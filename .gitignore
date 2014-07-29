@@ -1,0 +1,12 @@
+nbproject
+build
+lib/cachedir
+
+# database connection settings
+src/META-INF/persistence.xml
+
+# pydev project files
+newspaper/.*
+
+#data_analysis/**/*.txt
+
