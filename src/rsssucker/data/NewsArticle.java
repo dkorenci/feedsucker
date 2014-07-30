@@ -6,6 +6,7 @@
 package rsssucker.data;
 
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -21,9 +22,17 @@ public class NewsArticle {
     
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date datePublished;
+    
+    @Column(length=100000)
     private String text;
+    
+    @Column(length=10000)
     private String summary;
+    
+    @Column(length=1000)
     private String title;
+    
+    @Column(length=10000)
     String url;
     
     public Date getDatePublished() {
