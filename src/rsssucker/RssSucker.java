@@ -47,9 +47,9 @@ public class RssSucker {
     private static String article2="http://edition.cnn.com/2014/07/27/world/meast/mideast-crisis-reporters-notebook/index.html?eref=edition";
     
     public static void main(String[] args) throws Exception {
-        DataOperations.test();
-        //RssSucker sucker = new RssSucker();
-        //sucker.readAndPrintFeed(cnn1);
+        //DataOperations.test();
+        RssSucker sucker = new RssSucker();
+        sucker.readAndPrintFeed(guardian1);
         //sucker.tikaExtractURL("http://www.theguardian.com/culture/2014/jul/28/tulisa-contostavlos-paranoid-wreck-fake-sheikh-mazher-mahmood-drugs-sting");
         //sucker.tikaExtractURL("http://edition.cnn.com/2014/07/27/world/meast/mideast-crisis-reporters-notebook/index.html?eref=edition");
         //sucker.tikaExtractURL("http://www.theguardian.com/environment/2014/jul/28/bee-research-funding-pesticides-mps");
@@ -76,7 +76,8 @@ public class RssSucker {
             System.out.println("title: "+e.getTitle()+"\n"+
                     "date published: "+e.getPublishedDate()+"\n"+
                     "author: "+e.getAuthor()+"\n"+                    
-                    "link: "+e.getLink());       
+                    "link: "+e.getLink()+"\n"+
+                    "uri: "+e.getUri());       
             System.out.println("- categories: ");
             List cat = e.getCategories();
             for (Object oc : cat) {
