@@ -5,6 +5,8 @@ lib/cachedir
 # database connection settings
 src/META-INF/persistence.xml
 
+config/rsssucker.properties
+
 # pydev project files
 newspaper/.*
 
