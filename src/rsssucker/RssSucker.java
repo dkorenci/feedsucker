@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.html.HtmlParser;
@@ -30,31 +32,40 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 import rsssucker.data.DataOperations;
+import rsssucker.log.LoggersManager;
 
 /**
  *
  * @author dam1root
  */
 public class RssSucker {
-
-    /**
-     * @param args the command line arguments
-     */
-    
+   
     private static String guardian1="http://www.theguardian.com/world/europe/roundup/rss";
     private static String cnn1="http://rss.cnn.com/rss/edition.rss";
     private static String article1="http://www.theguardian.com/environment/2014/jul/28/bee-research-funding-pesticides-mps";
     private static String article2="http://edition.cnn.com/2014/07/27/world/meast/mideast-crisis-reporters-notebook/index.html?eref=edition";
+
+    private static final Logger logger = LoggersManager.getErrorLogger(RssSucker.class.getName());
     
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {        
         //DataOperations.test();
-        RssSucker sucker = new RssSucker();
-        sucker.readAndPrintFeed(guardian1);
+        testLogging();
+        //RssSucker sucker = new RssSucker();
+        //sucker.readAndPrintFeed(guardian1);
         //sucker.tikaExtractURL("http://www.theguardian.com/culture/2014/jul/28/tulisa-contostavlos-paranoid-wreck-fake-sheikh-mazher-mahmood-drugs-sting");
         //sucker.tikaExtractURL("http://edition.cnn.com/2014/07/27/world/meast/mideast-crisis-reporters-notebook/index.html?eref=edition");
         //sucker.tikaExtractURL("http://www.theguardian.com/environment/2014/jul/28/bee-research-funding-pesticides-mps");
         //sucker.testPython();
         //sucker.testNewspaper();
+    }
+    
+    public static void testLogging() {
+        try {
+            throw new RuntimeException("this is a runtime exception");
+        }
+        catch (Exception e) {
+            logger.log(Level.SEVERE, "error1", e);            
+        }
     }
     
     public void readAndPrintFeed(String feedURL) throws Exception {
