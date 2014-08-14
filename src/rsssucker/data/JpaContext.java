@@ -17,6 +17,7 @@ public class JpaContext {
     public EntityManager em;
     
     public void close() {
+        em.getTransaction().commit();
         em.close();
         emf.close();
     }

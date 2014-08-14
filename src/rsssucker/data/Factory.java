@@ -9,6 +9,7 @@ public class Factory {
         JpaContext jpa = new JpaContext();
         jpa.emf = Persistence.createEntityManagerFactory("rsssuckerPU");
         jpa.em = jpa.emf.createEntityManager();
+        jpa.em.getTransaction().begin();
         return jpa;
     }
     

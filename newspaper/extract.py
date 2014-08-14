@@ -32,7 +32,8 @@ def printArticleText(articleURL):
         article = Article(url=articleURL)
         article.download()
         article.parse()
-        print article.title
+        print article.title 
+	print "!-TITLE-END-!"
         print article.text
     except: 
         print "ERROR: "    
@@ -44,8 +45,8 @@ def run():
     #processArticle("http://www.indystar.com/story/news/local/hamilton-county/2014/07/27/carmel-couple-die-apparent-murder-suicide/13255503/")
     #processArticle("http://www.tristate-media.com/pdclarion/article_3793b120-12ed-11e4-9c26-001a4bcf887a.html")
     while True:        
-        line = sys.stdin.readline()
-        if line == "EXIT\n" : break
+        line = sys.stdin.readline().strip();
+        if line == "EXIT" : break
         else : printArticleText(line)        
 
     

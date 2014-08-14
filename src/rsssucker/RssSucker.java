@@ -31,6 +31,7 @@ import org.python.core.PyInteger;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
+import rsssucker.article.newspaper.Newspaper;
 import rsssucker.data.DataOperations;
 import rsssucker.log.LoggersManager;
 
@@ -48,10 +49,11 @@ public class RssSucker {
     private static final Logger logger = LoggersManager.getErrorLogger(RssSucker.class.getName());
     
     public static void main(String[] args) throws Exception {        
-        //DataOperations.test();
-        testLogging();
-        //RssSucker sucker = new RssSucker();
-        //sucker.readAndPrintFeed(guardian1);
+        DataOperations.test();
+        //testLogging();
+        //System.out.println(Newspaper.isErrorMessage("ERR" ));
+//        RssSucker sucker = new RssSucker();
+//        sucker.readAndPrintFeed(cnn1);
         //sucker.tikaExtractURL("http://www.theguardian.com/culture/2014/jul/28/tulisa-contostavlos-paranoid-wreck-fake-sheikh-mazher-mahmood-drugs-sting");
         //sucker.tikaExtractURL("http://edition.cnn.com/2014/07/27/world/meast/mideast-crisis-reporters-notebook/index.html?eref=edition");
         //sucker.tikaExtractURL("http://www.theguardian.com/environment/2014/jul/28/bee-research-funding-pesticides-mps");
@@ -88,7 +90,7 @@ public class RssSucker {
                     "date published: "+e.getPublishedDate()+"\n"+
                     "author: "+e.getAuthor()+"\n"+                    
                     "link: "+e.getLink()+"\n"+
-                    "uri: "+e.getUri());       
+                    "uri: "+e.getUri());      
             System.out.println("- categories: ");
             List cat = e.getCategories();
             for (Object oc : cat) {
@@ -98,8 +100,7 @@ public class RssSucker {
             }            
             
             SyndContent content = e.getDescription();
-            System.out.println("content: "+content.getValue());
-            
+            System.out.println("content: "+content.getValue());       
             System.out.println("--- entry end ---");
 //          List contents = e.getContents();            
 //            System.out.println("- contents: ");
