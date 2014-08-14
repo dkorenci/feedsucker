@@ -32,10 +32,15 @@ public class NewsArticle {
     private String text;
     
     @Column(length=10000)
-    private String summary;
+    private String description;
     
+    /** Title that is given in the feed entry. */
     @Column(length=1000)
-    private String title;
+    private String feedTitle;
+    
+    /** Title extracted from downloaded article. */
+    @Column(length=1000)
+    private String extractedTitle;
     
     @Column(length=10000,unique = true)
     private String url;
@@ -56,20 +61,20 @@ public class NewsArticle {
         this.text = text;
     }
 
-    public String getSummary() {
-        return summary;
+    public String getDescription() {
+        return description;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getTitle() {
-        return title;
+    public String getFeedTitle() {
+        return feedTitle;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setFeedTitle(String title) {
+        this.feedTitle = title;
     }
 
     public Long getId() {
@@ -86,6 +91,14 @@ public class NewsArticle {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getExtractedTitle() {
+        return extractedTitle;
+    }
+
+    public void setExtractedTitle(String extractedTitle) {
+        this.extractedTitle = extractedTitle;
     }
     
 }

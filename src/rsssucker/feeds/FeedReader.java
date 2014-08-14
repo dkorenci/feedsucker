@@ -52,22 +52,31 @@ public class FeedReader {
     }
     
     /** Get new article URLs from all the feeds in the list. */
-    public List<String> getNewArticles() {        
+    public List<FeedEntry> getNewArticles() {        
         List<SyndEntry> entries = getAllFeedEntries();
-        Date oldest = getOldestDate(entries);
+        // get URLs urls of already saved articles that could be in the feed
+        // i.e. saved articles with date older than oldest feed date
+        Date oldest = getOldestDate(entries);        
         Set<String> urlsAfterOldest = new TreeSet<String>(getArticlesAfterDate(oldest));
-        
-        List<String> result = new ArrayList<String>();
+        // get new entries, ie those entries that are not in urlsAfterOldest
+        List<FeedEntry> result = new ArrayList<FeedEntry>();
         for (SyndEntry e : entries) {
             String url = e.getLink();            
-            if (urlsAfterOldest.contains(url) == false)
-                result.add(url);
+            if (urlsAfterOldest.contains(url) == false) {
+                FeedEntry entry = new FeedEntry();
+                entry.setArticleURL(url);
+                entry.setDate(e.getPublishedDate());
+                entry.setTitle(e.getTitle());
+                entry.setDescription(e.getDescription().getValue());
+                //e.get
+                result.add(entry);
+            }
         }
         
         return result;
     }
         
-    // get entries from all the feeds
+    // get all entries from all the feeds
     private List<SyndEntry> getAllFeedEntries() {
         List<SyndEntry> result = new ArrayList<SyndEntry>(feeds.size()*10);
         for (String feed : feeds) {
