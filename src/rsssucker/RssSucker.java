@@ -32,6 +32,8 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 import rsssucker.article.newspaper.Newspaper;
+import rsssucker.article.newspaper.NewspaperException;
+import rsssucker.article.newspaper.NewspaperOutput;
 import rsssucker.data.DataOperations;
 import rsssucker.log.LoggersManager;
 
@@ -49,16 +51,19 @@ public class RssSucker {
     private static final Logger logger = LoggersManager.getErrorLogger(RssSucker.class.getName());
     
     public static void main(String[] args) throws Exception {        
-        DataOperations.test();
+        //DataOperations.test();
+        testNewspaper();
         //testLogging();
-        //System.out.println(Newspaper.isErrorMessage("ERR" ));
-//        RssSucker sucker = new RssSucker();
-//        sucker.readAndPrintFeed(cnn1);
-        //sucker.tikaExtractURL("http://www.theguardian.com/culture/2014/jul/28/tulisa-contostavlos-paranoid-wreck-fake-sheikh-mazher-mahmood-drugs-sting");
-        //sucker.tikaExtractURL("http://edition.cnn.com/2014/07/27/world/meast/mideast-crisis-reporters-notebook/index.html?eref=edition");
-        //sucker.tikaExtractURL("http://www.theguardian.com/environment/2014/jul/28/bee-research-funding-pesticides-mps");
-        //sucker.testPython();
-        //sucker.testNewspaper();
+    }
+    
+    public static void testNewspaper() throws IOException, NewspaperException {
+        Newspaper newspaper = new Newspaper();
+        NewspaperOutput out = newspaper.processUrl(article1);
+        System.out.println("title: " + out.getTitle());
+        System.out.println(out.getText());
+        out = newspaper.processUrl(article2);
+        System.out.println("title: " + out.getTitle());
+        System.out.println(out.getText());        
     }
     
     public static void testLogging() {
@@ -130,7 +135,7 @@ public class RssSucker {
          //System.out.println("html:\n" + toHTMLHandler.toString());
      }    
 
-    public void testNewspaper() {
+    public void testNewspaperOld() {
         PythonInterpreter interp = new PythonInterpreter();                        
         interp.exec("newspaper/extract.py");        
         PyObject someFunc = interp.get("processArticle");
