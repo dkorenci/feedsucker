@@ -43,6 +43,11 @@ public class RssSuckerRunner {
         
     }
     
+    public static void main(String[] args) {   
+        RssSuckerRunner runner = new RssSuckerRunner();
+        runner.run();
+    }
+    
     public void run() {
         initialize();
         mainLoop();
@@ -112,6 +117,7 @@ public class RssSuckerRunner {
         Timer timer = new Timer();
         List<FeedEntry> entries = feedReader.getNewFeedEntries();
         infoLogger.log(Level.INFO, "time to fetch new entries: " + timer.fromStart());
+        infoLogger.log(Level.INFO, "number of new entries: " + entries.size());
         for (FeedEntry e : entries) {
             NewspaperOutput news;
             try { 
