@@ -23,6 +23,7 @@ public class LoggersManager {
         Logger e = null, i = null, p = null, d = null;
         try {
             createLogFolder();
+            createRootLogger();
             e = createCategoryLoger("error");
             i = createCategoryLoger("info");
             p = createCategoryLoger("performance");
@@ -50,10 +51,20 @@ public class LoggersManager {
         if (result == false) throw new IOException("Couldn't create log folder: "+logFolder);
     }
     
+    private static void createRootLogger() throws IOException {
+        Logger root = Logger.getLogger("");
+        Handler[] handlers = root.getHandlers();
+        for (Handler h : handlers) root.removeHandler(h); // remove all handlers
+        // add file handler to the logger
+        Handler h = new FileHandler(logFolder+"root.log");
+        h.setFormatter(new SimpleFormatter());
+        root.addHandler(h);         
+    }
+    
     // create top level category logger for a given category
     private static Logger createCategoryLoger(String category) throws IOException {
         Logger logger = Logger.getLogger(category);
-        logger.setUseParentHandlers(false); // disable message dispatch to parent
+        logger.setUseParentHandlers(true); // enable message dispatch to parent (root)
         // remove all handlers, just in case
         Handler[] handlers = logger.getHandlers();
         for (Handler h : handlers) logger.removeHandler(h);
