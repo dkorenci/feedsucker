@@ -2,8 +2,12 @@ package rsssucker.article.newspaper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Wrapper for python newspaper package.
@@ -13,39 +17,50 @@ public class Newspaper {
     private static final String script = "newspaper/extract.py";
     
     private static final String titleEndMarker = "!-TITLE-END-!";
+    private static final String endMarker = "!-END-!";
     private static final String terminateCommand = "EXIT";
     private static final String[] errorRegex = {".*\\[.*ERR.*\\].*"};
     
-    Process process;
+    Process process;    
+    OutputStreamWriter procIn;     
     BufferedReader procOut;
-    OutputStreamWriter procIn;            
     
     public Newspaper() throws IOException {
         process = Runtime.getRuntime().exec("python "+script);
-        procOut = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        procIn = new OutputStreamWriter(process.getOutputStream());        
+        //procOut = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        procIn = new OutputStreamWriter(process.getOutputStream());  
+        procOut = new BufferedReader(new InputStreamReader(process.getInputStream()));        
+//        procIn = new OutputStreamWriter(process.getInputStream());         
     }    
     
     public NewspaperOutput processUrl(String url) throws IOException, NewspaperException {
-        url = url.trim();
-        // write url on a single line of script input
-        procIn.append(url+"\n").flush();        
-        // read and process output
+        url = url.trim();          
+        boolean errorOccured = false;                
         String line, title = ""; StringBuilder text = new StringBuilder();
-        boolean readTitle = true, errorOccured = false;
-        while ((line = procOut.readLine()) != null) {    
-            errorOccured = isErrorMessage(line);
+
+        // write url on a single line of script input                  
+        procIn.append(url+"\n").flush();        
+        // read and process output        
+        boolean readTitle = true;        
+         //Charset.forName("UTF-8")
+        while (true) {    
+            line = procOut.readLine();
+            if (line == null) { errorOccured = true; break; }
+            if (isErrorMessage(line)) errorOccured = true;       
+            if (line.equals(endMarker)) break;
+            //System.out.println(line);                     
             if (line.equals(titleEndMarker)) {
                 readTitle = false;
                 continue;
             }
             if (readTitle) title = title + line + "\n";
-            else {
+            else {                
                 text.append(line).append("\n");
             }
         }
+        
         NewspaperOutput result = new NewspaperOutput();
-        result.setTitle(title); result.setText(text.toString());
+        result.setTitle(title.trim()); result.setText(text.toString().trim());
         
         if (errorOccured) {
             throw new NewspaperException("newspaper output: \n"+
