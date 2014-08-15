@@ -67,7 +67,7 @@ public class FeedReader {
         try {
             articlesAfterDate = getArticlesAfterDate(oldest);
         } catch (Exception e) {
-            errLogger.log(Level.SEVERE, "failed to fetch article after oldest date: " + oldest);
+            errLogger.log(Level.SEVERE, "failed to fetch article after oldest date: " + oldest, e);
             articlesAfterDate = new ArrayList<String>();
         }
         Set<String> urlsAfterOldest = new TreeSet<String>(articlesAfterDate);
@@ -109,9 +109,9 @@ public class FeedReader {
     private static List<String> getArticlesAfterDate(Date date) {
         JpaContext jpac = Factory.createContext();        
         Query q = jpac.em.createNamedQuery("getArticlesAfterDate");
-        q.setParameter("date", date);
-        jpac.close();
+        q.setParameter("date", date);        
         List articles = q.getResultList();                       
+        jpac.close();
         List<String> result = new ArrayList<String>();
         for (Object o : articles) {
             NewsArticle art = (NewsArticle)o;
