@@ -57,16 +57,18 @@ public class NewsArticle {
         return text;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setText(String txt) {
+        if (txt.length() > 100000) txt = txt.substring(0, 100000);
+        this.text = txt;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescription(String desc) {
+        if (desc.length() > 10000) desc = desc.substring(0, 10000);
+        this.description = desc;
     }
 
     public String getFeedTitle() {
@@ -74,6 +76,7 @@ public class NewsArticle {
     }
 
     public void setFeedTitle(String title) {
+        if (title.length() > 1000) title = title.substring(0, 1000);
         this.feedTitle = title;
     }
 
@@ -97,7 +100,8 @@ public class NewsArticle {
         return extractedTitle;
     }
 
-    public void setExtractedTitle(String extractedTitle) {
+    public void setExtractedTitle(String title) {
+        if (title.length() > 1000) title = title.substring(0, 1000);
         this.extractedTitle = extractedTitle;
     }
     
