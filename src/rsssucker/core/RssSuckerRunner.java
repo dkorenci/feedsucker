@@ -116,8 +116,8 @@ public class RssSuckerRunner {
         infoLogger.log(Level.INFO, "starting feed refresh");
         Timer timer = new Timer();
         List<FeedEntry> entries = feedReader.getNewFeedEntries();
-        infoLogger.log(Level.INFO, "time to fetch new entries: " + timer.fromStart());
-        infoLogger.log(Level.INFO, "number of new entries: " + entries.size());
+        infoLogger.log(Level.INFO, "time to fetch new entries: " + timer.fromStart());        
+        int saved = 0, saveFailed = 0;
         for (FeedEntry e : entries) {
             NewspaperOutput news;
             try { 
@@ -129,13 +129,17 @@ public class RssSuckerRunner {
                 errLogger.log(Level.SEVERE, "failed to process URL: " + e.getArticleURL(), ex);
                 continue;
             }
-            saveArticle(e, news);
+            boolean success = saveArticle(e, news);
+            if (success) saved++; else saveFailed++;            
         }
         infoLogger.log(Level.INFO, "ending feed refresh, it lasted " + timer.fromStart());
+        infoLogger.log(Level.INFO, "number of new entries: " + entries.size());
+        infoLogger.log(Level.INFO, "number of saved entries: " + saved);
+        infoLogger.log(Level.INFO, "number of entries failed to save: " + saveFailed);
     }
 
     // persist article to database
-    private void saveArticle(FeedEntry feedEntry, NewspaperOutput news) {
+    private boolean saveArticle(FeedEntry feedEntry, NewspaperOutput news) {
         // copy data
         NewsArticle article = new NewsArticle();        
         article.setDatePublished(feedEntry.getDate());
@@ -144,16 +148,29 @@ public class RssSuckerRunner {
         article.setDescription(feedEntry.getDescription());
         article.setText(news.getText());
         article.setUrl(feedEntry.getArticleURL());
+        JpaContext ctx = null;
         try {
             // open transaction context
-            JpaContext ctx = Factory.createContext();        
+            ctx = Factory.createContext();        
             // save, commit, close
+            ctx.beginTransaction();
             ctx.em.persist(article);        
-            ctx.close();
+            ctx.commitTransaction();            
             infoLogger.log(Level.INFO, "article successfuly saved: " + article.getUrl());
+            return true;
         } catch (Exception e) {
             errLogger.log(Level.SEVERE, "saving article failed " + article.getUrl(), e);
-        }        
+            return false;
+        }      
+        finally {            
+            try {
+                if (ctx != null) ctx.close();            
+            }
+            catch (Exception e) {
+                errLogger.log(Level.SEVERE, "closing JpaContext failed", e);
+            }
+        }
+               
     }    
     
     // return absolute value difference of two time points, in minutes
