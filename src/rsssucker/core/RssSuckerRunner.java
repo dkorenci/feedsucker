@@ -97,8 +97,6 @@ public class RssSuckerRunner {
             }            
             if (lastFeedRefresh == null) { // first entry, no last refresh
                 doFeedRefresh();
-                // set last refresh to now
-                lastFeedRefresh = new Date();
                 sleep = true;
             }
             else { // not first entry, check if refresh time has come
@@ -136,6 +134,8 @@ public class RssSuckerRunner {
         infoLogger.log(Level.INFO, "number of new entries: " + entries.size());
         infoLogger.log(Level.INFO, "number of saved entries: " + saved);
         infoLogger.log(Level.INFO, "number of entries failed to save: " + saveFailed);
+        // set last refresh to now
+        lastFeedRefresh = new Date();
     }
 
     // persist article to database
