@@ -16,10 +16,17 @@ public class JpaContext {
     EntityManagerFactory emf;
     public EntityManager em;
     
-    public void close() {
-        em.getTransaction().commit();
+    public void close() {        
         em.close();
         emf.close();
     }
     
+    public void beginTransaction() {
+        em.getTransaction().begin();
+    }
+    
+    public void commitTransaction() {
+        em.getTransaction().commit();
+    }
+        
 }

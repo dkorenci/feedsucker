@@ -8,8 +8,7 @@ public class Factory {
     public static JpaContext createContext() {
         JpaContext jpa = new JpaContext();
         jpa.emf = Persistence.createEntityManagerFactory("rsssuckerPU");
-        jpa.em = jpa.emf.createEntityManager();
-        jpa.em.getTransaction().begin();
+        jpa.em = jpa.emf.createEntityManager();        
         return jpa;
     }
     
