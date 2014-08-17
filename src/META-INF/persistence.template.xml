@@ -8,8 +8,7 @@
   <provider>org.hibernate.ejb.HibernatePersistence</provider>
   <!-- the JNDI data source -->
   <!-- <non-jta-data-source>java:comp/env/jdbc/tutorialDS</non-jta-data-source> -->
-  <properties>
-   <property name="show_sql" value="false"/>
+  <properties>   
    <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
    <property name="hibernate.connection.url" value="jdbc:postgresql://localhost/rsssucker"/>
    <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
@@ -17,7 +16,7 @@
    <property name="hibernate.connection.password" value="rsssucker"/>      
    <!-- if this is true, hibernate will print (to stdout) the SQL it executes, 
     so you can check it to ensure it's not doing anything crazy -->
-   <property name='hibernate.show_sql' value='true' />
+   <property name='hibernate.show_sql' value='false' />
    <property name='hibernate.format_sql' value='true' />
    <!-- this tell Hibernate to update the DDL when it starts, very useful 
     for development, dangerous in production -->
