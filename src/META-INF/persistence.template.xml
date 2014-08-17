@@ -9,6 +9,7 @@
   <!-- the JNDI data source -->
   <!-- <non-jta-data-source>java:comp/env/jdbc/tutorialDS</non-jta-data-source> -->
   <properties>
+   <property name="show_sql">false</property>
    <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
    <property name="hibernate.connection.url" value="jdbc:postgresql://localhost/rsssucker"/>
    <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
