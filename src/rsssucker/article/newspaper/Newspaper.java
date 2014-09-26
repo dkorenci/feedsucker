@@ -8,13 +8,13 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import rsssucker.config.PropertiesReader;
+import rsssucker.config.RssConfig;
 
 /**
  * Wrapper for python newspaper package.
  */
-public class Newspaper {
-    
-    private static final String script = "newspaper/extract.py";
+public class Newspaper {        
     
     private static final String titleEndMarker = "!-TITLE-END-!";
     private static final String endMarker = "!-END-!";
@@ -26,11 +26,12 @@ public class Newspaper {
     BufferedReader procOut;
     
     public Newspaper() throws IOException {
-        process = Runtime.getRuntime().exec("python "+script);
-        //procOut = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        procIn = new OutputStreamWriter(process.getOutputStream());  
-        procOut = new BufferedReader(new InputStreamReader(process.getInputStream()));        
-//        procIn = new OutputStreamWriter(process.getInputStream());         
+        PropertiesReader properties = new PropertiesReader(RssConfig.propertiesFile);        
+        String interfaceScript = properties.getProperty("newspaper_interface");
+        String pythonCommand = properties.getProperty("python_command");
+        process = Runtime.getRuntime().exec(pythonCommand + " " + interfaceScript);      
+        procOut = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
+        procIn = new OutputStreamWriter(process.getOutputStream(), "UTF-8");                  
     }    
     
     public NewspaperOutput processUrl(String url) throws IOException, NewspaperException {
