@@ -159,7 +159,8 @@ public class RssSuckerRunner {
             infoLogger.log(Level.INFO, "article successfuly saved: " + article.getUrl());
             return true;
         } catch (Exception e) {
-            errLogger.log(Level.SEVERE, "saving article failed " + article.getUrl(), e);
+            if (!isCommonError(e))
+                errLogger.log(Level.SEVERE, "saving article failed " + article.getUrl(), e);
             return false;
         }      
         finally {            
@@ -172,6 +173,27 @@ public class RssSuckerRunner {
         }
                
     }    
+    
+    // return true if Exception describes a common situation that
+    // is not alarming and should not be logged
+    private boolean isCommonError(Exception e) {
+        if (duplicateUrlError(e)) return true;
+        else return false;
+    }
+    
+    // unable to write NewsArticle because article with the same key exists
+    // this can occur if one article is present in more than one feed, 
+    // or if it is updated and put in a feed several times
+    private boolean duplicateUrlError(Exception e) {
+        Throwable thr = e;
+        // unwind cause stack to get root cause
+        while (thr.getCause() != null) thr = thr.getCause();
+        String message = thr.getMessage();
+        System.out.println(message);
+        if (message.contains("duplicate key value violates unique constraint"))
+            return true;
+        else return false;
+    }
     
     // return absolute value difference of two time points, in minutes
     private double getDifferenceInMinutes(Date date1, Date date2) {
