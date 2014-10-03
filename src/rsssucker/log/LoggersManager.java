@@ -9,6 +9,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import java.util.logging.XMLFormatter;
 
 public class LoggersManager {
     
@@ -57,7 +58,7 @@ public class LoggersManager {
         for (Handler h : handlers) root.removeHandler(h); // remove all handlers
         // add file handler to the logger
         Handler h = new FileHandler(logFolder+"root.log");
-        h.setFormatter(new SimpleFormatter());
+        h.setFormatter(new XMLFormatter());
         root.addHandler(h);         
     }
     
@@ -70,7 +71,7 @@ public class LoggersManager {
         for (Handler h : handlers) logger.removeHandler(h);
         // add file handler to the logger
         Handler h = new FileHandler(logFolder+category+".log");
-        h.setFormatter(new SimpleFormatter());
+        h.setFormatter(new XMLFormatter());
         logger.addHandler(h);        
         return logger;
     }
