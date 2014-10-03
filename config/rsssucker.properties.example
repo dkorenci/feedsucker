@@ -1,1 +1,7 @@
 feedlist = config/feedlist.txt
+# feeds refresh interval, in minutes
+refresh_interval = 30
+
+# newspaper
+newspaper_interface = /data/rudjer/code/RssSucker/newspaper/console_interface.py
+python_command = python
