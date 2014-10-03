@@ -76,11 +76,10 @@ public class RssSuckerRunner {
                     "failed to read list of feeds. terminating.", ex);  
             terminate = true;            
         }
-        try {
-            newspaper = new Newspaper();
-        } catch (IOException ex) {
-            errLogger.log(Level.SEVERE, "failed to initialize Newspaper. terminating.", ex);
-            terminate = true;
+        initNewspaper();
+        if (newspaper == null) {
+            errLogger.log(Level.SEVERE, "terminating because of failiure to initialize Newspaper");
+            terminate = true;            
         }
     }
 
@@ -125,6 +124,18 @@ public class RssSuckerRunner {
                         t.fromStart() + " for article: " + e.getArticleURL());
             } catch (Exception ex) {
                 errLogger.log(Level.SEVERE, "failed to process URL: " + e.getArticleURL(), ex);
+                if ( (ex instanceof NewspaperException) == false) {
+                    // severe exception occured, not just error reported by newspaper
+                    // restart newspaper
+                    errLogger.log(Level.SEVERE, "restaring newspaper");
+                    newspaper.close();
+                    initNewspaper();
+                    if (newspaper == null) {
+                        errLogger.log(Level.SEVERE, 
+                                "terminating because of failure to initialize Newspaper");
+                        terminate = true; break;
+                    }                    
+                }
                 continue;
             }
             boolean success = saveArticle(e, news);
@@ -138,6 +149,15 @@ public class RssSuckerRunner {
         lastFeedRefresh = new Date();
     }
 
+    private void initNewspaper() {
+        try {
+            newspaper = new Newspaper();
+        } catch (IOException ex) {
+            errLogger.log(Level.SEVERE, "failed to initialize Newspaper.", ex);
+            newspaper = null;
+        }
+    }
+    
     // persist article to database
     private boolean saveArticle(FeedEntry feedEntry, NewspaperOutput news) {
         // copy data

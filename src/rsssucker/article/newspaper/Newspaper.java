@@ -25,13 +25,14 @@ public class Newspaper {
     OutputStreamWriter procIn;     
     BufferedReader procOut;
     
+    /** Initialize new newspaper instance. */
     public Newspaper() throws IOException {
         PropertiesReader properties = new PropertiesReader(RssConfig.propertiesFile);        
         String interfaceScript = properties.getProperty("newspaper_interface");
         String pythonCommand = properties.getProperty("python_command");
         process = Runtime.getRuntime().exec(pythonCommand + " " + interfaceScript);      
-        procOut = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
         procIn = new OutputStreamWriter(process.getOutputStream(), "UTF-8");                  
+        procOut = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
     }    
     
     public NewspaperOutput processUrl(String url) throws IOException, NewspaperException {
@@ -46,7 +47,9 @@ public class Newspaper {
          //Charset.forName("UTF-8")
         while (true) {    
             line = procOut.readLine();
-            if (line == null) { errorOccured = true; break; }
+            if (line == null) { 
+                throw new IOException("process output stream terminated");
+            }
             if (isErrorMessage(line)) errorOccured = true;       
             if (line.equals(endMarker)) break;
             //System.out.println(line);                     
