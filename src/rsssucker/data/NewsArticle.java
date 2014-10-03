@@ -102,7 +102,7 @@ public class NewsArticle {
 
     public void setExtractedTitle(String title) {
         if (title.length() > 1000) title = title.substring(0, 1000);
-        this.extractedTitle = extractedTitle;
+        this.extractedTitle = title;
     }
     
 }
