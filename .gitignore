@@ -2,6 +2,7 @@ nbproject
 build
 lib/cachedir
 /log/
+build.xml
 
 # database connection settings
 src/META-INF/persistence.xml
