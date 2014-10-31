@@ -7,7 +7,6 @@ package rsssucker;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
@@ -24,7 +23,6 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.LinkContentHandler;
 import org.apache.tika.sax.TeeContentHandler;
 import org.apache.tika.sax.ToHTMLContentHandler;
-import org.python.core.PyCode;
 import org.xml.sax.ContentHandler;
 import org.python.core.PyException;
 import org.python.core.PyInteger;
@@ -34,7 +32,6 @@ import org.python.util.PythonInterpreter;
 import rsssucker.article.newspaper.Newspaper;
 import rsssucker.article.newspaper.NewspaperException;
 import rsssucker.article.newspaper.NewspaperOutput;
-import rsssucker.data.DataOperations;
 import rsssucker.log.LoggersManager;
 
 /**
