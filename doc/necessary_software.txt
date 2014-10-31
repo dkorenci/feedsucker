@@ -1,0 +1,4 @@
+- newspaper
+sudo pip install newspaper
+-- prereqs: 
+pip, libxml2, libxml2-dev, libxslt + dev (libxslt1.1, libxslt1-dev)
