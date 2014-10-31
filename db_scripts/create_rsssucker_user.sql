@@ -1,1 +1,0 @@
-CREATE ROLE rsssucker CREATEDB LOGIN PASSWORD 'rsssucker'
