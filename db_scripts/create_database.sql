@@ -1,0 +1,2 @@
+CREATE DATABASE rsssucker OWNER rsssucker ENCODING 'UTF8' 
+
