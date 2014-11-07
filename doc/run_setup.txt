@@ -1,0 +1,9 @@
+How to setup a RssSucker for a single run. 
+- DB user
+User 'rsssucker' with pass 'rsssucker' must exist
+as postgres role and have the right to create databases.
+creat_user.sql does this
+user data has to be synced with persistence.xml
+- DB
+Database has to be created with for user: create_database.sql
+db data has to be synced with persistence.xml
