@@ -10,8 +10,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 
 /** Raw news article data downloaded from the web. */
@@ -20,6 +22,7 @@ import javax.persistence.Temporal;
     @NamedQuery(name = "getArticlesAfterDate", 
         query = "SELECT a FROM NewsArticle a WHERE a.datePublished >= :date")
 })
+@Table(indexes = {@Index(columnList = "datePublished", name = "datePubIndex")})
 public class NewsArticle {
     @Id
     @GeneratedValue
