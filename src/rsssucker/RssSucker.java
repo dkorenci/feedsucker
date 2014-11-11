@@ -24,11 +24,6 @@ import org.apache.tika.sax.LinkContentHandler;
 import org.apache.tika.sax.TeeContentHandler;
 import org.apache.tika.sax.ToHTMLContentHandler;
 import org.xml.sax.ContentHandler;
-import org.python.core.PyException;
-import org.python.core.PyInteger;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.util.PythonInterpreter;
 import rsssucker.article.newspaper.Newspaper;
 import rsssucker.article.newspaper.NewspaperException;
 import rsssucker.article.newspaper.NewspaperOutput;
@@ -130,39 +125,6 @@ public class RssSucker {
          //System.out.println("links:\n" + linkHandler.getLinks());
          System.out.println("text:\n" + textHandler.toString());
          //System.out.println("html:\n" + toHTMLHandler.toString());
-     }    
-
-    public void testNewspaperOld() {
-        PythonInterpreter interp = new PythonInterpreter();                        
-        interp.exec("newspaper/extract.py");        
-        PyObject someFunc = interp.get("processArticle");
-        PyObject result = someFunc.__call__(new PyString(article1));
-        String realResult = (String) result.__tojava__(String.class);                
-        System.out.println(realResult);        
-//        interpreter.exec("import sys\nsys.path.append('pathToModiles if they're not there by default')\nimport yourModule");
-//        PyObject someFunc = interpreter.get("funcName");
-//        PyObject result = someFunc.__call__(new PyString("Test!"));
-//        String realResult = (String) result.__tojava__(String.class);                
-    }
-    
-    public void testPython() throws PyException {
-
-        // Create an instance of the PythonInterpreter
-        PythonInterpreter interp = new PythonInterpreter();
-        
-        // The exec() method executes strings of code
-        interp.exec("import sys");
-        interp.exec("print sys");
-
-        // Set variable values within the PythonInterpreter instance
-        interp.set("a", new PyInteger(42));
-        interp.exec("print a");
-        interp.exec("x = 2+2");
-
-        // Obtain the value of an object from the PythonInterpreter and store it
-        // into a PyObject.
-        PyObject x = interp.get("x");
-        System.out.println("x: " + x);
-    }    
+     }     
     
 }
