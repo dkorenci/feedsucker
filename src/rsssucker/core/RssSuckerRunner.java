@@ -14,7 +14,7 @@ import rsssucker.config.PropertiesReader;
 import rsssucker.config.RssConfig;
 import rsssucker.data.Factory;
 import rsssucker.data.JpaContext;
-import rsssucker.data.NewsArticle;
+import rsssucker.data.entity.FeedArticle;
 import rsssucker.feeds.FeedEntry;
 import rsssucker.feeds.FeedReader;
 import rsssucker.log.LoggersManager;
@@ -161,7 +161,7 @@ public class RssSuckerRunner {
     // persist article to database
     private boolean saveArticle(FeedEntry feedEntry, NewspaperOutput news) {
         // copy data
-        NewsArticle article = new NewsArticle();        
+        FeedArticle article = new FeedArticle();        
         article.setDatePublished(feedEntry.getDate());
         article.setExtractedTitle(news.getTitle());
         article.setFeedTitle(feedEntry.getTitle());

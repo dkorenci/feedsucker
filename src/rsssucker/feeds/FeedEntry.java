@@ -12,11 +12,6 @@ public class FeedEntry {
     private Date date;
     private String title;
     private String description;
-    
-//    SyndEntry e; 
-//    {
-//        e.getTitle();
-//    }
 
     public String getArticleURL() {
         return articleURL;

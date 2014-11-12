@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package rsssucker.data;
+package rsssucker.data.entity;
 
 import java.util.Date;
 import javax.persistence.Column;
@@ -20,10 +20,10 @@ import javax.persistence.Temporal;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "getArticlesAfterDate", 
-        query = "SELECT a FROM NewsArticle a WHERE a.datePublished >= :date")
+        query = "SELECT a FROM FeedArticle a WHERE a.datePublished >= :date")
 })
 @Table(indexes = {@Index(columnList = "datePublished", name = "datePubIndex")})
-public class NewsArticle {
+public class FeedArticle {
     @Id
     @GeneratedValue
     private Long id;

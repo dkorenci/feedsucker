@@ -28,7 +28,7 @@ import javax.persistence.Query;
 import rsssucker.config.PropertiesReader;
 import rsssucker.config.RssConfig;
 import rsssucker.core.RssSuckerRunner;
-import rsssucker.data.NewsArticle;
+import rsssucker.data.entity.FeedArticle;
 import rsssucker.log.LoggersManager;
 
 /**
@@ -114,7 +114,7 @@ public class FeedReader {
         jpac.close();
         List<String> result = new ArrayList<String>();
         for (Object o : articles) {
-            NewsArticle art = (NewsArticle)o;
+            FeedArticle art = (FeedArticle)o;
             result.add(art.getUrl());
         }
         return result;
