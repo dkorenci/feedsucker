@@ -16,6 +16,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.html.HtmlParser;
@@ -27,6 +29,9 @@ import org.xml.sax.ContentHandler;
 import rsssucker.article.newspaper.Newspaper;
 import rsssucker.article.newspaper.NewspaperException;
 import rsssucker.article.newspaper.NewspaperOutput;
+import rsssucker.config.PropertiesReader;
+import rsssucker.config.RssConfig;
+import rsssucker.data.mediadef.MediadefParser;
 import rsssucker.log.LoggersManager;
 
 /**
@@ -44,8 +49,18 @@ public class RssSucker {
     
     public static void main(String[] args) throws Exception {        
         //DataOperations.test();
-        testNewspaper();
+        //testNewspaper();
         //testLogging();
+        testMediadef();
+    }
+    
+    public static void testMediadef() throws Exception {
+//        Matcher m = Pattern.compile("\\p{Alpha}+").matcher("abc def");
+//        m.lookingAt(); System.out.println(m.start()+" "+m.end());
+        PropertiesReader properties = new PropertiesReader(RssConfig.propertiesFile);
+        String mediadefFile = properties.getProperty("mediadef_file");
+        MediadefParser parser = new MediadefParser(mediadefFile);
+        parser.parse();
     }
     
     public static void testNewspaper() throws IOException, NewspaperException {
