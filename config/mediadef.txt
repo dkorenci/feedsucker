@@ -1,0 +1,10 @@
+@feed // cnn feed brate, jako
+url = "http://rss.cnn.com/rss/cnn_world.rss"
+// kai kaje
+@feed
+// // komentar //
+url = "http://www.theguardian.com/uk/rss"
+name = // jedinstveni designator 
+       gardian_main_feed
+refresh = 345 // samo neki broj
+@feed url = "http://feeds.nytimes.com/nyt/rss/Business"		id = 556	cd = idon'tknow
