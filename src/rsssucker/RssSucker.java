@@ -26,6 +26,7 @@ import org.apache.tika.sax.LinkContentHandler;
 import org.apache.tika.sax.TeeContentHandler;
 import org.apache.tika.sax.ToHTMLContentHandler;
 import org.xml.sax.ContentHandler;
+import rsssucker.article.ArticleData;
 import rsssucker.article.newspaper.Newspaper;
 import rsssucker.article.newspaper.NewspaperException;
 import rsssucker.article.newspaper.NewspaperOutput;
@@ -65,10 +66,10 @@ public class RssSucker {
     
     public static void testNewspaper() throws IOException, NewspaperException {
         Newspaper newspaper = new Newspaper();
-        NewspaperOutput out = newspaper.processUrl(article1);
+        ArticleData out = newspaper.scrapeArticle(article1);
         System.out.println("title: " + out.getTitle());
         System.out.println(out.getText());
-        out = newspaper.processUrl(article2);
+        out = newspaper.scrapeArticle(article2);
         System.out.println("title: " + out.getTitle());
         System.out.println(out.getText());        
     }

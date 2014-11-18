@@ -8,13 +8,15 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import rsssucker.article.ArticleData;
+import rsssucker.article.IArticleScraper;
 import rsssucker.config.PropertiesReader;
 import rsssucker.config.RssConfig;
 
 /**
  * Wrapper for python newspaper package.
  */
-public class Newspaper {        
+public class Newspaper implements IArticleScraper {        
     
     private static final String titleEndMarker = "!-TITLE-END-!";
     private static final String endMarker = "!-END-!";
@@ -35,7 +37,7 @@ public class Newspaper {
         procOut = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
     }    
     
-    public NewspaperOutput processUrl(String url) throws IOException, NewspaperException {
+    public ArticleData scrapeArticle(String url) throws IOException, NewspaperException {
         url = url.trim();          
         boolean errorOccured = false;                
         String line, title = ""; StringBuilder text = new StringBuilder();
@@ -63,7 +65,7 @@ public class Newspaper {
             }
         }
         
-        NewspaperOutput result = new NewspaperOutput();
+        ArticleData result = new ArticleData();
         result.setTitle(title.trim()); result.setText(text.toString().trim());
         
         if (errorOccured) {
@@ -71,11 +73,11 @@ public class Newspaper {
                     result.getTitle()+result.getText());
         }
         
-        return result;
+        return result;        
     }
     
     // return true if a string (from newspaper output) produces an error message
-    public static boolean isErrorMessage(String str) {
+    private static boolean isErrorMessage(String str) {
         for (String regex : errorRegex) {
             if (str.matches(regex)) return true;
         }

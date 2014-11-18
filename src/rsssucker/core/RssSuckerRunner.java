@@ -7,6 +7,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import rsssucker.RssSucker;
+import rsssucker.article.ArticleData;
 import rsssucker.article.newspaper.Newspaper;
 import rsssucker.article.newspaper.NewspaperException;
 import rsssucker.article.newspaper.NewspaperOutput;
@@ -116,10 +117,10 @@ public class RssSuckerRunner {
         infoLogger.log(Level.INFO, "time to fetch new entries: " + timer.fromStart());        
         int saved = 0, saveFailed = 0;
         for (FeedEntry e : entries) {
-            NewspaperOutput news;
+            ArticleData news;
             try { 
                 Timer t = new Timer();
-                news = newspaper.processUrl(e.getArticleURL());
+                news = newspaper.scrapeArticle(e.getArticleURL());
                 infoLogger.log(Level.INFO, "time to newspaper: " + 
                         t.fromStart() + " for article: " + e.getArticleURL());
             } catch (Exception ex) {
@@ -159,7 +160,7 @@ public class RssSuckerRunner {
     }
     
     // persist article to database
-    private boolean saveArticle(FeedEntry feedEntry, NewspaperOutput news) {
+    private boolean saveArticle(FeedEntry feedEntry, ArticleData news) {
         // copy data
         FeedArticle article = new FeedArticle();        
         article.setDatePublished(feedEntry.getDate());
