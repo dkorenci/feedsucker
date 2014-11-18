@@ -5,12 +5,14 @@
 
 package rsssucker.data.entity;
 
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -27,6 +29,9 @@ public class FeedArticle {
     @Id
     @GeneratedValue
     private Long id;
+    
+    @ManyToMany(mappedBy = "articles")
+    private Collection<Feed> feeds;
     
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date datePublished;
@@ -47,6 +52,9 @@ public class FeedArticle {
     
     @Column(length=10000,unique = true)
     private String url;
+    
+    public Collection<Feed> getFeeds() { return feeds; }
+    public void setFeeds(Collection<Feed> feeds) { this.feeds = feeds; }   
     
     public Date getDatePublished() {
         return datePublished;
