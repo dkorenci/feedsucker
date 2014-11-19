@@ -1,10 +1,14 @@
-@feed // cnn feed brate, jako
-url = "http://rss.cnn.com/rss/cnn_world.rss"
-// kai kaje
-@feed
-// // komentar //
-url = "http://www.theguardian.com/uk/rss"
-name = // jedinstveni designator 
-       gardian_main_feed
-refresh = 345 // samo neki broj
-@feed url = "http://feeds.nytimes.com/nyt/rss/Business"		id = 556	cd = idon'tknow
+@outlet name = cnn ; url = http://cnn.com ;
+  @feed url = http://rss.cnn.com/rss/cnn_world.rss ; outlet = cnn
+  @feed url = http://rss.cnn.com/rss/edition_technology.rss ; outlet = cnn
+  @feed url = http://rss.cnn.com/rss/edition_business360.rss outlet = cnn
+
+@outlet name = theguardian url = http://www.theguardian.com
+  @feed url = http://www.theguardian.com/uk/rss outlet = theguardian
+  @feed url = http://www.theguardian.com/uk/business/rss outlet = theguardian
+  @feed url = http://www.theguardian.com/technology/rss outlet = theguardian
+  
+@outlet name = newyorktimes url = nytimes.com
+  @feed url = http://www.nytimes.com/services/xml/rss/nyt/World.xml outlet = newyorktimes
+  @feed url = http://feeds.nytimes.com/nyt/rss/Business outlet = newyorktimes
+  @feed url = http://feeds.nytimes.com/nyt/rss/Technology outlet = newyorktimes

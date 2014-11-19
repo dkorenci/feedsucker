@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -40,11 +42,11 @@ public class MediadefParser {
     // TODO expand
     // allowed punctuation to include in prop value (when not using " as delimiters)
     private static String allowedPunct = 
-            "!#\\$%\\&'\\(\\)\\*\\+\\,\\-\\./\\:;<=>\\?@\\[\\\\\\]\\^\\_`{\\|}~";
-    private static String propValueRE = "([\\p{Alnum}"+allowedPunct+"]+)";
+            "!#\\$%\\&'\\(\\)\\*\\+\\,\\-\\./\\:<=>\\?@\\[\\\\\\]\\^\\_`{\\|}~";
+    private static String propValueRE = "([\\p{Alnum}"+allowedPunct+"]+)(\\p{Space}*;)?";
     private static Pattern propValuePatt = Pattern.compile(propValueRE);
     // complex property value, anything between " "
-    private static String propValueXRE = "\"([^\"]*)\"";
+    private static String propValueXRE = "\"([^\"]*)\"(\\p{Space}*;)?";
     private static Pattern propValueXPatt = Pattern.compile(propValueXRE);
     // whitespace
     private static String whitespaceRE = "\\p{Space}+";
@@ -59,10 +61,11 @@ public class MediadefParser {
     int endPos; // last position of the mediadef string being processed
     int startPos; // position of the mediadef string to start matching at
     
-    public MediadefData parse() throws IOException {
+    public List<MediadefEntity> parse() throws IOException {
         readFile();
         createMatchers();        
-        startPos = 0; endPos = mediadef.length();                        
+        startPos = 0; endPos = mediadef.length();       
+        List<MediadefEntity> result = new ArrayList<>();
         while (true) {
             // parse entity header @entity
             stripWhitespaceAndComments();
@@ -73,6 +76,7 @@ public class MediadefParser {
                         + mediadef.substring(startPos, endPos));
             }
             System.out.println(entityClass);
+            MediadefEntity entity = new MediadefEntity(entityClass);
             Map<String, String> properties = new TreeMap<String, String>();
             // parse parameters and values [param = (value || "value")]*
             while (true) {
@@ -93,9 +97,10 @@ public class MediadefParser {
                 }
                 properties.put(propName, propValue);
                 System.out.println(propValue);
+                entity.addProperty(propName, propValue);
             }
         }        
-        return null;
+        return result;
     }
 
     private boolean end() { return startPos == endPos; }
