@@ -30,6 +30,7 @@ import rsssucker.article.ArticleData;
 import rsssucker.article.newspaper.Newspaper;
 import rsssucker.article.newspaper.NewspaperException;
 import rsssucker.article.newspaper.NewspaperOutput;
+import rsssucker.article.newspaper.NewspaperTester;
 import rsssucker.config.PropertiesReader;
 import rsssucker.config.RssConfig;
 import rsssucker.data.mediadef.MediadefParser;
@@ -52,7 +53,12 @@ public class RssSucker {
         //DataOperations.test();
         //testNewspaper();
         //testLogging();
-        testMediadef();
+        //testMediadef();
+        testNewspaper2();
+    }
+    
+    public static void testNewspaper2() throws Exception {
+        (new NewspaperTester()).concurrencyTest(10, 500);
     }
     
     public static void testMediadef() throws Exception {
