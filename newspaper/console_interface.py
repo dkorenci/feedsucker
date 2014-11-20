@@ -4,6 +4,7 @@
 import newspaper
 from newspaper import Article
 from newspaper import Config
+from newspaper import configuration
 import sys
 
 # encode string in utf-8 and print
@@ -11,10 +12,11 @@ def printUtf8(string):
 	print string.encode('utf-8')
 
 def printArticleText(articleURL):
-    #conf = Config()
-    #conf.fetch_images = False    
+    conf = Config()
+    conf.fetch_images = False
+    conf.memoize_articles = False    
     try:
-        article = Article(url=articleURL)
+        article = Article(url=articleURL, config=conf)
         article.download()
         article.parse()       
         title = article.title
