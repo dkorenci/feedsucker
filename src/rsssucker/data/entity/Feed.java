@@ -1,5 +1,6 @@
 package rsssucker.data.entity;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,8 +32,8 @@ public class Feed {
     @Column(length=10000)
     private String attributes;    
     
-    @ManyToMany
-    private Collection<FeedArticle> articles;
+    @ManyToMany(mappedBy = "feeds")
+    private Collection<FeedArticle> articles = new ArrayList<>();
     
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id;}

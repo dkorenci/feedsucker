@@ -5,6 +5,7 @@
 
 package rsssucker.data.entity;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Column;
@@ -22,7 +23,9 @@ import javax.persistence.Temporal;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "getArticlesAfterDate", 
-        query = "SELECT a FROM FeedArticle a WHERE a.datePublished >= :date")
+        query = "SELECT a FROM FeedArticle a WHERE a.datePublished >= :date"),
+    @NamedQuery(name = "FeedArticle.getByUrl", 
+        query = "SELECT a FROM FeedArticle a WHERE a.url = :url")        
 })
 @Table(indexes = {@Index(columnList = "datePublished", name = "datePubIndex")})
 public class FeedArticle {
@@ -30,8 +33,8 @@ public class FeedArticle {
     @GeneratedValue
     private Long id;
     
-    @ManyToMany(mappedBy = "articles")
-    private Collection<Feed> feeds;
+    @ManyToMany
+    private Collection<Feed> feeds = new ArrayList<>();
     
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date datePublished;
