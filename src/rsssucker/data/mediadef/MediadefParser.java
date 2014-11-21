@@ -33,7 +33,8 @@ public class MediadefParser {
     private static String ENTITY_CLASS_PROP = "class";
     
     // entity header "@media, @feed, ..."
-    private static String entityRE = "@\\p{Alpha}\\p{Alnum}*";
+    private static String allowedEntityPunct = "\\-\\.\\_";    
+    private static String entityRE = "@(\\p{Alpha}[\\p{Alnum}"+allowedEntityPunct+"]*)";
     private static Pattern entityPatt = Pattern.compile(entityRE);
     // property name followed by "=" sign
     private static String propNameRE = "(\\p{Alpha}\\p{Alnum}*)\\s*\\=";
@@ -41,9 +42,9 @@ public class MediadefParser {
     // simple (alphanumeric, number) value of the property
     // TODO expand
     // allowed punctuation to include in prop value (when not using " as delimiters)
-    private static String allowedPunct = 
+    private static String allowedPropPunct = 
             "!#\\$%\\&'\\(\\)\\*\\+\\,\\-\\./\\:<=>\\?@\\[\\\\\\]\\^\\_`{\\|}~";
-    private static String propValueRE = "([\\p{Alnum}"+allowedPunct+"]+)(\\p{Space}*;)?";
+    private static String propValueRE = "([\\p{Alnum}"+allowedPropPunct+"]+)(\\p{Space}*;)?";
     private static Pattern propValuePatt = Pattern.compile(propValueRE);
     // complex property value, anything between " "
     private static String propValueXRE = "\"([^\"]*)\"(\\p{Space}*;)?";
@@ -99,6 +100,7 @@ public class MediadefParser {
                 System.out.println(propValue);
                 entity.addProperty(propName, propValue);
             }
+            result.add(entity);
         }        
         return result;
     }
@@ -109,7 +111,7 @@ public class MediadefParser {
         entityMatcher.region(startPos, endPos);
         if (entityMatcher.lookingAt()) {
             startPos = entityMatcher.end();
-            return mediadef.substring(entityMatcher.start(), entityMatcher.end());
+            return entityMatcher.group(1);            
         }
         else return null;
     }

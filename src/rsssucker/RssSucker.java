@@ -33,7 +33,9 @@ import rsssucker.article.newspaper.NewspaperOutput;
 import rsssucker.article.newspaper.NewspaperTester;
 import rsssucker.config.PropertiesReader;
 import rsssucker.config.RssConfig;
+import rsssucker.data.mediadef.MediadefEntity;
 import rsssucker.data.mediadef.MediadefParser;
+import rsssucker.data.mediadef.MediadefPersister;
 import rsssucker.log.LoggersManager;
 
 /**
@@ -53,8 +55,9 @@ public class RssSucker {
         //DataOperations.test();
         //testNewspaper();
         //testLogging();
-        //testMediadef();
-        testNewspaper2();
+        testMediadef();
+        MediadefPersister.printOutletsAndFeeds();
+        //testNewspaper2();
     }
     
     public static void testNewspaper2() throws Exception {
@@ -67,7 +70,8 @@ public class RssSucker {
         PropertiesReader properties = new PropertiesReader(RssConfig.propertiesFile);
         String mediadefFile = properties.getProperty("mediadef_file");
         MediadefParser parser = new MediadefParser(mediadefFile);
-        parser.parse();
+        List<MediadefEntity> entities = parser.parse();
+        new MediadefPersister().persist(entities);
     }
     
     public static void testNewspaper() throws IOException, NewspaperException {

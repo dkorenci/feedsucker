@@ -1,34 +1,41 @@
 
 package rsssucker.data.entity;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 /**
  * Content producing outlet (news site, blog, ...).
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "Outlet.getByName", 
+            query = "SELECT o FROM Outlet o WHERE o.name = :name")
+})
 public class Outlet {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column(length=100,unique = true)
+    @Column(length=100, unique = true)
     private String name;    
     
-    @Column(length=10000,unique = true)
+    @Column(length=10000, unique = true)
     private String url;
     
     @Column(length=10000)
     private String attributes;    
     
     @OneToMany(mappedBy = "outlet")
-    private Collection<Feed> feeds;
+    private Collection<Feed> feeds = new ArrayList<>();
     
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id;}

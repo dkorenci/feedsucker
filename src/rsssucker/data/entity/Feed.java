@@ -7,11 +7,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  * Information about a single news feed.
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "Feed.getByUrl", query = "SELECT f FROM Feed f WHERE f.url = :url")
+})
 public class Feed {
     @Id
     @GeneratedValue
