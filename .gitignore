@@ -7,7 +7,9 @@ build.xml
 # database connection settings
 src/META-INF/persistence.xml
 
+# local and test settings
 config/rsssucker.properties
+config/local/**
 
 # pydev project files
 newspaper/.*
