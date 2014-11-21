@@ -62,7 +62,7 @@ public class MediadefParser {
     int endPos; // last position of the mediadef string being processed
     int startPos; // position of the mediadef string to start matching at
     
-    public List<MediadefEntity> parse() throws IOException {
+    public List<MediadefEntity> parse() throws IOException, MediadefException {
         readFile();
         createMatchers();        
         startPos = 0; endPos = mediadef.length();       
@@ -73,7 +73,7 @@ public class MediadefParser {
             String entityClass = extractEntityHeader();            
             if (entityClass == null) { 
                 if (end()) break;
-                else throw new IllegalArgumentException("error parsing entity at position:\n" 
+                else throw new MediadefException("error parsing entity at position:\n" 
                         + mediadef.substring(startPos, endPos));
             }
             System.out.println(entityClass);
@@ -85,14 +85,14 @@ public class MediadefParser {
                 String propName = extractPropertyName();                
                 if (propName == null) break;
                 if (propName.equals(ENTITY_CLASS_PROP)) {
-                    throw new IllegalCharException("property " + propName + 
+                    throw new MediadefException("property " + propName + 
                             " is reserved for entity class");
                 }
                 System.out.print(propName + " = ");
                 stripWhitespaceAndComments();
                 String propValue = extractPropertyValue();
                 if (propValue == null) {
-                    throw new IllegalArgumentException(
+                    throw new MediadefException(
                     "error parsing propertyValue at position:\n" 
                     + mediadef.substring(startPos, startPos+100));
                 }
