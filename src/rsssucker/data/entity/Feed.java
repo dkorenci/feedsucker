@@ -2,8 +2,10 @@ package rsssucker.data.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -16,7 +18,8 @@ import javax.persistence.NamedQuery;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "Feed.getByUrl", query = "SELECT f FROM Feed f WHERE f.url = :url")
+    @NamedQuery(name = "Feed.getByUrl", query = "SELECT f FROM Feed f WHERE f.url = :url"),
+    @NamedQuery(name = "Feed.getAll", query = "SELECT f FROM Feed f")
 })
 public class Feed {
     @Id
@@ -32,6 +35,7 @@ public class Feed {
     @Column(length=10000)
     private String attributes;    
     
+    @Basic(fetch=FetchType.LAZY)
     @ManyToMany(mappedBy = "feeds")
     private Collection<FeedArticle> articles = new ArrayList<>();
     

@@ -1,39 +1,38 @@
 package rsssucker.core;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import rsssucker.RssSucker;
-import rsssucker.article.ArticleData;
+import javax.persistence.Query;
+import rsssucker.article.IArticleScraper;
 import rsssucker.article.newspaper.Newspaper;
-import rsssucker.article.newspaper.NewspaperException;
-import rsssucker.article.newspaper.NewspaperOutput;
 import rsssucker.config.PropertiesReader;
 import rsssucker.config.RssConfig;
+import rsssucker.core.feedprocessor.FeedProcessor;
 import rsssucker.data.Factory;
-import rsssucker.data.JpaContext;
 import rsssucker.data.entity.Feed;
-import rsssucker.data.entity.FeedArticle;
 import rsssucker.data.mediadef.MediadefEntity;
 import rsssucker.data.mediadef.MediadefException;
 import rsssucker.data.mediadef.MediadefParser;
 import rsssucker.data.mediadef.MediadefPersister;
-import rsssucker.feeds.FeedEntry;
 import rsssucker.feeds.FeedReader;
+import rsssucker.feeds.IFeedReader;
+import rsssucker.feeds.RomeFeedReader;
 import rsssucker.log.LoggersManager;
-import rsssucker.util.Timer;
 
 /**
  * Initialization and workflow the the application.
  */
 public class RssSuckerApp {
 
-    private FeedReader feedReader;
-    private Newspaper newspaper;
     private boolean terminate = false;
     private Date lastFeedRefresh;
     // feeds refresh interval, in minutes
@@ -42,12 +41,15 @@ public class RssSuckerApp {
     private int sleepPeriod;
     private PropertiesReader properties;    
     private EntityManagerFactory emf;
+    private List<Newspaper> npapers;
     
     private static final Logger errLogger = 
             LoggersManager.getErrorLogger(RssSuckerRunner.class.getName());
     private static final Logger infoLogger = 
-            LoggersManager.getInfoLogger(RssSuckerRunner.class.getName());    
-   
+            LoggersManager.getInfoLogger(RssSuckerRunner.class.getName());   
+    private static final int DEFAULT_NUM_THREADS = 10;
+       
+    
     public static void main(String[] args) {   
         RssSuckerApp app = new RssSuckerApp();
         app.run();
@@ -72,13 +74,23 @@ public class RssSuckerApp {
     }
     
     private void cleanup() {
-        try {
-            emf.close();
-        }
-        catch (Exception e) {
-            errLogger.log(Level.SEVERE, "failed to cleanup", e);             
-        }
+        try { emf.close(); }
+        catch (Exception e) { logErr("failed to cleanup", e); }
     }
+    
+    private static void logErr(String msg, Exception e) {
+        errLogger.log(Level.SEVERE, msg, e);        
+    }
+    
+    // send info message
+    private static void info(String msg) { 
+        String header = String.format("[%1$td%1$tm%1$tY_%1$tH:%1$tm:%1$tS] : ", new Date());
+        System.out.println(header + msg); 
+    }
+    
+    private static void logInfo(String msg, Exception e) {
+        infoLogger.log(Level.INFO, msg, e);        
+    }    
     
     private boolean readProperties() {
         try {
@@ -87,13 +99,11 @@ public class RssSuckerApp {
             // set sleepPeriod to 1/100 th of refresh interval (in miliseconds)
             sleepPeriod = refreshInterval * 60 * 1000 / 100;
             return true;
-        } catch (IOException ex) {
-            errLogger.log(Level.SEVERE, 
-                    "failed to read properties.", ex); 
-            return false;
+        } catch (IOException ex) { 
+            logErr("failed to read properties.", ex);
+            return false; 
         } catch (NumberFormatException ex) {
-            errLogger.log(Level.SEVERE, 
-                    "failed to parse refresh_interval value.", ex);             
+            logErr("failed to parse refresh_interval value.", ex);             
             return false;
         }         
     }
@@ -108,14 +118,14 @@ public class RssSuckerApp {
             entities = parser.parse();
         }
         catch (IOException|MediadefException e) { 
-            errLogger.log(Level.SEVERE, "failed to parse mediadef_file", e);            
+            logErr("failed to parse mediadef_file", e);            
             return false;
         }
         try { // persist entities from mediadef file
             new MediadefPersister().persist(entities);        
         }
         catch (MediadefException e) {
-            errLogger.log(Level.SEVERE, "failed to persist mediadef_file", e);            
+            logErr("failed to persist mediadef_file", e);            
             return false;
         }
         return true;
@@ -126,24 +136,13 @@ public class RssSuckerApp {
             emf = Factory.createEmf();
         }
         catch (Exception e) {
-            errLogger.log(Level.SEVERE, "failed to create EntityManagerFactory", e);            
+            logErr("failed to create EntityManagerFactory", e);            
             return false;            
         }
+        info("initialized EntityManagerFactory");
         return true;
-    }
-    
-    private void singleThreadJob(Feed feed) {
-        // reader = getFeedReader()
-        // list<entries> entries = reader.read(feed.url)
-        // entries = filterEntries(entries)
-        // scraper = getArticleScraper()
-        // foreach entry : entries
-        //       articleData = scraper.scrape(entry.url)
-        //       saveData(feed, entry, articleData)
-        //
-        // saveData - zapiši ako nema, dodaj u cache
-    }
-    
+    }  
+   
     private void mainLoop() {
         boolean sleep = false;
         while (!terminate) {
@@ -151,7 +150,7 @@ public class RssSuckerApp {
                 try {
                     Thread.sleep(sleepPeriod);
                 } catch (InterruptedException ex) {
-                   infoLogger.log(Level.SEVERE, "main thread sleep interrupted.", ex);
+                   logInfo("main thread sleep interrupted.", ex);
                 }
                 sleep = false;
             }            
@@ -170,23 +169,84 @@ public class RssSuckerApp {
         }
     }
 
-    // initialize threads and jobs, run them and wait for them to finish
-    private void doFeedRefresh() {
-        List<Feed> feeds = getFeeds();
-    }
-    
-    private List<Feed> getFeeds() {
+    // initialize threads and feed processing jobs, run them and wait for them to finish
+    private void doFeedRefresh() { try {            
+        info("starting feed refresh");
+        List<Feed> feeds = getFeeds(); //feeds = feeds.subList(0, 1);
+        int numThreads = getNumThreads();    
+        if (feeds.size() < numThreads) numThreads = feeds.size();
+        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+        for (Feed f : feeds) {
+            IArticleScraper scraper = getNewspaper(); if (scraper == null) continue;
+            IFeedReader reader = getFeedReader();            
+            FeedProcessor processor = new FeedProcessor(f, emf, reader, scraper);
+            info("starting processor for feed " + f.getUrl());
+            executor.submit(processor);
+        }
+        executor.shutdown();
+        // TODO it the executor is not terminated after a long time, do shutdownNow
+        // how long? the use cases should be considered
+        // responsivity also depends on FeedProcessor error and blocking handling
+        info("waiting for FeedProcessor threads to finish");
+        while (executor.isTerminated() == false) {
+            try { executor.awaitTermination(refreshInterval, TimeUnit.MINUTES); }
+            catch (InterruptedException e) {}           
+        }
+        info("FeedProcessor threads finished");
+        closeNewspapers();
+        lastFeedRefresh = new Date();
+        info("ending feed refresh");
         
     }
+    catch (Exception e) { logErr("feed refresh error", e); }
+    }
     
-    private void initNewspaper() {
-        try {
-            newspaper = new Newspaper();
-        } catch (IOException ex) {
-            errLogger.log(Level.SEVERE, "failed to initialize Newspaper.", ex);
-            newspaper = null;
+    // read all feeds from the database
+    private List<Feed> getFeeds() {
+        EntityManager em = emf.createEntityManager();
+        Query q = em.createNamedQuery("Feed.getAll");
+        List<Feed> feeds = (List<Feed>)q.getResultList();
+        return feeds;
+    }
+    
+    // read number of threads from the properties file
+    private int getNumThreads() {
+        int nt;
+        try { nt = Integer.parseInt(properties.getProperty("num_threads")); }
+        catch (NumberFormatException|NullPointerException e) { nt = DEFAULT_NUM_THREADS; }
+        if (nt <= 0) nt = DEFAULT_NUM_THREADS;
+        return nt;
+    }
+    
+    // create newspaper and cache for later shutdown
+    private Newspaper getNewspaper() {
+        if (npapers == null) npapers = new ArrayList<Newspaper>();
+        Newspaper npaper = createNewspaper();
+        if (npaper == null) return null;
+        else { 
+            npapers.add(npaper);
+            return npaper;
         }
     }
+    
+    private void closeNewspapers() {
+        for (Newspaper npaper : npapers) {
+            try { npaper.close(); }
+            catch (Exception ex) { logErr("closing newspaper error", ex); }
+        }        
+    }
+    
+    // initialize and return a new newspaper instance
+    private Newspaper createNewspaper() {
+        try {
+            return new Newspaper();
+        } catch (IOException ex) {
+            errLogger.log(Level.SEVERE, "failed to initialize Newspaper.", ex);
+            return null;
+        }
+    }
+    
+    private RomeFeedReader getFeedReader() { return new RomeFeedReader(); }
         
     // return true if Exception describes a common situation that
     // is not alarming and should not be logged
