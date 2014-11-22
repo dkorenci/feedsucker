@@ -37,6 +37,7 @@ public class Newspaper implements IArticleScraper {
         procOut = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
     }    
     
+    @Override
     public ArticleData scrapeArticle(String url) throws IOException, NewspaperException {
         url = url.trim();          
         boolean errorOccured = false;                
