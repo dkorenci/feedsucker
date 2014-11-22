@@ -9,6 +9,7 @@ src/META-INF/persistence.xml
 
 # local and test settings
 config/rsssucker.properties
+mediadef.txt
 config/local/**
 
 # pydev project files
