@@ -76,7 +76,7 @@ public class MediadefParser {
                 else throw new MediadefException("error parsing entity at position:\n" 
                         + mediadef.substring(startPos, endPos));
             }
-            System.out.println(entityClass);
+            //System.out.println(entityClass);
             MediadefEntity entity = new MediadefEntity(entityClass);
             Map<String, String> properties = new TreeMap<String, String>();
             // parse parameters and values [param = (value || "value")]*
@@ -88,7 +88,7 @@ public class MediadefParser {
                     throw new MediadefException("property " + propName + 
                             " is reserved for entity class");
                 }
-                System.out.print(propName + " = ");
+                //System.out.print(propName + " = ");
                 stripWhitespaceAndComments();
                 String propValue = extractPropertyValue();
                 if (propValue == null) {
@@ -97,7 +97,7 @@ public class MediadefParser {
                     + mediadef.substring(startPos, startPos+100));
                 }
                 properties.put(propName, propValue);
-                System.out.println(propValue);
+                //System.out.println(propValue);
                 entity.addProperty(propName, propValue);
             }
             result.add(entity);
@@ -115,7 +115,6 @@ public class MediadefParser {
         }
         else return null;
     }
-
 
     private String extractPropertyName() {
         propMatcher.region(startPos, endPos);
