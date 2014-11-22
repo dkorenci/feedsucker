@@ -21,13 +21,13 @@ public class RomeFeedReader implements IFeedReader {
         SyndFeedInput input = new SyndFeedInput();                
         SyndFeed feed = input.build(new XmlReader(new URL(feedUrl))); 
         List entries = feed.getEntries();
-        List<FeedEntry> result = new ArrayList<FeedEntry>(entries.size());
+        List<FeedEntry> result = new ArrayList<>(entries.size());
         for (Object o : entries) {
             SyndEntry e = (SyndEntry)o;
             e.setLink(e.getLink().trim());
             result.add(syndEntryToFeedEntry(e));
         }
-        return entries;
+        return result;
     } 
     
     private static FeedEntry syndEntryToFeedEntry(SyndEntry e) {
