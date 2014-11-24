@@ -1,9 +1,11 @@
 package rsssucker.core;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +19,10 @@ import rsssucker.article.newspaper.Newspaper;
 import rsssucker.config.PropertiesReader;
 import rsssucker.config.RssConfig;
 import rsssucker.core.feedprocessor.FeedProcessor;
+import rsssucker.core.messages.FinishAndShutdownException;
+import rsssucker.core.messages.Messages;
+import rsssucker.core.messages.ShutdownException;
+import rsssucker.core.messages.ShutdownMonitor;
 import rsssucker.data.Factory;
 import rsssucker.data.entity.Feed;
 import rsssucker.data.mediadef.MediadefEntity;
@@ -32,8 +38,7 @@ import rsssucker.log.LoggersManager;
  * Initialization and workflow the the application.
  */
 public class RssSuckerApp {
-
-    private boolean terminate = false;
+    
     private Date lastFeedRefresh;
     // feeds refresh interval, in minutes
     private int refreshInterval;
@@ -42,20 +47,29 @@ public class RssSuckerApp {
     private PropertiesReader properties;    
     private EntityManagerFactory emf;
     private List<Newspaper> npapers;
+    private Queue<String> messageQueue;
+    private ShutdownMonitor shutdownMonitor;
     
     private static final Logger errLogger = 
-            LoggersManager.getErrorLogger(RssSuckerRunner.class.getName());
+            LoggersManager.getErrorLogger(RssSuckerApp.class.getName());
     private static final Logger infoLogger = 
-            LoggersManager.getInfoLogger(RssSuckerRunner.class.getName());   
+            LoggersManager.getInfoLogger(RssSuckerApp.class.getName());   
     private static final int DEFAULT_NUM_THREADS = 10;
        
+    // main loop (wait for next refresh) sleep period, in milis
+    private static final int MAIN_LOOP_SLEEP = 1000;
+    // how long to sleep when waiting for FeedProcessor threads to finish
+    private static final int FEED_REFRESH_SLEEP = 500;
+    // if app is interrupted, what this many millis for all the threads to close
+    // before shutting the application down
+    private static final int THREAD_SHUTDOWN_WAIT = 10 * 1000;
     
     public static void main(String[] args) {   
         RssSuckerApp app = new RssSuckerApp();
         app.run();
     }
     
-    public void run() {
+    private void run() {
         try {
             initialize();
             mainLoop();
@@ -67,14 +81,15 @@ public class RssSuckerApp {
     }
 
     private void initialize() {
-        boolean result; terminate = false;
-        result = readProperties(); if (result == false) terminate = true;
-        result = processMediaDef(); if (result == false) terminate = true;
-        result = initEntityManagerFactory(); if (result == false) terminate = true;
+        boolean result;
+        result = readProperties(); if (result == false) shutdown();
+        result = processMediaDef(); if (result == false) shutdown();
+        result = initEntityManagerFactory(); if (result == false) shutdown();
+        initMessaging();        
     }
     
     private void cleanup() {
-        try { emf.close(); }
+        try { if (emf != null) emf.close(); }
         catch (Exception e) { logErr("failed to cleanup", e); }
     }
     
@@ -91,6 +106,30 @@ public class RssSuckerApp {
     private static void logInfo(String msg, Exception e) {
         infoLogger.log(Level.INFO, msg, e);        
     }    
+    
+    private void initMessaging() {
+        initializeMessageQueue();
+        shutdownMonitor = new ShutdownMonitor(this);
+        (new Thread(shutdownMonitor)).start();
+    }
+    
+    private void initializeMessageQueue() {
+        messageQueue = new ArrayDeque<>();
+    }
+    
+    public synchronized void sendMessage(String msg) { messageQueue.add(msg); }    
+    // returns next message from the message queue, or null if there are no messages
+    private synchronized String readMessage() { return messageQueue.poll(); }
+        
+    // read messages in the queue and do appropriate actions
+    private synchronized void processMessages() 
+            throws ShutdownException, FinishAndShutdownException {
+        String msg;
+        while ((msg = readMessage()) != null) {
+            if (msg.equals(Messages.SHUTDOWN_NOW)) throw new ShutdownException();
+            if (msg.equals(Messages.FINISH_AND_SHUTDOWN)) throw new FinishAndShutdownException();
+        }
+    }
     
     private boolean readProperties() {
         try {
@@ -143,40 +182,63 @@ public class RssSuckerApp {
         return true;
     }  
    
-    private void mainLoop() {
+    private void mainLoop() { try {
         boolean sleep = false;
-        while (!terminate) {
+        while (true) {
             if (sleep) {
-                try {
-                    Thread.sleep(sleepPeriod);
-                } catch (InterruptedException ex) {
+                try { Thread.sleep(MAIN_LOOP_SLEEP); } 
+                catch (InterruptedException ex) {
                    logInfo("main thread sleep interrupted.", ex);
                 }
                 sleep = false;
+                processMessages();
             }            
-            if (lastFeedRefresh == null) { // first entry, no last refresh
-                doFeedRefresh();
-                sleep = true;
-            }
-            else { // not first entry, check if refresh time has come
-                Date now = new Date();
-                double diffMin = getDifferenceInMinutes(lastFeedRefresh, now);
-                if (diffMin > refreshInterval) {
+            else { 
+                processMessages();
+                // decide weather to do refresh
+                boolean refresh = false; 
+                if (lastFeedRefresh == null) refresh = true;
+                else refresh = refreshIntervalPassed();                               
+                // refresh and update last refresh time
+                if (refresh) {
                     doFeedRefresh();
-                }
+                    lastFeedRefresh = new Date();
+                }                
                 sleep = true;
+                processMessages();
             }
         }
+    } catch (ShutdownException | FinishAndShutdownException ex) { shutdown(); }
     }
 
+    // return true if time longer than refresh interval passed since last refresh
+    private boolean refreshIntervalPassed() {
+        Date now = new Date();
+        double diffMin = getDifferenceInMinutes(lastFeedRefresh, now);
+        if (diffMin > refreshInterval) return true;
+        else return false;
+    }
+    
+    // cleanup, releas resources and shutdown
+    private void shutdown() {
+        logInfo("shutting down rsssucker", null);
+        cleanup();
+        System.exit(0);
+    }
+    
     // initialize threads and feed processing jobs, run them and wait for them to finish
-    private void doFeedRefresh() { try {            
+    private void doFeedRefresh() throws ShutdownException { 
+        ExecutorService executor = null;
+        boolean shutdown = false;
+        try {            
+            
         info("starting feed refresh");
         List<Feed> feeds = getFeeds(); //feeds = feeds.subList(0, 1);
         int numThreads = getNumThreads();    
         if (feeds.size() < numThreads) numThreads = feeds.size();
-        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+        executor = Executors.newFixedThreadPool(numThreads);        
         for (Feed f : feeds) {
+            try { processMessages(); } catch (FinishAndShutdownException e) { shutdown = true; }
             IArticleScraper scraper = getNewspaper(); if (scraper == null) continue;
             IFeedReader reader = getFeedReader();            
             FeedProcessor processor = new FeedProcessor(f, emf, reader, scraper);
@@ -184,21 +246,28 @@ public class RssSuckerApp {
             executor.submit(processor);
         }
         executor.shutdown();
-        // TODO it the executor is not terminated after a long time, do shutdownNow
-        // how long? the use cases should be considered
-        // responsivity also depends on FeedProcessor error and blocking handling
         info("waiting for FeedProcessor threads to finish");
         while (executor.isTerminated() == false) {
-            try { executor.awaitTermination(refreshInterval, TimeUnit.MINUTES); }
+            try { processMessages(); } catch (FinishAndShutdownException e) { shutdown = true; }
+            try { executor.awaitTermination(FEED_REFRESH_SLEEP, TimeUnit.MILLISECONDS); }
             catch (InterruptedException e) {}           
         }
         info("FeedProcessor threads finished");
-        closeNewspapers();
-        lastFeedRefresh = new Date();
-        info("ending feed refresh");
+        closeNewspapers();        
+        info("ending feed refresh");        
         
-    }
-    catch (Exception e) { logErr("feed refresh error", e); }
+        }
+        catch (ShutdownException e) {
+            // this relies on the assumption that executor will interrupt threads
+            // if it does something else, use Futures instead            
+            executor.shutdownNow();
+            try { Thread.sleep(THREAD_SHUTDOWN_WAIT); } 
+            catch (InterruptedException ex) { logErr("shutdown wait interrupted", ex); }           
+            closeNewspapers();
+            shutdown = true;
+        }        
+        
+        if (shutdown) throw new ShutdownException();
     }
     
     // read all feeds from the database

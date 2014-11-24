@@ -28,7 +28,8 @@ public class FeedProcessor implements Runnable {
     private final IFeedReader freader;
     private final IArticleScraper scraper;
     private Feed feed;
-    private final EntityManagerFactory emf;    
+    private final EntityManagerFactory emf;  
+    private boolean interruped = false;
     
     private class ScrapedFeedEntry {
         public FeedEntry feedEntry;
@@ -42,9 +43,9 @@ public class FeedProcessor implements Runnable {
     private List<ScrapedFeedEntry> entries;
     
     private static final Logger errLogger = 
-            LoggersManager.getErrorLogger(RssSuckerRunner.class.getName());
+            LoggersManager.getErrorLogger(FeedProcessor.class.getName());
     private static final Logger infoLogger = 
-            LoggersManager.getInfoLogger(RssSuckerRunner.class.getName());    
+            LoggersManager.getInfoLogger(FeedProcessor.class.getName());    
 
     private static void logErr(String msg, Exception e) {
         errLogger.log(Level.SEVERE, msg, e);        
@@ -70,20 +71,30 @@ public class FeedProcessor implements Runnable {
     @Override
     public void run() {
         boolean result;
-        try {            
+        try {           
+            checkInterrupted();
             result = readFeedEntries(); if (result == false) return;
-            scrapeFeedArticles();
+            scrapeFeedArticles(); 
             saveFeedArticles();
+        }
+        catch (InterruptedException ex) {
+            info("feed processing interrupted occured for feed: " + feed.getUrl());
+            logInfo("feed processing interrupted for feed: " + feed.getUrl(), ex); 
         }
         catch (Exception ex) { 
             logErr("feed processing error occured for feed: " + feed.getUrl(), ex); 
         }
     }
 
+    private void checkInterrupted() throws InterruptedException {
+        if (Thread.currentThread().isInterrupted()) 
+            throw new InterruptedException();
+    }
+    
     // read feed entries, log error and return false if fail
     private boolean readFeedEntries() {        
         info("start reading entries");
-        try {            
+        try {                        
             List<FeedEntry> fentries = freader.getFeedEntries(feed.getUrl());    
             //fentries = fentries.subList(0, 5);
             entries = new ArrayList<>(fentries.size());
@@ -97,10 +108,11 @@ public class FeedProcessor implements Runnable {
         return true;
     }
 
-    private void scrapeFeedArticles() {
+    private void scrapeFeedArticles() throws InterruptedException {
         info("start scraping");
         for (ScrapedFeedEntry entry : entries) {
             String url = entry.feedEntry.getArticleURL();
+            checkInterrupted();
             try {
                 ArticleData data = scraper.scrapeArticle(url);
                 entry.scrapedData = data;
@@ -113,10 +125,11 @@ public class FeedProcessor implements Runnable {
         info("finished scraping");
     }
 
-    private void saveFeedArticles() {
+    private void saveFeedArticles() throws InterruptedException {
         info("start saving");
         EntityManager em = emf.createEntityManager();            
-        for (ScrapedFeedEntry e : entries) 
+        for (ScrapedFeedEntry e : entries) {
+        checkInterrupted();
         if (e.scrapedData != null) { // check if scraping failed
             if (em.getTransaction().isActive()) {
                 // this should not happen, since transaction should be 
@@ -149,6 +162,7 @@ public class FeedProcessor implements Runnable {
                     logErr("committing rollback failed for article: "+ url, ex2);
                 }
             }
+        }
         }
         em.close();
         info("finished saving");
