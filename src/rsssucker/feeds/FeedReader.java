@@ -17,7 +17,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +26,6 @@ import java.util.logging.Logger;
 import javax.persistence.Query;
 import rsssucker.config.PropertiesReader;
 import rsssucker.config.RssConfig;
-import rsssucker.core.RssSuckerRunner;
 import rsssucker.data.entity.FeedArticle;
 import rsssucker.log.LoggersManager;
 
