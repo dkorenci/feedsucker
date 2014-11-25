@@ -16,6 +16,7 @@ if [ "$ACTION" == "START" ]; then
   JAVA="java" # java 7 or above required
   LIB="\"lib/*;lib/hibernate-4.3.5/jpa/*;lib/hibernate-4.3.5/required/*\""
   MAIN_CLASS="rsssucker.core.RssSuckerApp"
+  ARGS="-Dfile.encoding=UTF-8"
   CMD="$JAVA -cp $LIB $MAIN_CLASS"
   echo $CMD
 elif [ "$ACTION" == "STOP" ]; then
