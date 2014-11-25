@@ -17,3 +17,4 @@ newspaper/.*
 
 #data_analysis/**/*.txt
 
+/dist/
