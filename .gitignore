@@ -1,7 +1,7 @@
 nbproject
 build
 lib/cachedir
-/log/
+log/**
 build.xml
 
 # database connection settings
