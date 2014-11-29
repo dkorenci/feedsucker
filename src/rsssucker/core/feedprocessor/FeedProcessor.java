@@ -149,6 +149,7 @@ public class FeedProcessor implements Runnable {
                 Feed f = em.find(Feed.class, feed.getId()); 
                 if (f == null) throw new IllegalArgumentException("feed is not in the database");
                 article.getFeeds().add(f);
+                article.setDateSaved(new Date());
                 // feed.getArticles().add(article); is this necessary? this would slow down things
                 em.getTransaction().commit();                            
             }

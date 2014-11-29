@@ -12,6 +12,7 @@ public class FeedEntry {
     private Date date;
     private String title;
     private String description;
+    private String author;
 
     public String getArticleURL() {
         return articleURL;
@@ -44,5 +45,12 @@ public class FeedEntry {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }    
 }

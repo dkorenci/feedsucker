@@ -36,7 +36,7 @@ public class FeedArticle {
     @ManyToMany
     private Collection<Feed> feeds = new ArrayList<>();
     
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date datePublished;
     
     @Column(length=100000)
@@ -55,6 +55,13 @@ public class FeedArticle {
     
     @Column(length=10000,unique = true)
     private String url;
+    
+    @Column(length=200)
+    private String author; 
+    
+    // time when the article is saved to DB
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date dateSaved;
     
     public Collection<Feed> getFeeds() { return feeds; }
     public void setFeeds(Collection<Feed> feeds) { this.feeds = feeds; }   
@@ -118,5 +125,11 @@ public class FeedArticle {
         if (title.length() > 1000) title = title.substring(0, 1000);
         this.extractedTitle = title;
     }
+
+    public String getAuthor() { return author; }
+    public void setAuthor(String author) { this.author = author; }
+
+    public Date getDateSaved() { return dateSaved; }
+    public void setDateSaved(Date dateSaved) { this.dateSaved = dateSaved; }
     
 }

@@ -32,6 +32,12 @@ public class Feed {
     @Column(length=10000,unique = true)
     private String url;
     
+    @Column(length=200)
+    private String title;
+    
+    @Column(length=1000)
+    private String description;
+    
     @Column(length=10000)
     private String attributes;    
     
@@ -53,5 +59,11 @@ public class Feed {
 
     public Collection<FeedArticle> getArticles() { return articles; }
     public void setArticles(Collection<FeedArticle> articles) { this.articles = articles; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
     
 }

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import rsssucker.data.entity.Feed;
 
 /**
  * Feed Reader using rome framework 
@@ -36,7 +37,16 @@ public class RomeFeedReader implements IFeedReader {
         entry.setDate(e.getPublishedDate());
         entry.setTitle(e.getTitle());
         entry.setDescription(e.getDescription().getValue());
+        entry.setAuthor(e.getAuthor());
         return entry;
+    }
+    
+    // parse feed url, read data and write it to entity file
+    public static void readFeedData(Feed efeed) throws FeedException, IOException {
+        SyndFeedInput input = new SyndFeedInput();                
+        SyndFeed feed = input.build(new XmlReader(new URL(efeed.getUrl())));         
+        efeed.setTitle(feed.getTitle());
+        efeed.setDescription(feed.getDescription());        
     }
     
 }

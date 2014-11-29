@@ -12,7 +12,8 @@ public class EntityFactory {
         article.setFeedTitle(entry.getTitle());
         article.setDescription(entry.getDescription());
         article.setText(artData.getText());
-        article.setUrl(entry.getArticleURL());          
+        article.setUrl(entry.getArticleURL());    
+        article.setAuthor(entry.getAuthor());
         return article;
     }
     

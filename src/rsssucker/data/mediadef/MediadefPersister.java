@@ -1,17 +1,25 @@
 package rsssucker.data.mediadef;
 
+import com.sun.syndication.io.FeedException;
+import java.io.IOException;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import rsssucker.core.RssSuckerApp;
 import rsssucker.data.Factory;
 import rsssucker.data.JpaContext;
 import rsssucker.data.entity.Feed;
 import rsssucker.data.entity.Outlet;
+import rsssucker.feeds.RomeFeedReader;
+import rsssucker.log.LoggersManager;
 
 /**
  * Save mediadef entities and relations between them to database.
@@ -26,6 +34,19 @@ public class MediadefPersister {
     private Map<String, Outlet> nameToOutlet = new TreeMap<>();
     // make all feed in the persistence context fetchable by url
     private Map<String, Feed> urlToFeed = new TreeMap<>();
+
+    private static final Logger errLogger = 
+            LoggersManager.getErrorLogger(MediadefPersister.class.getName());
+    private static final Logger infoLogger = 
+            LoggersManager.getInfoLogger(MediadefPersister.class.getName());      
+    
+    private static void logErr(String msg, Exception e) {
+        errLogger.log(Level.SEVERE, msg, e);        
+    }
+    
+    private static void logInfo(String msg, Exception e) {
+        infoLogger.log(Level.INFO, msg, e);        
+    }      
     
     /** Merge entity definitions to database: add unexisting entities, 
      * and update existing entities with new data. */
@@ -78,6 +99,8 @@ public class MediadefPersister {
             if (url == null || url.equals("")) 
                 throw new MediadefException("feed must have a url property");
             Feed feed = (Feed)getOrCreateEntity(EntityType.FEED, url, e);
+            try { RomeFeedReader.readFeedData(feed); } 
+            catch (FeedException|IOException ex) { logErr("feed data reading failed", ex); }
             urlToFeed.put(url, feed);
             // attach feed to outlet            
             String outletName = e.getValue("outlet");
@@ -87,7 +110,7 @@ public class MediadefPersister {
             else feed.setOutlet(null);
         }        
     }
-    
+
     // set outlet property of the feed to outlet corresponding to outletName, 
     // the outlet may be in the database or a new outlet in the persistence context
     private void attachFeedToOutlet(Feed feed, String outletName) throws MediadefException {        
