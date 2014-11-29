@@ -11,6 +11,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import rsssucker.article.ArticleData;
 import rsssucker.article.IArticleScraper;
+import rsssucker.data.cache.Filter;
 import rsssucker.data.entity.EntityFactory;
 import rsssucker.data.entity.Feed;
 import rsssucker.data.entity.FeedArticle;
@@ -25,13 +26,14 @@ public class FeedProcessor implements Runnable {
     
     private final IFeedReader freader;
     private final IArticleScraper scraper;
-    private Feed feed;
+    private final Feed feed;
     private final EntityManagerFactory emf;  
-    private boolean interruped = false;
+    private final Filter filter;    
     
     private class ScrapedFeedEntry {
         public FeedEntry feedEntry;
         public ArticleData scrapedData;
+        
         
         public ScrapedFeedEntry(FeedEntry fe, ArticleData ad) { 
             feedEntry = fe; scrapedData = ad; 
@@ -52,7 +54,7 @@ public class FeedProcessor implements Runnable {
     // send info message
     private static void info(String msg) {         
         long id = Thread.currentThread().getId();
-        String header = String.format("[%1$td%1$tm%1$tY_%1$tH:%1$tm:%1$tS thread%2$d] : ", 
+        String header = String.format("[%1$td%1$tm%1$tY_%1$tH:%1$tM:%1$tS thread%2$d] : ", 
                 new Date(), id);                
         System.out.println(header + msg); 
     }
@@ -62,8 +64,8 @@ public class FeedProcessor implements Runnable {
     }      
     
     public FeedProcessor(Feed f, EntityManagerFactory e, 
-            IFeedReader fread, IArticleScraper scr) {
-        feed = f; freader = fread; scraper = scr; emf = e;
+            IFeedReader fread, IArticleScraper scr, Filter fil) {
+        feed = f; freader = fread; scraper = scr; emf = e; filter = fil;
     }
 
     @Override
@@ -96,7 +98,14 @@ public class FeedProcessor implements Runnable {
             List<FeedEntry> fentries = freader.getFeedEntries(feed.getUrl());    
             //fentries = fentries.subList(0, 5);
             entries = new ArrayList<>(fentries.size());
-            for (FeedEntry e : fentries) { entries.add(new ScrapedFeedEntry(e, null)); }
+            for (FeedEntry e : fentries) { 
+                // check if (feedUrl, articleUrl) pair already exists
+                if (filter == null) entries.add(new ScrapedFeedEntry(e, null)); 
+                else if (filter.contains(feed.getUrl(), e.getArticleURL()) == false) {
+                    filter.addEntry(feed.getUrl(), e.getArticleURL());
+                    entries.add(new ScrapedFeedEntry(e, null));
+                }
+            }
         } catch (Exception ex) {
             errLogger.log(Level.SEVERE, "download feed entries for feed failed: "
                     + feed.getUrl(), ex); 

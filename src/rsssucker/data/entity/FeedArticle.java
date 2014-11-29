@@ -22,12 +22,10 @@ import javax.persistence.Temporal;
 /** Raw news article data downloaded from the web. */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "getArticlesAfterDate", 
-        query = "SELECT a FROM FeedArticle a WHERE a.datePublished >= :date"),
     @NamedQuery(name = "FeedArticle.getByUrl", 
         query = "SELECT a FROM FeedArticle a WHERE a.url = :url")        
 })
-@Table(indexes = {@Index(columnList = "datePublished", name = "datePubIndex")})
+@Table(indexes = {@Index(columnList = "url", name = "urlIndex")})
 public class FeedArticle {
     @Id
     @GeneratedValue

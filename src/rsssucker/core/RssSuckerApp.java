@@ -24,12 +24,12 @@ import rsssucker.core.messages.Messages;
 import rsssucker.core.messages.ShutdownException;
 import rsssucker.core.messages.ShutdownMonitor;
 import rsssucker.data.Factory;
+import rsssucker.data.cache.Filter;
 import rsssucker.data.entity.Feed;
 import rsssucker.data.mediadef.MediadefEntity;
 import rsssucker.data.mediadef.MediadefException;
 import rsssucker.data.mediadef.MediadefParser;
 import rsssucker.data.mediadef.MediadefPersister;
-import rsssucker.feeds.FeedReader;
 import rsssucker.feeds.IFeedReader;
 import rsssucker.feeds.RomeFeedReader;
 import rsssucker.log.LoggersManager;
@@ -49,6 +49,7 @@ public class RssSuckerApp {
     private List<Newspaper> npapers;
     private Queue<String> messageQueue;
     private ShutdownMonitor shutdownMonitor;
+    private Filter filter;
     
     private static final Logger errLogger = 
             LoggersManager.getErrorLogger(RssSuckerApp.class.getName());
@@ -67,7 +68,7 @@ public class RssSuckerApp {
     public static void main(String[] args) {   
         RssSuckerApp app = new RssSuckerApp();
         app.run();
-    }
+    }    
     
     private void run() {
         try {
@@ -85,11 +86,26 @@ public class RssSuckerApp {
         result = readProperties(); if (result == false) shutdown();
         result = processMediaDef(); if (result == false) shutdown();
         result = initEntityManagerFactory(); if (result == false) shutdown();
+        result = initFilter(); if (result == false) shutdown();
         initMessaging();        
     }
     
+    private boolean initFilter() {
+        try {
+            filter = Filter.getFilter();
+            return true;
+        }
+        catch (Exception e) { 
+            logErr("filter creation failed", e);
+            return false;
+        }
+    }
+    
     private void cleanup() {
-        try { if (emf != null) emf.close(); }
+        try { 
+            if (emf != null) emf.close(); 
+            if (filter != null) Filter.closeFilter();
+        }
         catch (Exception e) { logErr("failed to cleanup", e); }
     }
     
@@ -99,7 +115,7 @@ public class RssSuckerApp {
     
     // send info message
     private static void info(String msg) { 
-        String header = String.format("[%1$td%1$tm%1$tY_%1$tH:%1$tm:%1$tS] : ", new Date());
+        String header = String.format("[%1$td%1$tm%1$tY_%1$tH:%1$tM:%1$tS] : ", new Date());
         System.out.println(header + msg); 
     }
     
@@ -241,7 +257,7 @@ public class RssSuckerApp {
             try { processMessages(); } catch (FinishAndShutdownException e) { shutdown = true; }
             IArticleScraper scraper = getNewspaper(); if (scraper == null) continue;
             IFeedReader reader = getFeedReader();            
-            FeedProcessor processor = new FeedProcessor(f, emf, reader, scraper);
+            FeedProcessor processor = new FeedProcessor(f, emf, reader, scraper, filter);
             info("starting processor for feed " + f.getUrl());
             executor.submit(processor);
         }
@@ -253,6 +269,7 @@ public class RssSuckerApp {
             catch (InterruptedException e) {}           
         }
         info("FeedProcessor threads finished");
+        persistFilter();
         closeNewspapers();        
         info("ending feed refresh");        
         
@@ -268,6 +285,22 @@ public class RssSuckerApp {
         }        
         
         if (shutdown) throw new ShutdownException();
+    }
+    
+    private void persistFilter() {
+        try {
+            filter.persistNewEntries();
+        }
+        catch (Exception e) {
+            logErr("filter persisting failed", e);
+            try {
+                Filter.resetFilter();
+                filter = Filter.getFilter();
+            } catch (Exception ex) { 
+                logErr("filter reset failed", e);
+                filter = null;
+            }
+        }
     }
     
     // read all feeds from the database
