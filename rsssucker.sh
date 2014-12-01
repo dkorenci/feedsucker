@@ -13,12 +13,9 @@ function default_ifundef {
 ACTION=$1
 
 if [ "$ACTION" == "START" ]; then
-  JAVA="java" # java 7 or above required
-  LIB="\"lib/*;lib/hibernate-4.3.5/jpa/*;lib/hibernate-4.3.5/required/*\""
-  MAIN_CLASS="rsssucker.core.RssSuckerApp"
-  ARGS="-Dfile.encoding=UTF-8"
-  CMD="$JAVA -cp $LIB $MAIN_CLASS"
-  echo $CMD
+  ./run.sh
+elif [ "$ACTION" == "BUILD" ]; then
+  ./build.sh > build_out.txt 2>&1
 elif [ "$ACTION" == "STOP" ]; then
   MSG_FILE="messages.txt" # file to send messages to program
   # commands to write to the file

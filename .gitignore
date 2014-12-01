@@ -4,6 +4,15 @@ lib/cachedir
 log/**
 build.xml
 
+# build and run files
+build_log.txt
+build_out.txt
+manifest.txt
+*.class
+RssSucker.jar
+pid.txt
+run_output.txt
+
 # database connection settings
 src/META-INF/persistence.xml
 
