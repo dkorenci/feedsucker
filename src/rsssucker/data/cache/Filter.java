@@ -7,6 +7,8 @@
 package rsssucker.data.cache;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -72,19 +74,38 @@ public class Filter {
         } 
     }
     
-    public synchronized void persistNewEntries() {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        for (FilterEntry fe : pending) {
-            try { em.persist(fe); }
-            catch (EntityExistsException ex) {}
+    // write newly added entries to database
+    public synchronized void persistNewEntries() {        
+        EntityManager em = null;
+        try {
+            em = emf.createEntityManager();
+            em.getTransaction().begin();
+            for (FilterEntry fe : pending) {
+                try { em.persist(fe); }
+                catch (EntityExistsException ex) {}
+            }
+            em.getTransaction().commit();
         }
-        em.getTransaction().commit();
+        catch (RuntimeException e) { throw new RuntimeException(e); }
+        finally { if (em != null) em.close(); }
     }
     
+    // remove entries from the datapase that are more than 
+    // ENTRY_LIFETIME days older from current moment
     public synchronized void removeExpiredEntries() {
-        EntityManager em = emf.createEntityManager();
-        Query q = em.createN amedQuery("FilterEntry.getAll");        
+        EntityManager em = null;
+        try {
+            em = emf.createEntityManager();        
+            em.getTransaction().begin();
+            Query q = em.createNamedQuery("FilterEntry.deleteOlder"); 
+            Calendar cal = Calendar.getInstance(); Date d = new Date();
+            cal.setTime(d); cal.add(Calendar.DAY_OF_MONTH, ENTRY_LIFETIME * -1);
+            q.setParameter("date", cal.getTime());
+            q.executeUpdate();
+            em.getTransaction().commit();
+        }
+        catch (RuntimeException e) { throw new RuntimeException(e); }
+        finally { if (em != null) em.close(); }            
     }    
     
     private void loadFilterEntries() {

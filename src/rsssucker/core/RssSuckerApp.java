@@ -270,6 +270,7 @@ public class RssSuckerApp {
         }
         info("FeedProcessor threads finished");
         persistFilter();
+        removeExpiredFilterEntries();
         closeNewspapers();        
         info("ending feed refresh");        
         
@@ -287,21 +288,32 @@ public class RssSuckerApp {
         if (shutdown) throw new ShutdownException();
     }
     
-    private void persistFilter() {
-        try {
-            filter.persistNewEntries();
-        }
+    private void removeExpiredFilterEntries() {
+        try { filter.removeExpiredEntries(); }
         catch (Exception e) {
-            logErr("filter persisting failed", e);
-            try {
-                Filter.resetFilter();
-                filter = Filter.getFilter();
-            } catch (Exception ex) { 
-                logErr("filter reset failed", e);
-                filter = null;
-            }
+            logErr("removing expired entries from filter failed", e);
+            resetFilter();
         }
     }
+
+    // create new Filter class (used in case of fiter error)
+    private void resetFilter() {
+        try {
+            Filter.resetFilter();
+            filter = Filter.getFilter();
+        } catch (Exception ex) { 
+            logErr("filter reset failed", ex);
+            filter = null;
+        }        
+    }
+    
+    private void persistFilter() {
+        try { filter.persistNewEntries(); }
+        catch (Exception e) {
+            logErr("filter persisting failed", e);
+            resetFilter();
+        }
+    }    
     
     // read all feeds from the database
     private List<Feed> getFeeds() {

@@ -101,8 +101,7 @@ public class FeedProcessor implements Runnable {
             for (FeedEntry e : fentries) { 
                 // check if (feedUrl, articleUrl) pair already exists
                 if (filter == null) entries.add(new ScrapedFeedEntry(e, null)); 
-                else if (filter.contains(feed.getUrl(), e.getArticleURL()) == false) {
-                    filter.addEntry(feed.getUrl(), e.getArticleURL());
+                else if (filter.contains(feed.getUrl(), e.getArticleURL()) == false) {                    
                     entries.add(new ScrapedFeedEntry(e, null));
                 }
             }
@@ -160,7 +159,8 @@ public class FeedProcessor implements Runnable {
                 article.getFeeds().add(f);
                 article.setDateSaved(new Date());
                 // feed.getArticles().add(article); is this necessary? this would slow down things
-                em.getTransaction().commit();                            
+                em.getTransaction().commit();    
+                if (filter != null) filter.addEntry(f.getUrl(), article.getUrl());
             }
             catch (Exception ex) {
                 String url = e.feedEntry.getArticleURL();
