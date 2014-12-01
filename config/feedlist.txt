@@ -1,9 +1,0 @@
-http://rss.cnn.com/rss/cnn_world.rss
-http://rss.cnn.com/rss/edition_technology.rss
-http://rss.cnn.com/rss/edition_business360.rss
-http://www.theguardian.com/uk/rss
-http://www.theguardian.com/uk/business/rss
-http://www.theguardian.com/technology/rss
-http://www.nytimes.com/services/xml/rss/nyt/World.xml
-http://feeds.nytimes.com/nyt/rss/Business
-http://feeds.nytimes.com/nyt/rss/Technology
