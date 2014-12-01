@@ -21,10 +21,14 @@ src/META-INF/persistence.xml file, persistence.template.xml can be used as a tem
 
 other scripts of interes: delete_database.sh, reset_database.sh
 
-** BUILDING
-./rsssucker BUILD
-output is in build_out.txt
+** Java
+set binaries of !java 7! runtime via $JAVA_BIN, 
+ie /usr/lib/jvm/java-7-openjdk-amd64/bin/
+pass no argument to use sys default java commands
 
+** BUILDING
+./rsssucker BUILD $JAVA_BIN 
+output is in build_out.txt
 
 ** APPLICATION SETUP
 App settings are in config folder
@@ -38,7 +42,7 @@ application configuration options
 .example variants of the files are templates with all the options
 
 ** RUNNING
-./rsssucker START
+./rsssucker START $JAVA_BIN
 app output is in run_output.txt and in log/ folder
 process pid is in pid.txt
 stopping: ./rsssucker STOP

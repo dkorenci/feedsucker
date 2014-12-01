@@ -13,9 +13,11 @@ function default_ifundef {
 ACTION=$1
 
 if [ "$ACTION" == "START" ]; then
-  ./run.sh
+  JAVA_BIN=$2
+  ./run.sh $JAVA_BIN
 elif [ "$ACTION" == "BUILD" ]; then
-  ./build.sh > build_out.txt 2>&1
+  JAVA_BIN=$2
+  ./build.sh $JAVA_BIN > build_out.txt 2>&1
 elif [ "$ACTION" == "STOP" ]; then
   MSG_FILE="messages.txt" # file to send messages to program
   # commands to write to the file

@@ -1,5 +1,5 @@
 # has to be run from RssSucker root folder (with lib and src subfolders)
-JAVA_BIN="/usr/lib/jvm/java-7-openjdk-amd64/bin/"
+JAVA_BIN=$1 #"/usr/lib/jvm/java-7-openjdk-amd64/bin/"
 #LOG="build_log.txt" ; `rm $LOG` 
 
 # CLEAN
