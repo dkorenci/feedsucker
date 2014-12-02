@@ -1,4 +1,8 @@
+# params: $1 - location of the bin folder of java runtime environment, 
+# leave empty to work with JRE tools on system path 
+
 # has to be run from RssSucker root folder (with lib and src subfolders)
+
 JAVA_BIN=$1 #"/usr/lib/jvm/java-7-openjdk-amd64/bin/"
 #LOG="build_log.txt" ; `rm $LOG` 
 
@@ -15,7 +19,7 @@ JAVAC="$JAVA_BIN""javac"
 # put all the .jar files in lib directory into cp variable
 SEP=':' # classpath separator symbol, it is ';' on some systems
 cp=""
-for jar in $(find `pwd` -regex ".*\.jar");
+for jar in $(find `pwd` -regex ".*\.jar"); # use pwd to get absolute paths
 do
   cp="$jar$SEP$cp"  
 done
@@ -28,7 +32,7 @@ do
 done
 # run compiler
 $JAVAC -classpath $cp $srcfiles #>> $LOG 2>&1
-cd ..
+cd .. # return to root folder
 
 
 # CREATE JAR
@@ -39,7 +43,6 @@ do
   # the '\space\n\space' seprator is necessary, because of manifest file format
   cp="$jar \n $cp"  
 done
-#echo -e "Manifest-Version: 1.0\n" > manifest.txt
 echo -e "Class-Path: $cp" > manifest.txt
 echo "Main-Class: rsssucker.core.RssSuckerApp" >> manifest.txt
 JAR="$JAVA_BIN""jar" #jar command
