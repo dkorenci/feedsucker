@@ -38,7 +38,7 @@ public class Newspaper implements IArticleScraper {
     }    
     
     @Override
-    public ArticleData scrapeArticle(String url) throws IOException, NewspaperException {
+    public synchronized ArticleData scrapeArticle(String url) throws IOException, NewspaperException {
         url = url.trim();          
         boolean errorOccured = false;                
         String line, title = ""; StringBuilder text = new StringBuilder();
@@ -86,7 +86,7 @@ public class Newspaper implements IArticleScraper {
     }
     
     /** Terminate the script, return exit status. */
-    public int close() {        
+    public synchronized int close() {        
         try { // send terminate command and wait for process to terminate
             procIn.append(terminateCommand+"\n").flush();
             Thread.sleep(5);
