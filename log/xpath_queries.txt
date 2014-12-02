@@ -1,0 +1,4 @@
+xpath queries for searching log files
+
+- get all records whose exception message does not contain text
+//record[exception/message[not(contains(text(),'TEXT'))]]
