@@ -5,12 +5,17 @@
 
 JAVA_BIN=$1 #"/usr/lib/jvm/java-7-openjdk-amd64/bin/"
 #LOG="build_log.txt" ; `rm $LOG` 
+ARCHIVE=RssSucker.jar
 
 # CLEAN
-`rm RssSucker.jar`
+if [ -f $ARCHIVE ]; then
+  rm RssSucker.jar
+fi
 for class in $(find src -regex ".*\.class");
 do
-  rm $class
+  if [ -f $class ]; then
+    rm $class
+  fi  
 done
 
 
@@ -48,3 +53,12 @@ echo "Main-Class: rsssucker.core.RssSuckerApp" >> manifest.txt
 JAR="$JAVA_BIN""jar" #jar command
 #echo 'CREATE JAR: ' >> $LOG
 $JAR cfm RssSucker.jar manifest.txt -C src . #>> $LOG 2>&1
+
+
+# clean *.class files
+for class in $(find src -regex ".*\.class");
+do
+  if [ -f $class ]; then
+    rm $class
+  fi  
+done
