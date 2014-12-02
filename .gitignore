@@ -1,7 +1,7 @@
 nbproject
 build
 lib/cachedir
-log/log_*
+log/*log_*
 build.xml
 
 # build and run files
