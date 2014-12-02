@@ -85,6 +85,7 @@ public class Filter {
                 catch (EntityExistsException ex) {}
             }
             em.getTransaction().commit();
+            pending.clear();
         }
         finally { if (em != null) em.close(); }
     }
