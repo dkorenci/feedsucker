@@ -9,3 +9,4 @@ python_command = python
 mediadef_file = /data/code/RssSucker/config/mediadef.txt
 
 num_threads = 10
+num_npapers = 10
