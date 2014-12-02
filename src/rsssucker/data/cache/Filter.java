@@ -86,7 +86,6 @@ public class Filter {
             }
             em.getTransaction().commit();
         }
-        catch (RuntimeException e) { throw new RuntimeException(e); }
         finally { if (em != null) em.close(); }
     }
     
@@ -103,8 +102,8 @@ public class Filter {
             q.setParameter("date", cal.getTime());
             q.executeUpdate();
             em.getTransaction().commit();
+            loadFilterEntries(); // load new entry set to database
         }
-        catch (RuntimeException e) { throw new RuntimeException(e); }
         finally { if (em != null) em.close(); }            
     }    
     
