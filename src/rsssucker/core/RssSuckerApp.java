@@ -55,7 +55,12 @@ public class RssSuckerApp {
             LoggersManager.getErrorLogger(RssSuckerApp.class.getName());
     private static final Logger infoLogger = 
             LoggersManager.getInfoLogger(RssSuckerApp.class.getName());   
+    
+    private int numThreads; 
+    private int numNpapers, npaperPointer;    
     private static final int DEFAULT_NUM_THREADS = 10;
+    private static final int DEFAULT_NUM_NPAPERS = 10;
+    private static final int DEFAULT_REFRESH_INT = 30;
        
     // main loop (wait for next refresh) sleep period, in milis
     private static final int MAIN_LOOP_SLEEP = 1000;
@@ -150,17 +155,16 @@ public class RssSuckerApp {
     private boolean readProperties() {
         try {
             properties = new PropertiesReader(RssConfig.propertiesFile);
-            refreshInterval = Integer.parseInt(properties.getProperty("refresh_interval"));
+            numThreads = readNumericProperty("num_threads", DEFAULT_NUM_THREADS);    
+            numNpapers = readNumericProperty("num_npapers", DEFAULT_NUM_NPAPERS);    
+            refreshInterval = readNumericProperty("refresh_interval", DEFAULT_REFRESH_INT);                      
             // set sleepPeriod to 1/100 th of refresh interval (in miliseconds)
             sleepPeriod = refreshInterval * 60 * 1000 / 100;
             return true;
         } catch (IOException ex) { 
             logErr("failed to read properties.", ex);
             return false; 
-        } catch (NumberFormatException ex) {
-            logErr("failed to parse refresh_interval value.", ex);             
-            return false;
-        }         
+        } 
     }
     
     // read feeds and outlets from mediadef file, 
@@ -250,9 +254,9 @@ public class RssSuckerApp {
             
         info("starting feed refresh");
         List<Feed> feeds = getFeeds(); //feeds = feeds.subList(0, 1);
-        int numThreads = getNumThreads();    
-        if (feeds.size() < numThreads) numThreads = feeds.size();
-        executor = Executors.newFixedThreadPool(numThreads);        
+        int localNumThreads = numThreads;           
+        if (feeds.size() < localNumThreads) localNumThreads = feeds.size();
+        executor = Executors.newFixedThreadPool(localNumThreads);        
         for (Feed f : feeds) {
             try { processMessages(); } catch (FinishAndShutdownException e) { shutdown = true; }
             IArticleScraper scraper = getNewspaper(); if (scraper == null) continue;
@@ -323,22 +327,35 @@ public class RssSuckerApp {
         return feeds;
     }
     
-    // read number of threads from the properties file
-    private int getNumThreads() {
+    // read integer property from properties file
+    private int readNumericProperty(String propName, int defaultValue) {
         int nt;
-        try { nt = Integer.parseInt(properties.getProperty("num_threads")); }
-        catch (NumberFormatException|NullPointerException e) { nt = DEFAULT_NUM_THREADS; }
-        if (nt <= 0) nt = DEFAULT_NUM_THREADS;
+        try { nt = Integer.parseInt(properties.getProperty(propName)); }
+        catch (NumberFormatException|NullPointerException e) { nt = defaultValue; }
+        if (nt <= 0) nt = defaultValue;
         return nt;
     }
     
-    // create newspaper and cache for later shutdown
+    // create newspaper instance and cache for later shutdown
+    // if max. number of newspapers is exceeded, return existing instances
+    // in round robin fashion
     private Newspaper getNewspaper() {
-        if (npapers == null) npapers = new ArrayList<Newspaper>();
-        Newspaper npaper = createNewspaper();
-        if (npaper == null) return null;
-        else { 
-            npapers.add(npaper);
+        if (npapers == null) { 
+            npapers = new ArrayList<Newspaper>();
+            npaperPointer = 0;
+        }
+        
+        if (npapers.size() < numNpapers) {
+            Newspaper npaper = createNewspaper();
+            if (npaper == null) return null;
+            else { 
+                npapers.add(npaper);
+                return npaper;
+            }
+        }
+        else {
+            Newspaper npaper = npapers.get(npaperPointer++);
+            if (npaperPointer == npapers.size()) npaperPointer = 0;
             return npaper;
         }
     }
@@ -347,7 +364,8 @@ public class RssSuckerApp {
         for (Newspaper npaper : npapers) {
             try { npaper.close(); }
             catch (Exception ex) { logErr("closing newspaper error", ex); }
-        }        
+        }      
+        npapers = null;
     }
     
     // initialize and return a new newspaper instance
