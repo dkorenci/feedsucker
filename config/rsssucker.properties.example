@@ -6,7 +6,7 @@ newspaper_interface = newspaper/console_interface.py
 python_command = python
 
 # mediadef
-mediadef_file = config/mediadef.txt
+mediadef_file = config/mediadef/mediadef.txt
 
 num_threads = 10
 num_npapers = 10
