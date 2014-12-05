@@ -47,5 +47,13 @@ public class HttpUtils {
         }                
         throw new IllegalArgumentException("google redirect not found for url: " + url);
     }
+ 
+    public static String cleanFeedUrl(String url) {        
+        url = url.trim();        
+        // remove " from start and end
+        if (url.startsWith("\"")) url = url.substring(1,url.length());
+        if (url.endsWith("\"")) url = url.substring(0, url.length()-1);
+        return url;
+    }
     
 }

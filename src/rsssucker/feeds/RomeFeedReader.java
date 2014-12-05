@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import rsssucker.data.entity.Feed;
+import rsssucker.util.HttpUtils;
 
 /**
  * Feed Reader using rome framework 
@@ -25,7 +26,7 @@ public class RomeFeedReader implements IFeedReader {
         List<FeedEntry> result = new ArrayList<>(entries.size());
         for (Object o : entries) {
             SyndEntry e = (SyndEntry)o;
-            e.setLink(e.getLink().trim());
+            e.setLink(HttpUtils.cleanFeedUrl(e.getLink()));
             result.add(syndEntryToFeedEntry(e));
         }
         return result;
