@@ -1,5 +1,7 @@
 package rsssucker.core.feedprocessor;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +20,7 @@ import rsssucker.data.entity.FeedArticle;
 import rsssucker.feeds.FeedEntry;
 import rsssucker.feeds.IFeedReader;
 import rsssucker.log.LoggersManager;
+import rsssucker.util.HttpUtils;
 
 /**
  * Downloads entries from a single feed, scrapes the articles and save them to database.
@@ -102,6 +105,9 @@ public class FeedProcessor implements Runnable {
                 // check if (feedUrl, articleUrl) pair already exists
                 if (filter == null) entries.add(new ScrapedFeedEntry(e, null)); 
                 else if (filter.contains(feed.getUrl(), e.getUrl()) == false) {                    
+                    redirectUrl(e);
+                    System.out.println("url: "+e.getUrl());
+                    System.out.println("rrl: "+e.getRedirUrl());
                     entries.add(new ScrapedFeedEntry(e, null));
                 }
             }
@@ -114,6 +120,22 @@ public class FeedProcessor implements Runnable {
         return true;
     }
 
+    // find redirect location for entry's url, write it to redirUrl
+    private void redirectUrl(FeedEntry e) {
+        try {
+            String host = new URI(e.getUrl()).getHost().trim(), redir = null;
+            if ("news.google.com".equals(host)) 
+                redir = HttpUtils.resolveGoogleRedirect(e.getUrl());
+            else 
+                redir = HttpUtils.resolveHttpRedirects(e.getUrl());
+            e.setRedirUrl(redir);
+        }
+        catch (Exception ex) {
+            logErr("redirecting url failed", ex);
+            e.setRedirUrl(e.getUrl());
+        }
+    }
+    
     private void scrapeFeedArticles() throws InterruptedException {
         info("start scraping");
         for (ScrapedFeedEntry entry : entries) {
@@ -145,8 +167,8 @@ public class FeedProcessor implements Runnable {
             }
             try {
                 em.getTransaction().begin();            
-                Query q = em.createNamedQuery("FeedArticle.getByUrl");
-                q.setParameter("url", e.feedEntry.getUrl());
+                Query q = em.createNamedQuery("FeedArticle.getByUrl");                
+                q.setParameter("url", e.feedEntry.getRedirUrl());
                 FeedArticle article;
                 try { article = (FeedArticle)q.getSingleResult(); } // get managed article
                 catch (NoResultException ex) { article = null; }
@@ -160,7 +182,9 @@ public class FeedProcessor implements Runnable {
                 article.setDateSaved(new Date());
                 // feed.getArticles().add(article); is this necessary? this would slow down things
                 em.getTransaction().commit();    
-                if (filter != null) filter.addEntry(f.getUrl(), article.getUrl());
+                // save original, not redirected feed entry url to filter, 
+                // since filtering happens before redirection
+                if (filter != null) filter.addEntry(f.getUrl(), e.feedEntry.getUrl());
             }
             catch (Exception ex) {
                 String url = e.feedEntry.getUrl();
