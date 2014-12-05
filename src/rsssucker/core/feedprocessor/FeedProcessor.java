@@ -101,7 +101,7 @@ public class FeedProcessor implements Runnable {
             for (FeedEntry e : fentries) { 
                 // check if (feedUrl, articleUrl) pair already exists
                 if (filter == null) entries.add(new ScrapedFeedEntry(e, null)); 
-                else if (filter.contains(feed.getUrl(), e.getArticleURL()) == false) {                    
+                else if (filter.contains(feed.getUrl(), e.getUrl()) == false) {                    
                     entries.add(new ScrapedFeedEntry(e, null));
                 }
             }
@@ -117,7 +117,7 @@ public class FeedProcessor implements Runnable {
     private void scrapeFeedArticles() throws InterruptedException {
         info("start scraping");
         for (ScrapedFeedEntry entry : entries) {
-            String url = entry.feedEntry.getArticleURL();
+            String url = entry.feedEntry.getUrl();
             checkInterrupted();
             try {
                 ArticleData data = scraper.scrapeArticle(url);
@@ -146,7 +146,7 @@ public class FeedProcessor implements Runnable {
             try {
                 em.getTransaction().begin();            
                 Query q = em.createNamedQuery("FeedArticle.getByUrl");
-                q.setParameter("url", e.feedEntry.getArticleURL());
+                q.setParameter("url", e.feedEntry.getUrl());
                 FeedArticle article;
                 try { article = (FeedArticle)q.getSingleResult(); } // get managed article
                 catch (NoResultException ex) { article = null; }
@@ -163,7 +163,7 @@ public class FeedProcessor implements Runnable {
                 if (filter != null) filter.addEntry(f.getUrl(), article.getUrl());
             }
             catch (Exception ex) {
-                String url = e.feedEntry.getArticleURL();
+                String url = e.feedEntry.getUrl();
                 logErr("saving article failed: " + url, ex);
                 try { em.getTransaction().rollback(); }
                 catch (Exception ex2) {

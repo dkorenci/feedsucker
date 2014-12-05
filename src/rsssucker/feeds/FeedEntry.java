@@ -8,18 +8,19 @@ import java.util.Date;
  */
 public class FeedEntry {
 
-    private String articleURL;
+    private String url;
+    private String redirUrl;
     private Date date;
     private String title;
     private String description;
     private String author;
 
-    public String getArticleURL() {
-        return articleURL;
+    public String getUrl() {
+        return url;
     }
 
-    public void setArticleURL(String articleURL) {
-        this.articleURL = articleURL;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Date getDate() {
@@ -53,4 +54,12 @@ public class FeedEntry {
     public void setAuthor(String author) {
         this.author = author;
     }    
+
+    public String getRedirUrl() {
+        return redirUrl;
+    }
+
+    public void setRedirUrl(String redirUrl) {
+        this.redirUrl = redirUrl;
+    }
 }

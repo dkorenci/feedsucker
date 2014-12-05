@@ -33,7 +33,7 @@ public class RomeFeedReader implements IFeedReader {
     
     private static FeedEntry syndEntryToFeedEntry(SyndEntry e) {
         FeedEntry entry = new FeedEntry();
-        entry.setArticleURL(e.getLink());
+        entry.setUrl(e.getLink());
         entry.setDate(e.getPublishedDate());
         entry.setTitle(e.getTitle());
         entry.setDescription(e.getDescription().getValue());
