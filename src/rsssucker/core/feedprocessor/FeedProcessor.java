@@ -106,8 +106,8 @@ public class FeedProcessor implements Runnable {
                 if (filter == null) entries.add(new ScrapedFeedEntry(e, null)); 
                 else if (filter.contains(feed.getUrl(), e.getUrl()) == false) {                    
                     redirectUrl(e);
-                    System.out.println("url: "+e.getUrl());
-                    System.out.println("rrl: "+e.getRedirUrl());
+//                    System.out.println("url: "+e.getUrl());
+//                    System.out.println("rrl: "+e.getRedirUrl());
                     entries.add(new ScrapedFeedEntry(e, null));
                 }
             }
