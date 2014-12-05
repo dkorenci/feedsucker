@@ -139,7 +139,7 @@ public class FeedProcessor implements Runnable {
     private void scrapeFeedArticles() throws InterruptedException {
         info("start scraping");
         for (ScrapedFeedEntry entry : entries) {
-            String url = entry.feedEntry.getUrl();
+            String url = entry.feedEntry.getRedirUrl();
             checkInterrupted();
             try {
                 ArticleData data = scraper.scrapeArticle(url);
