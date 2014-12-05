@@ -26,8 +26,8 @@
 @outlet name = reuters ; url = http://www.reuters.com/news/world
   @feed url = http://feeds.reuters.com/reuters/worldNews ; outlet = reuters ;
 
-//@outlet name = googlenews  ; url = http://news.google.com/
-//  @feed url = http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&topic=w&output=rss ; outlet = googlenews ;
+@outlet name = googlenews  ; url = http://news.google.com/
+  @feed url = http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&topic=w&output=rss ; outlet = googlenews ;
 
 @outlet name = newsau ; url = http://www.news.com.au/ ;
   @feed url = http://feeds.news.com.au/public/rss/2.0/news_theworld_3356.xml ; outlet = newsau

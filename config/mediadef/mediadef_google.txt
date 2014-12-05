@@ -1,0 +1,9 @@
+@outlet name = googlenews_us  ; url = http://news.google.com/
+  @feed url = http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&output=rss ; 
+	outlet = googlenews_us ; attributes = "top_stories"
+  @feed url = http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&topic=w&output=rss ; 
+	outlet = googlenews_us ; attributes = "world"
+  @feed url = http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&topic=n&output=rss ; 
+	outlet = googlenews_us ; attributes = "us"
+  @feed url = http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&topic=b&output=rss ; 
+	outlet = googlenews_us ;  attributes = "business"

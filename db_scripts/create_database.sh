@@ -1,12 +1,7 @@
 # argument1 : database name, argument2 user name (owner of the database)
-# create a database using create_database.sql script
-# database name and user name are taken from command line and substituted in the script
-# user executing script must be able to sudo as postgres (default admin account that must exist)
 DATABASE=$1
 USER=$2
-DB_COMMAND=`cat create_database.sql`
-DB_COMMAND=${DB_COMMAND/'$USER'/$USER}
-DB_COMMAND=${DB_COMMAND/'$DATABASE'/$DATABASE}
+DB_COMMAND="CREATE DATABASE $DATABASE OWNER $USER ENCODING 'UTF8'" #LC_COLLATE 'POSIX' LC_CTYPE 'POSIX'
 echo $DB_COMMAND
 sudo -u postgres psql -c "$DB_COMMAND"
 #foo="Hello"
