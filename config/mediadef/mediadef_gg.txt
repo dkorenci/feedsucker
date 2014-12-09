@@ -1,0 +1,49 @@
+// google news feeds + global outlets
+
+// global outlets
+
+@outlet name = cnn ; url = http://cnn.com ; // attributes = "mainstream usa"
+  @feed url = http://rss.cnn.com/rss/cnn_world.rss ; outlet = cnn
+
+@outlet name = theguardian url = http://www.theguardian.com
+  @feed url = http://feeds.theguardian.com/theguardian/world/rss ; outlet = theguardian
+
+@outlet name = bbc ; url = http://www.bbc.com 
+  @feed url = http://feeds.bbci.co.uk/news/rss.xml ; outlet = bbc ; attributes = "news"
+  
+@outlet name = newyorktimes url = nytimes.com ; // attributes = "usa mainstream newspaper"
+  @feed url = http://www.nytimes.com/services/xml/rss/nyt/World.xml ; outlet = newyorktimes
+  
+@outlet name = aljazeera  ; url = http://www.aljazeera.com/
+  @feed url = http://www.aljazeera.com/Services/Rss/?PostingId=2007731105943979989 ; outlet = aljazeera ;
+	attributes = all ;
+	
+@outlet name = nbcnews ; url = http://www.nbcnews.com/
+  @feed url = http://feeds.nbcnews.com/feeds/topstories ; outlet = nbcnews ; attributes = topstories
+
+@outlet name = dwelle ; url = http://www.dw.de
+  @feed url = http://rss.dw.de/rdf/rss-en-world ; outlet = dwelle ;
+   
+@outlet name = xinhuanet ; url = http://www.xinhuanet.com/
+  @feed url = http://www.xinhuanet.com/english/rss/worldrss.xml ; outlet =  xinhuanet ;
+
+@outlet name = reuters ; url = http://www.reuters.com/news/world
+  @feed url = http://feeds.reuters.com/reuters/worldNews ; outlet = reuters ;
+
+@outlet name = newsau ; url = http://www.news.com.au/ ;
+  @feed url = http://feeds.news.com.au/public/rss/2.0/news_theworld_3356.xml ; outlet = newsau
+
+@outlet name = thehindu ; url = http://www.thehindu.com/
+  @feed url = http://www.thehindu.com/news/international/world/?service=rss ; outlet = thehindu 
+
+// google news us
+
+@outlet name = googlenews_us  ; url = http://news.google.com/
+  @feed url = http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&output=rss ; 
+	outlet = googlenews_us ; attributes = "top_stories"
+  @feed url = http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&topic=w&output=rss ; 
+	outlet = googlenews_us ; attributes = "world"
+  @feed url = http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&topic=n&output=rss ; 
+	outlet = googlenews_us ; attributes = "us"
+  @feed url = http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&topic=b&output=rss ; 
+	outlet = googlenews_us ;  attributes = "business"
