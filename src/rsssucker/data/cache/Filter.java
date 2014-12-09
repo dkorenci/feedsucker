@@ -115,8 +115,7 @@ public class Filter {
             Query q = em.createNamedQuery("FilterEntry.getAll");
             List<FilterEntry> ent = q.getResultList();
             entries = new TreeSet<>();
-            for (FilterEntry e : ent) entries.add(e.getIdString());
-            em.close();
+            for (FilterEntry e : ent) entries.add(e.getIdString());            
         }
         finally { if (em != null) em.close(); }                   
     }
