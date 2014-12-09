@@ -2,3 +2,10 @@ xpath queries for searching log files
 
 - get all records whose exception message does not contain text
 //record[exception/message[not(contains(text(),'TEXT'))]]
+
+- get record where exception message does not contain either of two below strings
+//record[exception/message[  (contains(text(),'java.io.IOException') or contains(text(),'ERR]')) = false()  ]]
+
+- extract only some subnodes from record
+//record[exception/message[not(contains(text(),'ERR]'))]]//*[(self::message or self::date)]
+
