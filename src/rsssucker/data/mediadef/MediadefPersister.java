@@ -2,18 +2,13 @@ package rsssucker.data.mediadef;
 
 import com.sun.syndication.io.FeedException;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import rsssucker.core.RssSuckerApp;
 import rsssucker.data.Factory;
 import rsssucker.data.JpaContext;
 import rsssucker.data.entity.Feed;
