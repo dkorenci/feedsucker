@@ -58,7 +58,7 @@ public class LoggersManager {
         for (Handler h : handlers) root.removeHandler(h); // remove all handlers
         // add file handler to the logger
         Handler h = new FileHandler(logFolder+"root.log");
-        h.setFormatter(new XMLFormatter());
+        h.setFormatter(new MyXMLFormatter());
         root.addHandler(h);         
     }
     
@@ -71,7 +71,7 @@ public class LoggersManager {
         for (Handler h : handlers) logger.removeHandler(h);
         // add file handler to the logger
         Handler h = new FileHandler(logFolder+category+".log");
-        h.setFormatter(new XMLFormatter());
+        h.setFormatter(new MyXMLFormatter());
         logger.addHandler(h);        
         return logger;
     }
