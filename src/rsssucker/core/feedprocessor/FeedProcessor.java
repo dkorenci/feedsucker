@@ -13,13 +13,14 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import rsssucker.article.ArticleData;
 import rsssucker.article.IArticleScraper;
+import rsssucker.core.RssSuckerApp;
 import rsssucker.data.cache.Filter;
 import rsssucker.data.entity.EntityFactory;
 import rsssucker.data.entity.Feed;
 import rsssucker.data.entity.FeedArticle;
 import rsssucker.feeds.FeedEntry;
 import rsssucker.feeds.IFeedReader;
-import rsssucker.log.LoggersManager;
+import rsssucker.log.RssSuckerLogger;
 import rsssucker.util.HttpUtils;
 
 /**
@@ -45,26 +46,8 @@ public class FeedProcessor implements Runnable {
     
     private List<ScrapedFeedEntry> entries;
     
-    private static final Logger errLogger = 
-            LoggersManager.getErrorLogger(FeedProcessor.class.getName());
-    private static final Logger infoLogger = 
-            LoggersManager.getInfoLogger(FeedProcessor.class.getName());    
-
-    private static void logErr(String msg, Exception e) {
-        errLogger.log(Level.SEVERE, msg, e);        
-    }
-    
-    // send info message
-    private static void info(String msg) {         
-        long id = Thread.currentThread().getId();
-        String header = String.format("[%1$td%1$tm%1$tY_%1$tH:%1$tM:%1$tS thread%2$d] : ", 
-                new Date(), id);                
-        System.out.println(header + msg); 
-    }
-    
-    private static void logInfo(String msg, Exception e) {
-        infoLogger.log(Level.INFO, msg, e);        
-    }      
+    private static final RssSuckerLogger logger = 
+            new RssSuckerLogger(FeedProcessor.class.getName());        
     
     public FeedProcessor(Feed f, EntityManagerFactory e, 
             IFeedReader fread, IArticleScraper scr, Filter fil) {
@@ -81,11 +64,11 @@ public class FeedProcessor implements Runnable {
             saveFeedArticles();
         }
         catch (InterruptedException ex) {
-            info("feed processing interrupted occured for feed: " + feed.getUrl());
-            logInfo("feed processing interrupted for feed: " + feed.getUrl(), ex); 
+            logger.info("feed processing interrupted occured for feed: " + feed.getUrl());
+            logger.logInfo("feed processing interrupted for feed: " + feed.getUrl(), ex); 
         }
         catch (Exception ex) { 
-            logErr("feed processing error occured for feed: " + feed.getUrl(), ex); 
+            logger.logErr("feed processing error occured for feed: " + feed.getUrl(), ex); 
         }
     }
 
@@ -96,7 +79,7 @@ public class FeedProcessor implements Runnable {
     
     // read feed entries, log error and return false if fail
     private boolean readFeedEntries() {        
-        info("start reading entries");
+        logger.info("start reading entries");
         try {                        
             List<FeedEntry> fentries = freader.getFeedEntries(feed.getUrl());    
             //fentries = fentries.subList(0, 5);
@@ -112,11 +95,10 @@ public class FeedProcessor implements Runnable {
                 }
             }
         } catch (Exception ex) {
-            errLogger.log(Level.SEVERE, "download feed entries for feed failed: "
-                    + feed.getUrl(), ex); 
+            logger.logErr("download feed entries for feed failed: " + feed.getUrl(), ex); 
             return false;
         }
-        info("finished reading entries");
+        logger.info("finished reading entries");
         return true;
     }
 
@@ -131,13 +113,13 @@ public class FeedProcessor implements Runnable {
             e.setRedirUrl(redir);
         }
         catch (Exception ex) {
-            logErr("redirecting url failed", ex);
+            logger.logErr("redirecting url failed", ex);
             e.setRedirUrl(e.getUrl());
         }
     }
     
     private void scrapeFeedArticles() throws InterruptedException {
-        info("start scraping");
+        logger.info("start scraping");
         for (ScrapedFeedEntry entry : entries) {
             String url = entry.feedEntry.getRedirUrl();
             checkInterrupted();
@@ -145,16 +127,16 @@ public class FeedProcessor implements Runnable {
                 ArticleData data = scraper.scrapeArticle(url);
                 entry.scrapedData = data;
             } catch (Exception ex) {
-                errLogger.log(Level.SEVERE, "scraping article failed for : "
+                logger.logErr("scraping article failed for : "
                     + url + " from feed: " + feed.getUrl(), ex);                
                 entry.scrapedData = null;
             }
         }
-        info("finished scraping");
+        logger.info("finished scraping");
     }
 
     private void saveFeedArticles() throws InterruptedException {
-        info("start saving");        
+        logger.info("start saving");        
         EntityManager em = null;
         try {
         
@@ -165,7 +147,7 @@ public class FeedProcessor implements Runnable {
             if (em.getTransaction().isActive()) {
                 // this should not happen, since transaction should be 
                 // commited or rolled back, continue with new entity manager
-                try { em.close(); } catch (Exception ex) { logErr("closing em failed", ex); }
+                try { em.close(); } catch (Exception ex) { logger.logErr("closing em failed", ex); }
                 em = emf.createEntityManager();
             }
             try {
@@ -191,10 +173,10 @@ public class FeedProcessor implements Runnable {
             }
             catch (Exception ex) {
                 String url = e.feedEntry.getUrl();
-                logErr("saving article failed: " + url, ex);
+                logger.logErr("saving article failed: " + url, ex);
                 try { em.getTransaction().rollback(); }
                 catch (Exception ex2) {
-                    logErr("committing rollback failed for article: "+ url, ex2);
+                    logger.logErr("committing rollback failed for article: "+ url, ex2);
                 }
             }
         }
@@ -202,7 +184,7 @@ public class FeedProcessor implements Runnable {
         
         }        
         finally { if (em != null) em.close(); }
-        info("finished saving");
+        logger.info("finished saving");
     }
     
 }

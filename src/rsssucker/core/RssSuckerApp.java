@@ -9,8 +9,6 @@ import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
@@ -32,7 +30,6 @@ import rsssucker.data.mediadef.MediadefParser;
 import rsssucker.data.mediadef.MediadefPersister;
 import rsssucker.feeds.IFeedReader;
 import rsssucker.feeds.RomeFeedReader;
-import rsssucker.log.LoggersManager;
 import rsssucker.log.RssSuckerLogger;
 
 /**

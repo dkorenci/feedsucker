@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import rsssucker.core.RssSuckerApp;
 import rsssucker.log.LoggersManager;
+import rsssucker.log.RssSuckerLogger;
 
 /**
  * Monitors a file for shutdown messages and signals it to the main app.
@@ -21,10 +22,8 @@ public class ShutdownMonitor implements Runnable {
 
     private RssSuckerApp app;
     
-    private static final Logger errLogger = 
-            LoggersManager.getErrorLogger(ShutdownMonitor.class.getName());
-    private static final Logger infoLogger = 
-            LoggersManager.getInfoLogger(ShutdownMonitor.class.getName());       
+    private static final RssSuckerLogger logger = 
+            new RssSuckerLogger(ShutdownMonitor.class.getName());     
     
     // file checking interval, in milis
     private static final int REFRESH_INTERVAL = 1 * 1000;
@@ -32,30 +31,16 @@ public class ShutdownMonitor implements Runnable {
     private static final String messageFile = "messages.txt";
     
     public ShutdownMonitor(RssSuckerApp app) { this.app = app; }
-    
-    private static void logErr(String msg, Exception e) {
-        errLogger.log(Level.SEVERE, msg, e);        
-    }
-    
-    // send info message
-    private static void info(String msg) { 
-        String header = String.format("[%1$td%1$tm%1$tY_%1$tH:%1$tm:%1$tS] : ", new Date());
-        System.out.println(header + msg); 
-    }
-    
-    private static void logInfo(String msg, Exception e) {
-        infoLogger.log(Level.INFO, msg, e);        
-    }        
-    
+     
     @Override
     public void run() {
-        logInfo("ShutdownMonitor starting", null);
+        logger.logInfo("ShutdownMonitor starting", null);
         while (true) {
             String msg = shutdownMessage();
             if (msg != null) shutdownApp(msg);
             try { Thread.sleep(REFRESH_INTERVAL); } 
             catch (InterruptedException ex) {
-                logErr("ShutdownMonitor wait interrupted", ex);
+                logger.logErr("ShutdownMonitor wait interrupted", ex);
             }
         }
     }   
@@ -83,12 +68,12 @@ public class ShutdownMonitor implements Runnable {
             }
             else return null;
         } catch (Exception e) {
-            logErr("message file processing error", e);
+            logger.logErr("message file processing error", e);
             return null;
         }
         finally {
             try { if (reader != null) reader.close();  } 
-            catch (IOException ex) { logErr("buffered reader close error", ex); }                            
+            catch (IOException ex) { logger.logErr("buffered reader close error", ex); }                            
         }
     }
 

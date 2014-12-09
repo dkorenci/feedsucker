@@ -9,12 +9,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import rsssucker.core.RssSuckerApp;
 import rsssucker.data.Factory;
 import rsssucker.data.JpaContext;
 import rsssucker.data.entity.Feed;
 import rsssucker.data.entity.Outlet;
 import rsssucker.feeds.RomeFeedReader;
 import rsssucker.log.LoggersManager;
+import rsssucker.log.RssSuckerLogger;
 
 /**
  * Save mediadef entities and relations between them to database.
@@ -30,18 +32,8 @@ public class MediadefPersister {
     // make all feed in the persistence context fetchable by url
     private Map<String, Feed> urlToFeed = new TreeMap<>();
 
-    private static final Logger errLogger = 
-            LoggersManager.getErrorLogger(MediadefPersister.class.getName());
-    private static final Logger infoLogger = 
-            LoggersManager.getInfoLogger(MediadefPersister.class.getName());      
-    
-    private static void logErr(String msg, Exception e) {
-        errLogger.log(Level.SEVERE, msg, e);        
-    }
-    
-    private static void logInfo(String msg, Exception e) {
-        infoLogger.log(Level.INFO, msg, e);        
-    }      
+    private static final RssSuckerLogger logger = 
+            new RssSuckerLogger(MediadefPersister.class.getName());    
     
     /** Merge entity definitions to database: add unexisting entities, 
      * and update existing entities with new data. */
@@ -95,7 +87,7 @@ public class MediadefPersister {
                 throw new MediadefException("feed must have a url property");
             Feed feed = (Feed)getOrCreateEntity(EntityType.FEED, url, e);
             try { RomeFeedReader.readFeedData(feed); } 
-            catch (FeedException|IOException ex) { logErr("feed data reading failed", ex); }
+            catch (FeedException|IOException ex) { logger.logErr("feed data reading failed", ex); }
             urlToFeed.put(url, feed);
             // attach feed to outlet            
             String outletName = e.getValue("outlet");
