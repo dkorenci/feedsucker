@@ -15,7 +15,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import rsssucker.article.IArticleScraper;
-import rsssucker.article.newspaper.Newspaper;
+import rsssucker.article.newspaper.RessurectingNewspaper;
 import rsssucker.config.PropertiesReader;
 import rsssucker.config.RssConfig;
 import rsssucker.core.feedprocessor.FeedProcessor;
@@ -33,6 +33,7 @@ import rsssucker.data.mediadef.MediadefPersister;
 import rsssucker.feeds.IFeedReader;
 import rsssucker.feeds.RomeFeedReader;
 import rsssucker.log.LoggersManager;
+import rsssucker.log.RssSuckerLogger;
 
 /**
  * Initialization and workflow the the application.
@@ -46,16 +47,14 @@ public class RssSuckerApp {
     private int sleepPeriod;
     private PropertiesReader properties;    
     private EntityManagerFactory emf;
-    private List<Newspaper> npapers;
+    private List<RessurectingNewspaper> npapers;
     private Queue<String> messageQueue;
     private ShutdownMonitor shutdownMonitor;
     private Filter filter;
-    private List<Feed> feeds;
+    private List<Feed> feeds;    
     
-    private static final Logger errLogger = 
-            LoggersManager.getErrorLogger(RssSuckerApp.class.getName());
-    private static final Logger infoLogger = 
-            LoggersManager.getInfoLogger(RssSuckerApp.class.getName());   
+    private static final RssSuckerLogger logger = 
+            new RssSuckerLogger(RssSuckerApp.class.getName());
     
     private int numThreads; 
     private int numNpapers, npaperPointer;    
@@ -96,7 +95,7 @@ public class RssSuckerApp {
         initMessaging(); 
         loadFeeds(); 
         if (feeds == null || feeds.isEmpty()) {
-            info("failed feed initialization or no feeds");
+            logger.info("failed feed initialization or no feeds");
             shutdown();
         }
     }
@@ -107,7 +106,7 @@ public class RssSuckerApp {
             return true;
         }
         catch (Exception e) { 
-            logErr("filter creation failed", e);
+            logger.logErr("filter creation failed", e);
             return false;
         }
     }
@@ -117,23 +116,9 @@ public class RssSuckerApp {
             if (emf != null) emf.close(); 
             if (filter != null) Filter.closeFilter();
         }
-        catch (Exception e) { logErr("failed to cleanup", e); }
+        catch (Exception e) { logger.logErr("failed to cleanup", e); }
     }
-    
-    private static void logErr(String msg, Exception e) {
-        errLogger.log(Level.SEVERE, msg, e);        
-    }
-    
-    // send info message
-    private static void info(String msg) { 
-        String header = String.format("[%1$td%1$tm%1$tY_%1$tH:%1$tM:%1$tS] : ", new Date());
-        System.out.println(header + msg); 
-    }
-    
-    private static void logInfo(String msg, Exception e) {
-        infoLogger.log(Level.INFO, msg, e);        
-    }    
-    
+           
     private void initMessaging() {
         initializeMessageQueue();
         shutdownMonitor = new ShutdownMonitor(this);
@@ -168,7 +153,7 @@ public class RssSuckerApp {
             sleepPeriod = refreshInterval * 60 * 1000 / 100;
             return true;
         } catch (IOException ex) { 
-            logErr("failed to read properties.", ex);
+            logger.logErr("failed to read properties.", ex);
             return false; 
         } 
     }
@@ -183,14 +168,14 @@ public class RssSuckerApp {
             entities = parser.parse();
         }
         catch (IOException|MediadefException e) { 
-            logErr("failed to parse mediadef_file", e);            
+            logger.logErr("failed to parse mediadef_file", e);            
             return false;
         }
         try { // persist entities from mediadef file
             new MediadefPersister().persist(entities);        
         }
         catch (MediadefException e) {
-            logErr("failed to persist mediadef_file", e);            
+            logger.logErr("failed to persist mediadef_file", e);            
             return false;
         }
         return true;
@@ -201,10 +186,10 @@ public class RssSuckerApp {
             emf = Factory.createEmf();
         }
         catch (Exception e) {
-            logErr("failed to create EntityManagerFactory", e);            
+            logger.logErr("failed to create EntityManagerFactory", e);            
             return false;            
         }
-        info("initialized EntityManagerFactory");
+        logger.info("initialized EntityManagerFactory");
         return true;
     }  
    
@@ -214,7 +199,7 @@ public class RssSuckerApp {
             if (sleep) {
                 try { Thread.sleep(MAIN_LOOP_SLEEP); } 
                 catch (InterruptedException ex) {
-                   logInfo("main thread sleep interrupted.", ex);
+                   logger.logInfo("main thread sleep interrupted.", ex);
                 }
                 sleep = false;
                 processMessages();
@@ -247,7 +232,7 @@ public class RssSuckerApp {
     
     // cleanup, releas resources and shutdown
     private void shutdown() {
-        logInfo("shutting down rsssucker", null);
+        logger.logInfo("shutting down rsssucker", null);
         cleanup();
         System.exit(0);
     }
@@ -258,7 +243,7 @@ public class RssSuckerApp {
         boolean shutdown = false;
         try {            
             
-        info("starting feed refresh");
+        logger.info("starting feed refresh");
         int localNumThreads = numThreads;           
         if (feeds.size() < localNumThreads) localNumThreads = feeds.size();
         executor = Executors.newFixedThreadPool(localNumThreads);        
@@ -267,21 +252,21 @@ public class RssSuckerApp {
             IArticleScraper scraper = getNewspaper(); if (scraper == null) continue;
             IFeedReader reader = getFeedReader();            
             FeedProcessor processor = new FeedProcessor(f, emf, reader, scraper, filter);
-            info("starting processor for feed " + f.getUrl());
+            logger.info("starting processor for feed " + f.getUrl());
             executor.submit(processor);
         }
         executor.shutdown();
-        info("waiting for FeedProcessor threads to finish");
+        logger.info("waiting for FeedProcessor threads to finish");
         while (executor.isTerminated() == false) {
             try { processMessages(); } catch (FinishAndShutdownException e) { shutdown = true; }
             try { executor.awaitTermination(FEED_REFRESH_SLEEP, TimeUnit.MILLISECONDS); }
             catch (InterruptedException e) {}           
         }
-        info("FeedProcessor threads finished");
+        logger.info("FeedProcessor threads finished");
         persistFilter();
         removeExpiredFilterEntries();
         closeNewspapers();        
-        info("ending feed refresh");        
+        logger.info("ending feed refresh");        
         
         }
         catch (ShutdownException e) {
@@ -289,7 +274,7 @@ public class RssSuckerApp {
             // if it does something else, use Futures instead            
             executor.shutdownNow();
             try { Thread.sleep(THREAD_SHUTDOWN_WAIT); } 
-            catch (InterruptedException ex) { logErr("shutdown wait interrupted", ex); }           
+            catch (InterruptedException ex) { logger.logErr("shutdown wait interrupted", ex); }           
             closeNewspapers();
             shutdown = true;
         }        
@@ -300,7 +285,7 @@ public class RssSuckerApp {
     private void removeExpiredFilterEntries() {
         try { filter.removeExpiredEntries(); }
         catch (Exception e) {
-            logErr("removing expired entries from filter failed", e);
+            logger.logErr("removing expired entries from filter failed", e);
             resetFilter();
         }
     }
@@ -311,7 +296,7 @@ public class RssSuckerApp {
             Filter.resetFilter();
             filter = Filter.getFilter();
         } catch (Exception ex) { 
-            logErr("filter reset failed", ex);
+            logger.logErr("filter reset failed", ex);
             filter = null;
         }        
     }
@@ -319,7 +304,7 @@ public class RssSuckerApp {
     private void persistFilter() {
         try { filter.persistNewEntries(); }
         catch (Exception e) {
-            logErr("filter persisting failed", e);
+            logger.logErr("filter persisting failed", e);
             resetFilter();
         }
     }    
@@ -333,7 +318,7 @@ public class RssSuckerApp {
             feeds = (List<Feed>)q.getResultList();            
         }
         catch (Exception e) {
-            logErr("feed refresh failed", e);
+            logger.logErr("feed refresh failed", e);
             feeds = null;
         }
         finally { if (em != null) em.close(); }
@@ -351,14 +336,14 @@ public class RssSuckerApp {
     // create newspaper instance and cache for later shutdown
     // if max. number of newspapers is exceeded, return existing instances
     // in round robin fashion
-    private Newspaper getNewspaper() {
+    private RessurectingNewspaper getNewspaper() {
         if (npapers == null) { 
-            npapers = new ArrayList<Newspaper>();
+            npapers = new ArrayList<RessurectingNewspaper>();
             npaperPointer = 0;
         }
         
         if (npapers.size() < numNpapers) {
-            Newspaper npaper = createNewspaper();
+            RessurectingNewspaper npaper = createNewspaper();
             if (npaper == null) return null;
             else { 
                 npapers.add(npaper);
@@ -366,26 +351,26 @@ public class RssSuckerApp {
             }
         }
         else {
-            Newspaper npaper = npapers.get(npaperPointer++);
+            RessurectingNewspaper npaper = npapers.get(npaperPointer++);
             if (npaperPointer == npapers.size()) npaperPointer = 0;
             return npaper;
         }
     }
     
     private void closeNewspapers() {
-        for (Newspaper npaper : npapers) {
+        for (RessurectingNewspaper npaper : npapers) {
             try { npaper.close(); }
-            catch (Exception ex) { logErr("closing newspaper error", ex); }
+            catch (Exception ex) { logger.logErr("closing newspaper error", ex); }
         }      
         npapers = null;
     }
     
     // initialize and return a new newspaper instance
-    private Newspaper createNewspaper() {
+    private RessurectingNewspaper createNewspaper() {
         try {
-            return new Newspaper();
+            return new RessurectingNewspaper();
         } catch (IOException ex) {
-            errLogger.log(Level.SEVERE, "failed to initialize Newspaper.", ex);
+            logger.logErr("failed to initialize Newspaper.", ex);
             return null;
         }
     }
