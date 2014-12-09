@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.XMLFormatter;
 
+/** Creates and configures loggers. */
 public class LoggersManager {
     
     private static String logFolder;           
