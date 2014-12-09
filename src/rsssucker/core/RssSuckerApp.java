@@ -50,6 +50,7 @@ public class RssSuckerApp {
     private Queue<String> messageQueue;
     private ShutdownMonitor shutdownMonitor;
     private Filter filter;
+    private List<Feed> feeds;
     
     private static final Logger errLogger = 
             LoggersManager.getErrorLogger(RssSuckerApp.class.getName());
@@ -92,7 +93,12 @@ public class RssSuckerApp {
         result = processMediaDef(); if (result == false) shutdown();
         result = initEntityManagerFactory(); if (result == false) shutdown();
         result = initFilter(); if (result == false) shutdown();
-        initMessaging();        
+        initMessaging(); 
+        loadFeeds(); 
+        if (feeds == null || feeds.isEmpty()) {
+            info("failed feed initialization or no feeds");
+            shutdown();
+        }
     }
     
     private boolean initFilter() {
@@ -253,7 +259,6 @@ public class RssSuckerApp {
         try {            
             
         info("starting feed refresh");
-        List<Feed> feeds = getFeeds(); //feeds = feeds.subList(0, 1);
         int localNumThreads = numThreads;           
         if (feeds.size() < localNumThreads) localNumThreads = feeds.size();
         executor = Executors.newFixedThreadPool(localNumThreads);        
@@ -320,11 +325,18 @@ public class RssSuckerApp {
     }    
     
     // read all feeds from the database
-    private List<Feed> getFeeds() {
-        EntityManager em = emf.createEntityManager();
-        Query q = em.createNamedQuery("Feed.getAll");
-        List<Feed> feeds = (List<Feed>)q.getResultList();
-        return feeds;
+    private void loadFeeds() {  
+        EntityManager em = null;
+        try {
+            em = emf.createEntityManager();
+            Query q = em.createNamedQuery("Feed.getAll");
+            feeds = (List<Feed>)q.getResultList();            
+        }
+        catch (Exception e) {
+            logErr("feed refresh failed", e);
+            feeds = null;
+        }
+        finally { if (em != null) em.close(); }
     }
     
     // read integer property from properties file

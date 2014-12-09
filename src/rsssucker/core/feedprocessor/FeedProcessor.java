@@ -154,8 +154,11 @@ public class FeedProcessor implements Runnable {
     }
 
     private void saveFeedArticles() throws InterruptedException {
-        info("start saving");
-        EntityManager em = emf.createEntityManager();            
+        info("start saving");        
+        EntityManager em = null;
+        try {
+        
+        em = emf.createEntityManager();            
         for (ScrapedFeedEntry e : entries) {
         checkInterrupted();
         if (e.scrapedData != null) { // check if scraping failed
@@ -196,7 +199,9 @@ public class FeedProcessor implements Runnable {
             }
         }
         }
-        em.close();
+        
+        }        
+        finally { if (em != null) em.close(); }
         info("finished saving");
     }
     

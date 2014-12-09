@@ -109,11 +109,15 @@ public class Filter {
     }    
     
     private void loadFilterEntries() {
-        EntityManager em = emf.createEntityManager();
-        Query q = em.createNamedQuery("FilterEntry.getAll");
-        List<FilterEntry> ent = q.getResultList();
-        entries = new TreeSet<>();
-        for (FilterEntry e : ent) entries.add(e.getIdString());
-        em.close();
+        EntityManager em = null;
+        try {
+            em = emf.createEntityManager();
+            Query q = em.createNamedQuery("FilterEntry.getAll");
+            List<FilterEntry> ent = q.getResultList();
+            entries = new TreeSet<>();
+            for (FilterEntry e : ent) entries.add(e.getIdString());
+            em.close();
+        }
+        finally { if (em != null) em.close(); }                   
     }
 }
