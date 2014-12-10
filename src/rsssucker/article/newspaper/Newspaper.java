@@ -51,7 +51,8 @@ public class Newspaper implements IArticleScraper {
         while (true) {    
             line = procOut.readLine();
             if (line == null) { 
-                throw new IOException("process output stream terminated");
+                throw new IOException("output stream ended unexpectedly.\n"
+                        + "received text: " + text.toString());
             }
             if (isErrorMessage(line)) errorOccured = true;       
             if (line.equals(endMarker)) break;
