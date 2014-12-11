@@ -18,18 +18,20 @@ public class LoggersManager {
     private static final Logger error;
     private static final Logger info;
     private static final Logger performance;
-    private static final Logger debug;    
+    private static final Logger debug;   
+    private static final Logger errorUrl;
     
     // init logFolder and loggers
     static {
-        Logger e = null, i = null, p = null, d = null;
+        Logger e = null, i = null, p = null, d = null, eu = null;
         try {
             createLogFolder();
             createRootLogger();
             e = createCategoryLoger("error");
             i = createCategoryLoger("info");
             p = createCategoryLoger("performance");
-            d = createCategoryLoger("debug");                        
+            d = createCategoryLoger("debug");  
+            eu = createErrUrlLoger();
         } catch (Exception ex) {            
             outputLoggingErrorAndExit(ex);
         }
@@ -37,7 +39,8 @@ public class LoggersManager {
             error = e;
             info = i;
             performance = p;
-            debug = d;            
+            debug = d;      
+            errorUrl = eu;
         }
     }               
 
@@ -77,6 +80,20 @@ public class LoggersManager {
         return logger;
     }
     
+    // create top level category logger for a given category
+    private static Logger createErrUrlLoger() throws IOException {
+        Logger logger = Logger.getLogger("errorUrl");
+        logger.setUseParentHandlers(false); // enable message dispatch to parent (root)
+        // remove all handlers, just in case
+        Handler[] handlers = logger.getHandlers();
+        for (Handler h : handlers) logger.removeHandler(h);
+        // add file handler to the logger
+        Handler h = new FileHandler(logFolder+"errorUrl"+".log");
+        h.setFormatter(new BareMessageFormatter());
+        logger.addHandler(h);        
+        return logger;
+    }    
+    
     // write error to stderr and terminate application
     private static void outputLoggingErrorAndExit(Exception ex) {
         System.err.println("error occured during initialization of logging: ");        
@@ -87,6 +104,10 @@ public class LoggersManager {
     public static Logger getErrorLogger(String hierarchy) {
         return error;
     }
+    
+    public static Logger getErrorUrlLogger() {
+        return errorUrl;
+    }    
 
     public static Logger getDebugLogger(String hierarchy) {
         return debug;

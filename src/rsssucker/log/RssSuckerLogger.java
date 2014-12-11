@@ -11,10 +11,12 @@ public class RssSuckerLogger {
     
     private final Logger errLogger;            
     private final Logger infoLogger;  
+    private final Logger errUrlLogger;
     
     public RssSuckerLogger(String className) {
         errLogger = LoggersManager.getErrorLogger(className);
-        infoLogger = LoggersManager.getInfoLogger(className);                     
+        infoLogger = LoggersManager.getInfoLogger(className);   
+        errUrlLogger = LoggersManager.getErrorUrlLogger();
     }
     
     public void logErr(String msg, Exception e) {
@@ -24,6 +26,10 @@ public class RssSuckerLogger {
     public void logInfo(String msg, Exception e) {
         infoLogger.log(Level.INFO, msg, e);        
     }     
+    
+    public void logUrl(String url) {
+        errUrlLogger.log(Level.INFO, url);
+    }
     
     // send info message
     public void info(String msg) { 

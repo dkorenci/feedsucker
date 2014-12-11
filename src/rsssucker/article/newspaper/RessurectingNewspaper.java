@@ -36,10 +36,15 @@ public class RessurectingNewspaper implements IArticleScraper {
         }
         catch (IOException e) {
             // IOException is for now only observed sign that the newspaper crashed
+            logger.logUrl(articleUrl);
             logger.logErr("newspaper crashed for url: " + articleUrl, e);
             try { newspaper.close(); }
             catch (Exception ex) { logger.logErr("closing newspaper failed for url", ex); }
             createNewspaper();            
+        }
+        catch (NewspaperException e) {
+            logger.logUrl(articleUrl);
+            throw e;
         }
         }
         return null;
