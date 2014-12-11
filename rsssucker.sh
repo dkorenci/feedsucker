@@ -10,11 +10,24 @@ function default_ifundef {
   fi
 }
 
+# return java path: if default path is designated return "", else return path
+function get_java_bin {   
+  if [ "$1" == "default_java" ] || [ "$1" == "" ] ; then
+    echo ""  
+  else echo $1
+  fi
+}
+
 ACTION=$1
 
 if [ "$ACTION" == "START" ]; then
-  JAVA_BIN=$2
+  JAVA_BIN=$(get_java_bin $2)
   ./run.sh $JAVA_BIN
+elif [ "$ACTION" == "TOOL" ]; then
+  # java must be specified explicitly for tools, for now, to fetch tool argument
+  # use default_java instead of ""
+  JAVA_BIN=$(get_java_bin $2)     
+  "$JAVA_BIN""java" -jar RssSucker.jar $3
 elif [ "$ACTION" == "BUILD" ]; then
   JAVA_BIN=$2
   ./build.sh $JAVA_BIN > build_out.txt 2>&1
