@@ -31,6 +31,7 @@ import rsssucker.data.mediadef.MediadefPersister;
 import rsssucker.feeds.IFeedReader;
 import rsssucker.feeds.RomeFeedReader;
 import rsssucker.log.RssSuckerLogger;
+import rsssucker.tools.HostExtractor;
 
 /**
  * Initialization and workflow the the application.
@@ -68,8 +69,13 @@ public class RssSuckerApp {
     private static final int THREAD_SHUTDOWN_WAIT = 10 * 1000;
     
     public static void main(String[] args) {   
-        RssSuckerApp app = new RssSuckerApp();
-        app.run();
+        if (args.length == 0) {
+            RssSuckerApp app = new RssSuckerApp();
+            app.run();
+        }
+        else {
+            runTools(args[0]);
+        }
     }    
     
     private void run() {
@@ -83,6 +89,11 @@ public class RssSuckerApp {
         
     }
 
+    private static void runTools(String tool) {
+        if ("hosts".equals(tool)) HostExtractor.printHosts();
+        else System.out.println("unrecognized tool command");
+    }
+    
     private void initialize() {
         boolean result;
         result = readProperties(); if (result == false) shutdown();

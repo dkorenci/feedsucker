@@ -23,7 +23,9 @@ import javax.persistence.Temporal;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "FeedArticle.getByUrl", 
-        query = "SELECT a FROM FeedArticle a WHERE a.url = :url")        
+        query = "SELECT a FROM FeedArticle a WHERE a.url = :url")  ,
+    @NamedQuery(name = "FeedArticle.getAll", 
+        query = "SELECT a FROM FeedArticle a")         
 })
 @Table(indexes = {@Index(columnList = "url", name = "urlIndex")})
 public class FeedArticle {
