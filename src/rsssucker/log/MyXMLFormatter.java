@@ -25,52 +25,52 @@ public class MyXMLFormatter extends Formatter {
     @Override
     public String format(LogRecord lr) {
         initXml();
-        startTag("record", true);
+        startTag("record"); nline();
             
-            startTag("date", false);
+            startTag("date");
             print(formatDate(new Date(lr.getMillis())), false);
             endTag("date");
             
-            startTag("milis", false);
+            startTag("milis");
             print(Long.toString(lr.getMillis()), false);
             endTag("milis");
             
-            startTag("sequence", false);
+            startTag("sequence");
             print(Long.toString(lr.getSequenceNumber()), false);
             endTag("sequence");
             
-            startTag("logger", false);
+            startTag("logger");
             print(lr.getLoggerName(), false);
             endTag("logger");       
             
-            startTag("level", false);
+            startTag("level");
             print(lr.getLevel().toString(), false);
             endTag("level");       
             
-            startTag("class", false);
+            startTag("class");
             print(lr.getSourceClassName(), false);
             endTag("class");        
             
-            startTag("method", false);
-            print(lr.getSourceMethodName(), false);
-            endTag("method");                
+            startTag("method"); startCdata(" "," ");
+            print(lr.getSourceMethodName(), false); 
+            endCdata(" "," "); endTag("method");                
             
-            startTag("thread", false);
+            startTag("thread");
             print(Integer.toString(lr.getThreadID()), false);
             endTag("thread");      
             
-            startTag("message", true);
+            startTag("message"); startCdata(" ",""); nline();
             print(lr.getMessage(), true);
-            endTag("message");     
+            endCdata(""," "); endTag("message");     
         
             Throwable e = lr.getThrown();
-            startTag("exception", true);
-                startTag("message", true);
+            startTag("exception"); nline();
+                startTag("message"); startCdata(" ",""); nline();
                 print(e != null ? e.getMessage() : "null", true);
-                endTag("message");
-                startTag("stacktrace", true);
+                endCdata(""," "); endTag("message");
+                startTag("stacktrace"); startCdata(" ","");  nline();
                 print(stackTraceToString(e), false);
-                endTag("stacktrace");
+                endCdata(""," "); endTag("stacktrace");
             endTag("exception");
         
         endTag("record"); print("", true);
@@ -80,10 +80,21 @@ public class MyXMLFormatter extends Formatter {
     private void initXml() { xml = new StringBuilder(); }
     private String getXml() { return xml.toString(); }  
     
-    private void startTag(String tag, boolean newline) { 
-        xml.append("<"+tag+">");
-        if (newline) xml.append("\n"); 
+    private static String cdata(String s) {
+        return "<![CDATA[   "+s+"   ]]>";
     }
+    
+    private static String blockCdata(String s) {
+        return "<![CDATA[\n"+s+"\n]]>";
+    }    
+    
+    private void startTag(String tag) { 
+        xml.append("<"+tag+">");      
+    }
+    private void nline() { xml.append("\n"); }
+    private void startCdata(String p, String s) { xml.append(p).append("<![CDATA[").append(s); }
+    private void endCdata(String p, String s) { xml.append(p).append("]]>").append(s); }
+    
     private void endTag(String tag) { xml.append("</"+tag+">").append("\n"); }
     
     private void print(String s, boolean newline) { 
