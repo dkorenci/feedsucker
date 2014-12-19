@@ -1,0 +1,8 @@
+@outlet name = googlenews_us ; url = http://news.google.com ; // attributes = "mainstream usa"
+  @feed url = http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&output=rss ; outlet = googlenews_us ; 
+	attributes = main_feed;
+  @feed url = http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&topic=w&output=rss ; outlet = googlenews_us ; 
+	attributes = world_feed;
+  @feed url = http://news.google.com/news?pz=1&cf=all&ned=us&hl=en&topic=n&output=rss; outlet = googlenews_us ;
+	attributes = us_feed;
+	
