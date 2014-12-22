@@ -28,3 +28,6 @@ config/local/**
 #data_analysis/**/*.txt
 
 /dist/
+
+# files with host data_analysis
+scripts/*.txt
