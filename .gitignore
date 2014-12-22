@@ -22,7 +22,8 @@ mediadef.txt
 config/local/**
 
 # pydev project files
-newspaper/.*
+.project
+.pydevproject
 
 #data_analysis/**/*.txt
 
