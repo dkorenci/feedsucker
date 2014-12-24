@@ -127,7 +127,10 @@ public class FeedArticle {
     }
 
     public String getAuthor() { return author; }
-    public void setAuthor(String author) { this.author = author; }
+    public void setAuthor(String author) { 
+        if (author.length() > 200) author = author.substring(0, 200);
+        this.author = author; 
+    }
 
     public Date getDateSaved() { return dateSaved; }
     public void setDateSaved(Date dateSaved) { this.dateSaved = dateSaved; }
