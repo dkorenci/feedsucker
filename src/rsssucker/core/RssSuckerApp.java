@@ -74,7 +74,7 @@ public class RssSuckerApp {
             app.run();
         }
         else {
-            runTools(args[0]);
+            runTools(args[1], args[0]);
         }
     }    
     
@@ -89,8 +89,10 @@ public class RssSuckerApp {
         
     }
 
-    private static void runTools(String tool) {
+    private static void runTools(String tool, String javaBin) {
+        tool = tool.toLowerCase();
         if ("hosts".equals(tool)) HostExtractor.printHosts();
+        if ("loop".equals(tool)) new LoopAppRunner(javaBin).run();
         else System.out.println("unrecognized tool command");
     }
     

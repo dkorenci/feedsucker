@@ -26,8 +26,9 @@ if [ "$ACTION" == "START" ]; then
 elif [ "$ACTION" == "TOOL" ]; then
   # java must be specified explicitly for tools, for now, to fetch tool argument
   # use default_java instead of ""
-  JAVA_BIN=$(get_java_bin $2)     
-  "$JAVA_BIN""java" -jar RssSucker.jar $3
+  JAVA_BIN=$(get_java_bin $2) 
+  JAVA_CMD="$JAVA_BIN""java"
+  $JAVA_CMD -jar RssSucker.jar $2 $3
 elif [ "$ACTION" == "BUILD" ]; then
   JAVA_BIN=$2
   ./build.sh $JAVA_BIN > build_out.txt 2>&1
