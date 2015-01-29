@@ -14,6 +14,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import rsssucker.config.PropertiesReader;
+import rsssucker.config.RssConfig;
 import rsssucker.log.RssSuckerLogger;
 import rsssucker.util.Timer;
 
@@ -22,11 +24,13 @@ import rsssucker.util.Timer;
  */
 public class LoopAppRunner {
     
-    private static final long RESTART_INTERVAL = 20 * 60 * 1000; // in milisec
+    private static final int DEFAULT_RESTART_INTERVAL = 300; // in minutes
     private static final long WAIT_FOR_SHUTDOWN =  15 * 1000; // in milis
     
     private String javaBin; // folder with java runtime, compiler etc. 
-    private Process rsssucker;        
+    private int restartInterval;    
+    
+    private PropertiesReader properties;
     
     public LoopAppRunner(String java) { javaBin = java; }
     
@@ -42,6 +46,8 @@ public class LoopAppRunner {
 //        if (true) return;
         try {        
             
+        readProperties();
+            
         while (true) {
             // start new instance
             try {
@@ -56,7 +62,7 @@ public class LoopAppRunner {
                 break;
             }            
             // sleep
-            sleepNoInterrupt(RESTART_INTERVAL);
+            sleepNoInterrupt(restartInterval);
             // shutdown running instance
             try {          
                 boolean result = shutdownRsssucker();
@@ -71,6 +77,13 @@ public class LoopAppRunner {
         
         }
         catch (Exception e) { logger.info("error during loop execution:\n"+e.getMessage()); }
+    }
+    
+    private void readProperties() throws IOException {
+        properties = new PropertiesReader(RssConfig.propertiesFile);
+        restartInterval = 
+         properties.readIntProperty("restart_interval", DEFAULT_RESTART_INTERVAL);
+        
     }
     
     // try to shutdown app, return true if successful

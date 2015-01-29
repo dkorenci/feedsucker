@@ -156,9 +156,9 @@ public class RssSuckerApp {
     private boolean readProperties() {
         try {
             properties = new PropertiesReader(RssConfig.propertiesFile);
-            numThreads = readNumericProperty("num_threads", DEFAULT_NUM_THREADS);    
-            numNpapers = readNumericProperty("num_npapers", DEFAULT_NUM_NPAPERS);    
-            refreshInterval = readNumericProperty("refresh_interval", DEFAULT_REFRESH_INT);                      
+            numThreads = properties.readIntProperty("num_threads", RssSuckerApp.DEFAULT_NUM_THREADS);    
+            numNpapers = properties.readIntProperty("num_npapers", RssSuckerApp.DEFAULT_NUM_NPAPERS);    
+            refreshInterval = properties.readIntProperty("refresh_interval", RssSuckerApp.DEFAULT_REFRESH_INT);                      
             // set sleepPeriod to 1/100 th of refresh interval (in miliseconds)
             sleepPeriod = refreshInterval * 60 * 1000 / 100;
             return true;
@@ -332,15 +332,6 @@ public class RssSuckerApp {
             feeds = null;
         }
         finally { if (em != null) em.close(); }
-    }
-    
-    // read integer property from properties file
-    private int readNumericProperty(String propName, int defaultValue) {
-        int nt;
-        try { nt = Integer.parseInt(properties.getProperty(propName)); }
-        catch (NumberFormatException|NullPointerException e) { nt = defaultValue; }
-        if (nt <= 0) nt = defaultValue;
-        return nt;
     }
     
     // create newspaper instance and cache for later shutdown

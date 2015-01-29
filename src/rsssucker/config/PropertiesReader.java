@@ -3,6 +3,7 @@ package rsssucker.config;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import rsssucker.core.RssSuckerApp;
 
 /** Utility class for reading properties file and accessing properties. */
 public class PropertiesReader {
@@ -22,6 +23,20 @@ public class PropertiesReader {
         
     public String getProperty(String name) {
         return props.getProperty(name);
+    }
+
+    // read integer property from properties file
+    public int readIntProperty(String propName, int defaultValue) {
+        int nt;
+        try {
+            nt = Integer.parseInt(getProperty(propName));
+        } catch (NumberFormatException | NullPointerException e) {
+            nt = defaultValue;
+        }
+        if (nt <= 0) {
+            nt = defaultValue;
+        }
+        return nt;
     }
     
 }

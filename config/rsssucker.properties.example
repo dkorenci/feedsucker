@@ -10,3 +10,6 @@ mediadef_file = config/mediadef/mediadef.txt
 
 num_threads = 10
 num_npapers = 10
+
+# loop
+restart_interval = 20
