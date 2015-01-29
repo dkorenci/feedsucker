@@ -124,7 +124,6 @@ public class LoopAppRunner {
         String cmd = String.format("ps -p %d --no-headers -o lstart", pid);
         Process p = execBashCommand(cmd,"LC_TIME=en_US");
         BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        sleepNoInterrupt(10);
         // command returns start time on single line if process exists or empty output 
         String result = out.readLine();        
         if (result == null) return true; // no process
@@ -133,6 +132,7 @@ public class LoopAppRunner {
             logger.info("resulting time: " + result);
             DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy", new Locale("en", "US"));
             Date date =  df.parse(result);                
+            System.out.println("process date: " + date + " , check date: " + d);
             if (date.after(d)) return true;
             else return false;
         }
@@ -160,7 +160,7 @@ public class LoopAppRunner {
         deletePidFile();
         logger.info("executing: " + cmd);
         execBashCommand(cmd);
-        sleepNoInterrupt(10);
+        sleepNoInterrupt(2000); // give some time for the jvm with rsssucker to start running
         Date now = new Date(); 
         int pid;        
         try { pid = readPid(); }
