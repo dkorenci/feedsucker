@@ -24,6 +24,7 @@ import rsssucker.core.messages.IMessageReceiver;
 import rsssucker.core.messages.Messages;
 import rsssucker.core.messages.ShutdownException;
 import rsssucker.core.messages.MessageFileMonitor;
+import rsssucker.core.messages.MessageReceiver;
 import rsssucker.data.Factory;
 import rsssucker.data.cache.Filter;
 import rsssucker.data.entity.Feed;
@@ -39,7 +40,7 @@ import rsssucker.tools.HostExtractor;
 /**
  * Initialization and workflow the the application.
  */
-public class RssSuckerApp implements IMessageReceiver {
+public class RssSuckerApp {
     
     private Date lastFeedRefresh;
     // feeds refresh interval, in minutes
@@ -49,7 +50,7 @@ public class RssSuckerApp implements IMessageReceiver {
     private PropertiesReader properties;    
     private EntityManagerFactory emf;
     private List<RessurectingNewspaper> npapers;
-    private Queue<String> messageQueue;
+    private MessageReceiver messageReceiver;
     private MessageFileMonitor messageMonitor;
     private Filter filter;
     private List<Feed> feeds;    
@@ -137,28 +138,15 @@ public class RssSuckerApp implements IMessageReceiver {
     }
            
     private void initMessaging() {
-        initializeMessageQueue();
-        messageMonitor = new MessageFileMonitor("messages.txt", this);
+        messageReceiver = new MessageReceiver();
+        messageMonitor = new MessageFileMonitor("messages.txt", messageReceiver);
         messageMonitor.start();
-    }
-    
-    private void initializeMessageQueue() {
-        messageQueue = new ArrayDeque<>();
-    }
-    
-    @Override
-    public synchronized void receiveMessage(String msg) { messageQueue.add(msg); }    
-    // returns next message from the message queue, or null if there are no messages
-    private synchronized String readMessage() { return messageQueue.poll(); }
-        
+    }  
+       
     // read messages in the queue and do appropriate actions
-    private synchronized void processMessages() 
+    private void checkMessages() 
             throws ShutdownException, FinishAndShutdownException {
-        String msg;
-        while ((msg = readMessage()) != null) {
-            if (msg.equals(Messages.SHUTDOWN_NOW)) throw new ShutdownException();
-            if (msg.equals(Messages.FINISH_AND_SHUTDOWN)) throw new FinishAndShutdownException();
-        }
+        messageReceiver.checkMessages();
     }
     
     private boolean readProperties() {
@@ -220,10 +208,10 @@ public class RssSuckerApp implements IMessageReceiver {
                    logger.logInfo("main thread sleep interrupted.", ex);
                 }
                 sleep = false;
-                processMessages();
+                checkMessages();
             }            
             else { 
-                processMessages();
+                checkMessages();
                 // decide weather to do refresh
                 boolean refresh = false; 
                 if (lastFeedRefresh == null) refresh = true;
@@ -234,7 +222,7 @@ public class RssSuckerApp implements IMessageReceiver {
                     lastFeedRefresh = new Date();
                 }                
                 sleep = true;
-                processMessages();
+                checkMessages();
             }
         }
     } catch (ShutdownException | FinishAndShutdownException ex) { shutdown(); }
@@ -266,7 +254,7 @@ public class RssSuckerApp implements IMessageReceiver {
         if (feeds.size() < localNumThreads) localNumThreads = feeds.size();
         executor = Executors.newFixedThreadPool(localNumThreads);        
         for (Feed f : feeds) {
-            try { processMessages(); } catch (FinishAndShutdownException e) { shutdown = true; }
+            try { checkMessages(); } catch (FinishAndShutdownException e) { shutdown = true; }
             IArticleScraper scraper = getNewspaper(); if (scraper == null) continue;
             IFeedReader reader = getFeedReader();            
             FeedProcessor processor = new FeedProcessor(f, emf, reader, scraper, filter);
@@ -276,7 +264,7 @@ public class RssSuckerApp implements IMessageReceiver {
         executor.shutdown();
         logger.info("waiting for FeedProcessor threads to finish");
         while (executor.isTerminated() == false) {
-            try { processMessages(); } catch (FinishAndShutdownException e) { shutdown = true; }
+            try { checkMessages(); } catch (FinishAndShutdownException e) { shutdown = true; }
             try { executor.awaitTermination(FEED_REFRESH_SLEEP, TimeUnit.MILLISECONDS); }
             catch (InterruptedException e) {}           
         }
