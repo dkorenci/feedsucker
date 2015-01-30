@@ -9,6 +9,8 @@ import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
@@ -18,9 +20,10 @@ import rsssucker.config.PropertiesReader;
 import rsssucker.config.RssConfig;
 import rsssucker.core.feedprocessor.FeedProcessor;
 import rsssucker.core.messages.FinishAndShutdownException;
+import rsssucker.core.messages.IMessageReceiver;
 import rsssucker.core.messages.Messages;
 import rsssucker.core.messages.ShutdownException;
-import rsssucker.core.messages.ShutdownMonitor;
+import rsssucker.core.messages.MessageFileMonitor;
 import rsssucker.data.Factory;
 import rsssucker.data.cache.Filter;
 import rsssucker.data.entity.Feed;
@@ -36,7 +39,7 @@ import rsssucker.tools.HostExtractor;
 /**
  * Initialization and workflow the the application.
  */
-public class RssSuckerApp {
+public class RssSuckerApp implements IMessageReceiver {
     
     private Date lastFeedRefresh;
     // feeds refresh interval, in minutes
@@ -47,7 +50,7 @@ public class RssSuckerApp {
     private EntityManagerFactory emf;
     private List<RessurectingNewspaper> npapers;
     private Queue<String> messageQueue;
-    private ShutdownMonitor shutdownMonitor;
+    private MessageFileMonitor messageMonitor;
     private Filter filter;
     private List<Feed> feeds;    
     
@@ -127,19 +130,24 @@ public class RssSuckerApp {
             if (filter != null) Filter.closeFilter();
         }
         catch (Exception e) { logger.logErr("failed to cleanup", e); }
+        if (messageMonitor != null) {
+            messageMonitor.stop();
+            try { Thread.sleep(50); } catch (InterruptedException ex) { }
+        }
     }
            
     private void initMessaging() {
         initializeMessageQueue();
-        shutdownMonitor = new ShutdownMonitor(this);
-        (new Thread(shutdownMonitor)).start();
+        messageMonitor = new MessageFileMonitor("messages.txt", this);
+        messageMonitor.start();
     }
     
     private void initializeMessageQueue() {
         messageQueue = new ArrayDeque<>();
     }
     
-    public synchronized void sendMessage(String msg) { messageQueue.add(msg); }    
+    @Override
+    public synchronized void receiveMessage(String msg) { messageQueue.add(msg); }    
     // returns next message from the message queue, or null if there are no messages
     private synchronized String readMessage() { return messageQueue.poll(); }
         

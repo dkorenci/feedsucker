@@ -16,38 +16,60 @@ import rsssucker.log.LoggersManager;
 import rsssucker.log.RssSuckerLogger;
 
 /**
- * Monitors a file for shutdown messages and signals it to the main app.
+ * Monitors a file for text messages and when they are received, 
+ * send them to IMessageReceiver.
  */
-public class ShutdownMonitor implements Runnable {
+public class MessageFileMonitor implements Runnable {
 
-    private RssSuckerApp app;
+    private IMessageReceiver receiver;
     
     private static final RssSuckerLogger logger = 
-            new RssSuckerLogger(ShutdownMonitor.class.getName());     
+            new RssSuckerLogger(MessageFileMonitor.class.getName());     
     
     // file checking interval, in milis
     private static final int REFRESH_INTERVAL = 1 * 1000;
     // message file
-    private static final String messageFile = "messages.txt";
+    private final String messageFile;
     
-    public ShutdownMonitor(RssSuckerApp app) { this.app = app; }
+    private Thread runnerThread = null;
+    private boolean stop; // flag to signal stopping the run
+    
+    public MessageFileMonitor(String file, IMessageReceiver r) {         
+        this.messageFile = file;
+        this.receiver = r; 
+    }
      
     @Override
     public void run() {
         logger.logInfo("ShutdownMonitor starting", null);
         while (true) {
-            String msg = shutdownMessage();
-            if (msg != null) shutdownApp(msg);
+            if (stop) break;
+            String msg = readMessage();
+            if (msg != null) sendMessage(msg);
             try { Thread.sleep(REFRESH_INTERVAL); } 
-            catch (InterruptedException ex) {
-                logger.logErr("ShutdownMonitor wait interrupted", ex);
-            }
+            catch (InterruptedException ex) { }
         }
     }   
     
+    /** Start new thread running the monitor, if it is not already running.  */
+    public void start() {
+        if (runnerThread == null || !runnerThread.isAlive()) {
+            stop = false;
+            runnerThread = new Thread(this); 
+            runnerThread.start();
+        }
+    }
+    /** If the monitor is running in a thread, send stop signal. */
+    public void stop() {
+        if (runnerThread != null && runnerThread.isAlive()) {
+            stop = true;
+            runnerThread.interrupt();
+        }
+    }
+    
     // check messageFile for shutdownMessages and returns the first one read
     // if no messages are found or an error occurs, return null
-    private String shutdownMessage() {
+    private String readMessage() {
         BufferedReader reader = null;
         try {
             Path path = Paths.get(messageFile);        
@@ -77,8 +99,9 @@ public class ShutdownMonitor implements Runnable {
         }
     }
 
-    private void shutdownApp(String msg) {
-        app.sendMessage(msg);
+    // send message to the receiver
+    private void sendMessage(String msg) {
+        receiver.receiveMessage(msg);
     }
     
 }
