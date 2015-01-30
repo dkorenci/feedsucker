@@ -2,7 +2,6 @@ package rsssucker.core;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,6 +15,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import rsssucker.config.PropertiesReader;
 import rsssucker.config.RssConfig;
+import rsssucker.core.messages.FinishAndShutdownException;
+import rsssucker.core.messages.MessageFileMonitor;
+import rsssucker.core.messages.MessageReceiver;
+import rsssucker.core.messages.ShutdownException;
 import rsssucker.log.RssSuckerLogger;
 import rsssucker.util.Timer;
 
@@ -24,13 +27,16 @@ import rsssucker.util.Timer;
  */
 public class LoopAppRunner {
     
-    private static final int DEFAULT_RESTART_INTERVAL = 300; // in minutes
+    private static final int DEFAULT_RESTART_INTERVAL = 300; // in minutes    
     private static final long WAIT_FOR_SHUTDOWN =  15 * 1000; // in milis
+    private static final String MESSAGE_FILE = "loop_messages.txt";
     
     private String javaBin; // folder with java runtime, compiler etc. 
     private int restartInterval;    
     
     private PropertiesReader properties;
+    private MessageReceiver messageReceiver;
+    private MessageFileMonitor messageMonitor;
     
     public LoopAppRunner(String java) { javaBin = java; }
     
@@ -46,6 +52,7 @@ public class LoopAppRunner {
 //        if (true) return;
         try {        
             
+        initMessaging();
         readProperties();
             
         while (true) {
@@ -62,7 +69,7 @@ public class LoopAppRunner {
                 break;
             }            
             // sleep
-            sleepNoInterrupt(restartInterval);
+            sleepCheck(restartInterval);
             // shutdown running instance
             try {          
                 boolean result = shutdownRsssucker();
@@ -76,14 +83,35 @@ public class LoopAppRunner {
         }
         
         }
-        catch (Exception e) { logger.info("error during loop execution:\n"+e.getMessage()); }
+        catch (ShutdownException | FinishAndShutdownException ex) {
+             logger.info("shutting down as messaged:\n"+ex.getMessage());
+        }
+        catch (Exception e) { logger.info("error during loop execution:\n"+e.getMessage()); }        
+        finally { // shutdown app and do cleanup
+            try { shutdownRsssucker(); } catch (Exception ex) {
+                logger.info("error shutting the app down:\n" + ex.getMessage());                
+            }
+            cleanup();
+        }
     }
+
+    // cleanup resources before end
+    private void cleanup() {
+        messageMonitor.stop();                
+    }
+    
+    private void initMessaging() {
+        messageReceiver = new MessageReceiver();
+        messageMonitor = new MessageFileMonitor(MESSAGE_FILE, messageReceiver);
+        messageMonitor.start();
+    }    
     
     private void readProperties() throws IOException {
         properties = new PropertiesReader(RssConfig.propertiesFile);
         restartInterval = 
-         properties.readIntProperty("restart_interval", DEFAULT_RESTART_INTERVAL);
-        
+         properties.readIntProperty("restart_interval", DEFAULT_RESTART_INTERVAL);   
+        // turn minutes to miliseconds
+        restartInterval *= 60 * 1000;
     }
     
     // try to shutdown app, return true if successful
@@ -93,12 +121,12 @@ public class LoopAppRunner {
         Date now = new Date();
         try { execBashCommand("./rsssucker.sh STOP NOW"); }
         catch (IOException ex) {
-            logger.info("stopping rsssucker failed:\n" + ex.getMessage());
+            logger.info("executing STOP command failed:\n" + ex.getMessage());
         }          
-        sleepNoInterrupt(WAIT_FOR_SHUTDOWN);
+        sleep(WAIT_FOR_SHUTDOWN);
         // if the process is still active, try to kill        
         if (!processNotExist(pid, now)) { 
-            logger.info("app did not shut down, killing it");
+            logger.info("could not shut down the app, killing it");
             now = new Date();
             killProcess(pid); 
             if (!processNotExist(pid, now)) return false;
@@ -140,18 +168,35 @@ public class LoopAppRunner {
     
     // sleep at least designated number of milliseconds, 
     // continue sleep after each interrupt until the number is reached
-    private void sleepNoInterrupt(long milis) {
-        long toSleep = milis;
+    private void sleep(long milisToSleep) {        
         Timer timer;
         while (true) {
             timer = new Timer();
-            try { Thread.sleep(toSleep+5); } 
+            try { Thread.sleep(milisToSleep+2); } 
             catch (InterruptedException ex) { logger.info("sleep interrupted"); }
             long elapsed = timer.milisFromStart();
-            toSleep -= elapsed;
-            if (toSleep <= 0) break;
+            milisToSleep -= elapsed;
+            if (milisToSleep <= 0) break;
         }        
     }
+    
+    // sleep at least designated number of milliseconds, periodically 
+    // check for shutdown messages
+    private void sleepCheck(long milisToSleep) 
+            throws ShutdownException, FinishAndShutdownException {
+        long sleepInterval = 200; // period between checks
+        Timer timer;
+        while (true) {
+            messageReceiver.checkMessages();
+            timer = new Timer();
+            try { Thread.sleep(sleepInterval); } 
+            catch (InterruptedException ex) { logger.info("sleep interrupted"); }
+            long elapsed = timer.milisFromStart();
+            milisToSleep -= elapsed;
+            if (milisToSleep <= 0) break;
+        }        
+    }
+    
     
     // execute rsssucker as a separate process, via startup script
     // return true iff started successfuly
@@ -160,7 +205,7 @@ public class LoopAppRunner {
         deletePidFile();
         logger.info("executing: " + cmd);
         execBashCommand(cmd);
-        sleepNoInterrupt(2000); // give some time for the jvm with rsssucker to start running
+        sleep(2000); // give some time for the jvm with rsssucker to start running
         Date now = new Date(); 
         int pid;        
         try { pid = readPid(); }

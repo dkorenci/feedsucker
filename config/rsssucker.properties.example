@@ -11,5 +11,5 @@ mediadef_file = config/mediadef/mediadef.txt
 num_threads = 10
 num_npapers = 10
 
-# loop
+# loop restart interval, in minutes
 restart_interval = 20
