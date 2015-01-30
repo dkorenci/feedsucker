@@ -18,6 +18,15 @@ function get_java_bin {
   fi
 }
 
+# MESSAGING CONSTANTS
+# message strings, must be in sync with Messages class in the application
+SHUTDOWN_NOW="close" 
+SHUTDOWN_FINNISH="finish_and_close"  
+#message file names, must be in sync with code that inits MessageFileMonitors
+APP_MSG_FILE="messages.txt"
+LOOP_MSG_FILE="loop_messages.txt"
+
+# START SCRIPT LOGIC
 ACTION=$1
 
 if [ "$ACTION" == "START" ]; then
@@ -29,20 +38,25 @@ elif [ "$ACTION" == "TOOL" ]; then
   JAVA_BIN=$(get_java_bin $2) 
   JAVA_CMD="$JAVA_BIN""java"
   $JAVA_CMD -jar RssSucker.jar $2 $3
+elif [ "$ACTION" == "LOOP" ]; then  
+  if [ "$2" == "STOP" ]; then     
+    echo $SHUTDOWN_NOW > $LOOP_MSG_FILE
+  else
+    JAVA_BIN=$(get_java_bin $2) 
+    JAVA_CMD="$JAVA_BIN""java"
+    $JAVA_CMD -jar RssSucker.jar $2 LOOP
+  fi   
 elif [ "$ACTION" == "BUILD" ]; then
   JAVA_BIN=$2
   ./build.sh $JAVA_BIN > build_out.txt 2>&1
 elif [ "$ACTION" == "STOP" ]; then
-  MSG_FILE="messages.txt" # file to send messages to program
-  # commands to write to the file
-  SHUTDOWN_NOW="close" 
-  SHUTDOWN_FINNISH="finish_and_close"  
+   # file to send messages to program
   # determines how to shutodown
   MODE=$(default_ifundef $2 "NOW")
   if [ "$MODE" == "NOW" ]; then     
-    echo $SHUTDOWN_NOW > $MSG_FILE
+    echo $SHUTDOWN_NOW > $APP_MSG_FILE
   fi
   if [ "$MODE" == "WAIT" ]; then     
-    echo $SHUTDOWN_FINNISH > $MSG_FILE
+    echo $SHUTDOWN_FINNISH > $APP_MSG_FILE
   fi  
 fi	
