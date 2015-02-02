@@ -12,6 +12,7 @@ manifest.txt
 RssSucker.jar
 pid.txt
 run_output.txt
+loop_output.txt
 
 # database connection settings
 src/META-INF/persistence.xml

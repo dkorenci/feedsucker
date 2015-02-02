@@ -41,10 +41,10 @@ elif [ "$ACTION" == "TOOL" ]; then
 elif [ "$ACTION" == "LOOP" ]; then  
   if [ "$2" == "STOP" ]; then     
     echo $SHUTDOWN_NOW > $LOOP_MSG_FILE
-  else
-    JAVA_BIN=$(get_java_bin $2) 
+  elif [ "$2" == "START" ]; then
+    JAVA_BIN=$(get_java_bin $3) 
     JAVA_CMD="$JAVA_BIN""java"
-    $JAVA_CMD -jar RssSucker.jar $2 LOOP
+    $JAVA_CMD -jar RssSucker.jar $3 LOOP > loop_output.txt &
   fi   
 elif [ "$ACTION" == "BUILD" ]; then
   JAVA_BIN=$2
