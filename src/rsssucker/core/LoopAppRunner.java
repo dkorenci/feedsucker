@@ -29,6 +29,7 @@ public class LoopAppRunner {
     
     private static final int DEFAULT_RESTART_INTERVAL = 300; // in minutes    
     private static final long WAIT_FOR_SHUTDOWN =  15 * 1000; // in milis
+    private static final long WAIT_FOR_STARTUP =  10 * 1000; // in milis
     private static final String MESSAGE_FILE = "loop_messages.txt";
     
     private String javaBin; // folder with java runtime, compiler etc. 
@@ -41,7 +42,7 @@ public class LoopAppRunner {
     public LoopAppRunner(String java) { javaBin = java; }
     
     private static final RssSuckerLogger logger = 
-            new RssSuckerLogger(RssSuckerApp.class.getName());    
+            new RssSuckerLogger(LoopAppRunner.class.getName());    
     
     public void run() {
 //        try {
@@ -54,12 +55,12 @@ public class LoopAppRunner {
             
         initMessaging();
         readProperties();
-            
+        logger.info("restart interval: " + restartInterval);
         while (true) {
             // start new instance
             try {
                 boolean result = startRsssucker();
-                if (result) logger.info("rsssucker started ok");                
+                if (result) logger.info("rsssucker started ok");// info("rsssucker started ok");                
                 else {
                     logger.info("starting rsssucker failed");
                     break;
@@ -122,7 +123,7 @@ public class LoopAppRunner {
         try { execBashCommand("./rsssucker.sh STOP NOW"); }
         catch (IOException ex) {
             logger.info("executing STOP command failed:\n" + ex.getMessage());
-        }          
+        }        
         sleep(WAIT_FOR_SHUTDOWN);
         // if the process is still active, try to kill        
         if (!processNotExist(pid, now)) { 
@@ -154,7 +155,10 @@ public class LoopAppRunner {
         BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
         // command returns start time on single line if process exists or empty output 
         String result = out.readLine();        
-        if (result == null) return true; // no process
+        if (result == null) { // no process
+            logger.info("no process with given pid: " + pid);
+            return true;
+        } 
         else { // check process start date            
             // get start time, formatting should be: Wed Jan 28 10:06:04 2015            
             logger.info("resulting time: " + result);
@@ -185,13 +189,13 @@ public class LoopAppRunner {
     private void sleepCheck(long milisToSleep) 
             throws ShutdownException, FinishAndShutdownException {
         long sleepInterval = 200; // period between checks
-        Timer timer;
+        Timer timer;        
         while (true) {
             messageReceiver.checkMessages();
             timer = new Timer();
             try { Thread.sleep(sleepInterval); } 
             catch (InterruptedException ex) { logger.info("sleep interrupted"); }
-            long elapsed = timer.milisFromStart();
+            long elapsed = timer.milisFromStart();            
             milisToSleep -= elapsed;
             if (milisToSleep <= 0) break;
         }        
@@ -205,15 +209,32 @@ public class LoopAppRunner {
         deletePidFile();
         logger.info("executing: " + cmd);
         execBashCommand(cmd);
-        sleep(2000); // give some time for the jvm with rsssucker to start running
+        sleep(WAIT_FOR_STARTUP); // give some time for the jvm with rsssucker to start running
         Date now = new Date(); 
         int pid;        
         try { pid = readPid(); }
-        catch (IOException ex) { return false; } // pid file does not exist
+        catch (IOException ex) { 
+            logger.info("error reading process id");
+            return false; 
+        } // pid file does not exist
         // now check process itself, just to be sure
-        if (processNotExist(pid, now)) return false;
+        if (processNotExist(pid, now)) { 
+            logger.info("process does not exist");
+            return false;
+        }
         else return true;
     }
+    
+    // run rsssucker, this execution shoudl correspond to run.sh script
+    private Process execRsssucker(String java) throws IOException {
+        String javaCmd;
+        if ("default_java".equals(javaBin)) javaCmd = "java";
+        else javaCmd = javaBin+java;
+        ProcessBuilder pb = new ProcessBuilder(javaCmd, 
+                "-jar -Xmx4g -XX:+UseConcMarkSweepGC RssSucker.jar > run_output.txt");
+        Process p = pb.start();        
+        return p;
+    }          
     
     private void deletePidFile() {
         File f = new File("pid.txt");
@@ -223,7 +244,7 @@ public class LoopAppRunner {
      private static Process execBashCommand(String cmd) throws IOException {
          return execBashCommand(cmd, null);
      }
-    
+
     // run with specified environment variables set in format "VAR1=VAL1;VAR2=VAL2;..."
     private static Process execBashCommand(String cmd, String e) throws IOException {
         // return Runtime.getRuntime().exec(new String[]{"bash", "-c", cmd});           

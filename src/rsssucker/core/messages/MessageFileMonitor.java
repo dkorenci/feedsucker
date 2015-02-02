@@ -17,7 +17,7 @@ import rsssucker.log.RssSuckerLogger;
 
 /**
  * Monitors a file for text messages and when they are received, 
- * send them to IMessageReceiver.
+ * send them to IMessageReceiver. Each monitor must have its own file.
  */
 public class MessageFileMonitor implements Runnable {
 
@@ -40,8 +40,9 @@ public class MessageFileMonitor implements Runnable {
     }
      
     @Override
+    /** This is entry point for a thread. Monitor must be started with start() method. */
     public void run() {
-        logger.logInfo("ShutdownMonitor starting", null);
+        logger.logInfo("Message Monitor starting", null);
         while (true) {
             if (stop) break;
             String msg = readMessage();
@@ -54,6 +55,7 @@ public class MessageFileMonitor implements Runnable {
     /** Start new thread running the monitor, if it is not already running.  */
     public void start() {
         if (runnerThread == null || !runnerThread.isAlive()) {
+            deleteMessageFile();
             stop = false;
             runnerThread = new Thread(this); 
             runnerThread.start();
@@ -99,6 +101,14 @@ public class MessageFileMonitor implements Runnable {
         }
     }
 
+    private void deleteMessageFile() {
+        Path path = Paths.get(messageFile); 
+        if (Files.exists(path)) {
+            try { Files.delete(path); } 
+            catch (IOException ex) { logger.logErr("error deleting message file", ex); }
+        }
+    }
+    
     // send message to the receiver
     private void sendMessage(String msg) {
         receiver.receiveMessage(msg);
