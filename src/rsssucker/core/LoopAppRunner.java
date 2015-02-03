@@ -28,8 +28,9 @@ import rsssucker.util.Timer;
 public class LoopAppRunner {
     
     private static final int DEFAULT_RESTART_INTERVAL = 300; // in minutes    
-    private static final long WAIT_FOR_SHUTDOWN =  15 * 1000; // in milis
-    private static final long WAIT_FOR_STARTUP =  10 * 1000; // in milis
+    private static final long WAIT_FOR_SHUTDOWN =  30 * 1000; // in milis
+    private static final long WAIT_BEFORE_STARTUP =  2 * 1000; // in milis
+    private static final long WAIT_FOR_STARTUP =  1 * 1000; // in milis
     private static final String MESSAGE_FILE = "loop_messages.txt";
     
     private String javaBin; // folder with java runtime, compiler etc. 
@@ -85,7 +86,7 @@ public class LoopAppRunner {
         
         }
         catch (ShutdownException | FinishAndShutdownException ex) {
-             logger.info("shutting down as messaged:\n"+ex.getMessage());
+             logger.info("shutting down as messaged: "+ex.getMessage());
         }
         catch (Exception e) { logger.info("error during loop execution:\n"+e.getMessage()); }        
         finally { // shutdown app and do cleanup
@@ -133,7 +134,10 @@ public class LoopAppRunner {
             if (!processNotExist(pid, now)) return false;
             else return true;
         }
-        else return true;
+        else { 
+            logger.info("application is shut down");
+            return true;
+        }
     }
     
     // read rsssucker's process id from pid.txt (on first and only line of file)
@@ -207,6 +211,7 @@ public class LoopAppRunner {
     private boolean startRsssucker() throws IOException, ParseException {    
         String cmd = String.format("./rsssucker.sh %s %s", "START", javaBin);        
         deletePidFile();
+        sleep(WAIT_BEFORE_STARTUP); // wait so that there is no collision with log files
         logger.info("executing: " + cmd);
         execBashCommand(cmd);
         sleep(WAIT_FOR_STARTUP); // give some time for the jvm with rsssucker to start running

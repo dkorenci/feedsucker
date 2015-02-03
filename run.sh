@@ -6,6 +6,6 @@ JAVA="$JAVA_BIN""java" # java 7 or above required
 # set max. heap size to 4 gigs, use runtime garbage collection
 ARGS="-Xmx4g -XX:+UseConcMarkSweepGC" #-Dfile.encoding=UTF-8 
 # run RssSucker and write PID 
-$JAVA -jar $ARGS RssSucker.jar > run_output.txt &
+$JAVA -jar $ARGS RssSucker.jar > run_output.txt 2>&1 &
 echo $! > pid.txt
 
