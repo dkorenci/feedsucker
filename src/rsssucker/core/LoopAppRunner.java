@@ -31,6 +31,7 @@ public class LoopAppRunner {
     private static final long WAIT_FOR_SHUTDOWN =  30 * 1000; // in milis
     private static final long WAIT_BEFORE_STARTUP =  2 * 1000; // in milis
     private static final long WAIT_FOR_STARTUP =  1 * 1000; // in milis
+    private static final long WAIT_AFTER_KILL =  10 * 1000; // in milis
     private static final String MESSAGE_FILE = "loop_messages.txt";
     
     private String javaBin; // folder with java runtime, compiler etc. 
@@ -61,13 +62,12 @@ public class LoopAppRunner {
             // start new instance
             try {
                 boolean result = startRsssucker();
-                if (result) logger.info("rsssucker started ok");// info("rsssucker started ok");                
-                else {
-                    logger.info("starting rsssucker failed");
+                if (!result) {
+                    logger.info("starting app failed - exiting");
                     break;
                 }                
             } catch (IOException ex) {
-                logger.info("starting rsssucker failed:\n" + ex.getMessage());
+                logger.info("!error starting app: " + ex.getMessage() + " , exiting");
                 break;
             }            
             // sleep
@@ -76,22 +76,23 @@ public class LoopAppRunner {
             try {          
                 boolean result = shutdownRsssucker();
                 if (result == false) {
-                    logger.info("error shutting the app down");
+                    logger.info("shutting down the app failed - exiting ");
                     break;
                 }
             } catch (Exception ex) {
-                logger.info("error shutting the app down:\n" + ex.getMessage());
+                logger.info("!error shutting the app down:\n" + ex.getMessage());
             }
         }
         
         }
         catch (ShutdownException | FinishAndShutdownException ex) {
-             logger.info("shutting down as messaged: "+ex.getMessage());
+             logger.info("MESSAGE INITIATED SHUTDOWN");
         }
-        catch (Exception e) { logger.info("error during loop execution:\n"+e.getMessage()); }        
+        catch (Exception e) { logger.info("!error during execution:\n"+e.getMessage()); }        
         finally { // shutdown app and do cleanup
+            logger.info("EXITING LOOP, START CLEANUP");
             try { shutdownRsssucker(); } catch (Exception ex) {
-                logger.info("error shutting the app down:\n" + ex.getMessage());                
+                logger.info("!error shutting the app down:\n" + ex.getMessage());                
             }
             cleanup();
         }
@@ -119,6 +120,7 @@ public class LoopAppRunner {
     // try to shutdown app, return true if successful
     private boolean shutdownRsssucker() throws Exception {
         int pid = readPid(); // read current RssSucker instance's process id
+        logger.info("ATTEMPTING TO SHUTDOWN APP");
         // try regular shutdown   
         Date now = new Date();
         try { execBashCommand("./rsssucker.sh STOP NOW"); }
@@ -131,8 +133,15 @@ public class LoopAppRunner {
             logger.info("could not shut down the app, killing it");
             now = new Date();
             killProcess(pid); 
-            if (!processNotExist(pid, now)) return false;
-            else return true;
+            sleep(WAIT_AFTER_KILL);
+            if (!processNotExist(pid, now)) {
+                logger.info("app is not killed");
+                return false;
+            }
+            else {
+                logger.info("app is killed");
+                return true;
+            }
         }
         else { 
             logger.info("application is shut down");
@@ -154,23 +163,32 @@ public class LoopAppRunner {
     // return true if process with specified id that started before d doesnt exist, ie 
     // process with this id does not exist or exists but its start date is after d
     private boolean processNotExist(int pid, Date d) throws IOException, ParseException {
+        logger.info("checking existance of process with pid " + pid +
+                " that started before " + d );
         String cmd = String.format("ps -p %d --no-headers -o lstart", pid);
         Process p = execBashCommand(cmd,"LC_TIME=en_US");
         BufferedReader out = new BufferedReader(new InputStreamReader(p.getInputStream()));
         // command returns start time on single line if process exists or empty output 
         String result = out.readLine();        
         if (result == null) { // no process
-            logger.info("no process with given pid: " + pid);
+            logger.info("process with this pid does not exist");
             return true;
         } 
         else { // check process start date            
             // get start time, formatting should be: Wed Jan 28 10:06:04 2015            
-            logger.info("resulting time: " + result);
+            logger.info("process with this pid exists, checking time");
+            logger.info("process start time read from ps output: " + result);
             DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy", new Locale("en", "US"));
             Date date =  df.parse(result);                
-            System.out.println("process date: " + date + " , check date: " + d);
-            if (date.after(d)) return true;
-            else return false;
+            logger.info("process start time parsed: " + date + " , test date: " + d);
+            if (date.after(d)) {
+                logger.info("process did not start before " + d);
+                return true;
+            }
+            else {
+                logger.info("process started before " + d);
+                return false;
+            }
         }
     }
     
@@ -192,6 +210,7 @@ public class LoopAppRunner {
     // check for shutdown messages
     private void sleepCheck(long milisToSleep) 
             throws ShutdownException, FinishAndShutdownException {
+        logger.info("STARTING SLEEP PERIOD");
         long sleepInterval = 200; // period between checks
         Timer timer;        
         while (true) {
@@ -208,7 +227,8 @@ public class LoopAppRunner {
     
     // execute rsssucker as a separate process, via startup script
     // return true iff started successfuly
-    private boolean startRsssucker() throws IOException, ParseException {    
+    private boolean startRsssucker() throws IOException, ParseException { 
+        logger.info("STARTING THE APP");
         String cmd = String.format("./rsssucker.sh %s %s", "START", javaBin);        
         deletePidFile();
         sleep(WAIT_BEFORE_STARTUP); // wait so that there is no collision with log files
@@ -218,16 +238,19 @@ public class LoopAppRunner {
         Date now = new Date(); 
         int pid;        
         try { pid = readPid(); }
-        catch (IOException ex) { 
+        catch (Exception ex) { 
             logger.info("error reading process id");
             return false; 
         } // pid file does not exist
         // now check process itself, just to be sure
         if (processNotExist(pid, now)) { 
-            logger.info("process does not exist");
+            logger.info("app did not start, process with id does not exist");
             return false;
         }
-        else return true;
+        else { 
+            logger.info("app has started");
+            return true;
+        }
     }
     
     // run rsssucker, this execution shoudl correspond to run.sh script
