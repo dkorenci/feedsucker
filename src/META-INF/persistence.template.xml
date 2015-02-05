@@ -10,10 +10,12 @@
   <!-- <non-jta-data-source>java:comp/env/jdbc/tutorialDS</non-jta-data-source> -->
   <properties>   
    <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-   <property name="hibernate.connection.url" value="jdbc:postgresql://localhost/rsssucker"/>
    <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+   <!-- 
    <property name="hibernate.connection.username" value="rsssucker"/>
-   <property name="hibernate.connection.password" value="rsssucker"/>      
+   <property name="hibernate.connection.password" value="rsssucker"/>  
+   <property name="hibernate.connection.url" value="jdbc:postgresql://localhost/rsssucker_devel"/> 
+   -->
    <!-- if this is true, hibernate will print (to stdout) the SQL it executes, 
     so you can check it to ensure it's not doing anything crazy -->
    <property name='hibernate.show_sql' value='false' />

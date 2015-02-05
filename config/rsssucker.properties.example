@@ -13,3 +13,8 @@ num_npapers = 10
 
 # loop restart interval, in minutes
 restart_interval = 20
+
+# database connection
+db_url = localhost/rsssucker_devel
+db_username = rsssucker
+db_password = rsssucker
