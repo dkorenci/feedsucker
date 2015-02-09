@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import rsssucker.article.ArticleData;
 import rsssucker.article.IArticleScraper;
-import rsssucker.config.PropertiesReader;
+import javautils.PropertiesReader;
 import rsssucker.config.RssConfig;
 
 /**

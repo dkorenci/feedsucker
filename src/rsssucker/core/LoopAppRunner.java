@@ -13,7 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import rsssucker.config.PropertiesReader;
+import javautils.PropertiesReader;
 import rsssucker.config.RssConfig;
 import rsssucker.core.messages.FinishAndShutdownException;
 import rsssucker.core.messages.MessageFileMonitor;
