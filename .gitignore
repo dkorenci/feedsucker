@@ -3,6 +3,7 @@ build
 lib/cachedir
 log/*log_*
 build.xml
+tmp
 
 # build and run files
 build_log.txt
@@ -22,9 +23,10 @@ config/rsssucker.properties
 mediadef.txt
 config/local/**
 
-# pydev project files
+# pydev project and compiled files
 .project
 .pydevproject
+*.pyc
 
 #data_analysis/**/*.txt
 

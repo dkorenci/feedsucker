@@ -1,16 +1,12 @@
 package rsssucker.core;
 
 import java.io.IOException;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
@@ -20,8 +16,6 @@ import javautils.PropertiesReader;
 import rsssucker.config.RssConfig;
 import rsssucker.core.feedprocessor.FeedProcessor;
 import rsssucker.core.messages.FinishAndShutdownException;
-import rsssucker.core.messages.IMessageReceiver;
-import rsssucker.core.messages.Messages;
 import rsssucker.core.messages.ShutdownException;
 import rsssucker.core.messages.MessageFileMonitor;
 import rsssucker.core.messages.MessageReceiver;
@@ -35,7 +29,7 @@ import rsssucker.data.mediadef.MediadefPersister;
 import rsssucker.feeds.IFeedReader;
 import rsssucker.feeds.RomeFeedReader;
 import rsssucker.log.RssSuckerLogger;
-import rsssucker.tools.HostExtractor;
+import rsssucker.tools.DatabaseTools;
 
 /**
  * Initialization and workflow the the application.
@@ -95,9 +89,16 @@ public class RssSuckerApp {
 
     private static void runTools(String tool, String javaBin) {
         tool = tool.toLowerCase();
-        if ("hosts".equals(tool)) HostExtractor.printHosts();
-        if ("loop".equals(tool)) new LoopAppRunner(javaBin).run();
-        else System.out.println("unrecognized tool command");
+        try {
+            if ("hosts".equals(tool)) new DatabaseTools().printHosts();
+            if ("table".equals(tool)) new DatabaseTools().exportDatabaseAsTable();
+            if ("loop".equals(tool)) new LoopAppRunner(javaBin).run();
+            else System.out.println("unrecognized tool command");
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace(System.out);            
+        }
     }
     
     private void initialize() {

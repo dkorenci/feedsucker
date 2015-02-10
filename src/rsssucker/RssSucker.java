@@ -4,6 +4,8 @@
  */
 package rsssucker;
 
+import com.google.common.escape.Escaper;
+import com.google.common.escape.Escapers;
 import com.sun.syndication.feed.synd.SyndCategory;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -44,6 +46,7 @@ import rsssucker.data.mediadef.MediadefEntity;
 import rsssucker.data.mediadef.MediadefParser;
 import rsssucker.data.mediadef.MediadefPersister;
 import rsssucker.log.LoggersManager;
+import rsssucker.tools.DatabaseTools;
 import rsssucker.util.HttpUtils;
 
 /**
@@ -61,9 +64,20 @@ public class RssSucker {
     
     public static void main(String[] args) throws Exception {        
         //testUrlRedirect();
-        testGoogleNewsUrlParsing();
+        //testGoogleNewsUrlParsing();
+        //testEscaping();
+        new DatabaseTools().exportDatabaseAsTable();
     }
 
+
+    private static void testEscaping() {
+        char delimit = '\t';
+        String text = "who can\tescape the tab\tmonster";
+        Escaper e = Escapers.builder().addEscape(delimit, "\\"+delimit).build();
+        System.out.println(text);
+        System.out.println(e.escape(text));
+    }    
+    
     private static void testGoogleNewsUrlParsing() throws Exception {
         //String url = "http://news.google.com/news/url?sr=1&ct2=us%2F0_0_s_0_12_a&sa=t&usg=AFQjCNFcJYqcno20DdIVUEAwgeSb19w6_g&cid=52778672338616&url=http%3A%2F%2Fwww.msnbc.com%2Fmsnbc%2Fmike-browns-stepdad-apologizes-outburst&ei=hDB_VIC-FYjA1Aa1xoGABQ&rt=HOMEPAGE&vm=STANDARD&bvm=section&did=-2511018995557392677&ssid=h&gcnid=840";        
         String url = "http://news.google.com/news/url?sr=1&ct2=us%2F0_0_s_1_1_a&sa=t&usg=AFQjCNGhpS94Oggrx4lZ2dY08MudICcm_A&cid=52778672704092&url=http%3A%2F%2Fabcnews.go.com%2FTechnology%2Fnasas-orion-spacecraft-suffers-series-setbacks-launch-day%2Fstory%3Fid%3D27360581&ei=AnOAVJCqDMLR1QbOzIDICQ&rt=HOMEPAGE&vm=STANDARD&bvm=section&did=-3744730547277117519&ssid=h";
