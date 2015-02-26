@@ -29,8 +29,8 @@ public class LoopAppRunner {
     
     private static final int DEFAULT_RESTART_INTERVAL = 300; // in minutes    
     private static final long WAIT_FOR_SHUTDOWN =  30 * 1000; // in milis
-    private static final long WAIT_BEFORE_STARTUP =  2 * 1000; // in milis
-    private static final long WAIT_FOR_STARTUP =  1 * 1000; // in milis
+    private static final long WAIT_BEFORE_STARTUP =  4 * 1000; // in milis
+    private static final long WAIT_FOR_STARTUP =  4 * 1000; // in milis
     private static final long WAIT_AFTER_KILL =  10 * 1000; // in milis
     private static final String MESSAGE_FILE = "loop_messages.txt";
     
