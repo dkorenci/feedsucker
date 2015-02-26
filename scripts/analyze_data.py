@@ -90,11 +90,14 @@ def sampleTextsFromLengthRange(table, sampleSize, minLen, maxLen):
 def extractDay(time):        
     return pandas.datetime(time.year, time.month, time.day)
 
+def extractHour(time):        
+    return pandas.datetime(time.year, time.month, time.day, time.hour)
+
 def extractHalfDay(time):    
     return pandas.datetime(time.year, time.month, time.day)
 
-def groupByDay(dates):
-    return dates.groupby(lambda i : extractDay(dates[i])).count()   
+def groupByTime(dates, timeProject):
+    return dates.groupby(lambda i : timeProject(dates[i])).count()   
 
 # return False if date is NaT or too small, 
 def filterDate(date, minDate, maxDate):
@@ -103,8 +106,10 @@ def filterDate(date, minDate, maxDate):
     elif (date > maxDate) : return False
     else : return True
     
-# filter out NaT and random values    
-def filterDates(dates, minDate = '2014-12-24 00:00:01', maxDate = '2015-02-05 00:00:01'):
+# filter out NaT and random values
+#minDate = '2014-12-24 00:00:01', maxDate = '2015-12-05 00:00:01'):    
+#def filterDates(dates, minDate = '2015-02-06 00:00:01', maxDate = '2015-12-05 00:00:01'):
+def filterDates(dates, minDate = '2014-12-24 00:00:01', maxDate = '2015-12-05 00:00:01'):
     minD, maxD = pts.Timestamp(minDate), pts.Timestamp(maxDate)    
     clean = (dates.apply(lambda x : filterDate(x, minD, maxD)))
     return dates[clean]
@@ -112,7 +117,7 @@ def filterDates(dates, minDate = '2014-12-24 00:00:01', maxDate = '2015-02-05 00
 def plotDates(dates):
     dates = filterDates(dates)
     # aggregate data
-    agg = groupByDay(dates)    
+    agg = groupByTime(dates, extractHour)    
     dates, counts = agg.index, agg.values
     # plot
     fig, ax = plt.subplots()
@@ -130,10 +135,12 @@ def plotDates(dates):
     fig.autofmt_xdate()
     plt.show()
 
-ERRURL = '../tmp/errorUrlAll_topus05022015.txt'
-TABLE = '../tmp/table_topus03022015.txt'
+ERRURL = '/data/rsssucker_data/errorUrlAll_topus05022015.txt'
+TABLE = '/data/rsssucker_data/table_topus26022015.txt'
+#TABLE = '/data/rsssucker_data/table_topus03022015.txt'
+#TABLE='/data/rsssucker_data/table_loop_test_mediagg_23022015.txt'
 
-errUrl = readLines(ERRURL)
+#errUrl = readLines(ERRURL)
 #table = readTable(TABLE)
 
 #plotSavedDates(table)
