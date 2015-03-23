@@ -10,8 +10,10 @@ import com.google.common.base.Function;
 import com.google.common.escape.Escaper;
 import com.google.common.escape.Escapers;
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -48,7 +50,8 @@ public class DatabaseTools {
     /** Export as table for statistical software (R, scipy, ...) */ 
     public void exportDatabaseAsTable() throws IOException {
         List<FeedArticle> articles = getAllArticles();
-        BufferedWriter table = new BufferedWriter(new FileWriter("table.txt"));        
+        BufferedWriter table = new BufferedWriter(new OutputStreamWriter(
+            new FileOutputStream("table.txt"), "UTF-8"));                                
         char delimit = '\t';        
         // to make it readable for pandas read_table, quote strings and remove newlines
         Function<String,String> strProcess = new Function<String,String>() {
