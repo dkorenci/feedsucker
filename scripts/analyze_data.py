@@ -10,6 +10,7 @@ import matplotlib.dates as mdates
 import matplotlib.cbook as cbook
 import pandas.tslib as pts
 from textwrap import wrap
+from rpy2 import robjects
 
 def readTable(fileName):
     columnTypes = {'id':int, 'date_published':datetime, 'date_saved':datetime,
@@ -34,6 +35,23 @@ def printTextSample(table, sampleSize, fileName, cutoffLen = 1000):
         title = titles[table.index[i]]; title.replace('\n', ' ');
         f.write('TITLE: ' + title +"\n\n")
         text = texts[table.index[i]]; text = text[:cutoffLen]
+        text.replace('\n', ' '); text = '\n'.join(wrap(text, 100));
+        f.write(text); f.write("\n\n*****************\n");
+
+def printLargeTextSample(table, sampleSize, fileName, minLen = 1000):
+    random.seed(88775621)
+    f = open(fileName, "w")
+    texts = table['text']; urls = table['url']; titles = table['title_feed']
+    indexes = [ i for i in range(len(table)) if numTokens(texts[i]) >= minLen ]
+    print len(indexes)
+    random.shuffle(indexes)
+    sampleSize = len(indexes) if sampleSize < 0 else sampleSize
+    for i in indexes[:sampleSize] :
+        f.write('URL: ' + urls[i]+"\n\n")
+        title = titles[i]; title.replace('\n', ' ');
+        print title, i
+        f.write('TITLE: ' + title +"\n\n")
+        text = texts[i];
         text.replace('\n', ' '); text = '\n'.join(wrap(text, 100));
         f.write(text); f.write("\n\n*****************\n");
 
@@ -72,11 +90,19 @@ def textLengthDist(table):
 
 # histogram of text length distribution, all lengths > maxLen
 # are filterd out, number of histogram bins is specified
-def plotLengthDist(table, maxLen, numBins, binSetup):
+def plotLengthDist(table, maxLen, numBins):
+    fig, ax = plt.subplots()
     ll = textLengthDist(table)
     #plot.boxplot(ll)    
     ll = [n for n in ll if n < maxLen]
-    plt.hist(ll, bins=numBins)
+    ax.hist(ll, bins=numBins)
+    plt.show()
+
+# 5 number summary text length distribution
+def plotLengthSummary(table):
+    ll = textLengthDist(table)
+    summary = robjects.r('summary')
+    print summary(robjects.IntVector(ll))
 
 # return table of rows with text length between specified values
 def filterByNumTokens(table, minLen, maxLen):
