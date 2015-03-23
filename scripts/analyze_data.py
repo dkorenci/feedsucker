@@ -9,6 +9,7 @@ import pandas
 import matplotlib.dates as mdates
 import matplotlib.cbook as cbook
 import pandas.tslib as pts
+from textwrap import wrap
 
 def readTable(fileName):
     columnTypes = {'id':int, 'date_published':datetime, 'date_saved':datetime,
@@ -22,14 +23,19 @@ def readTable(fileName):
     table['date_published'] = newDatePub
     return table
 
-def printTextSample(table, sampleSize, fileName):
+def printTextSample(table, sampleSize, fileName, cutoffLen = 1000):
     indexes = range(len(table))
+    random.seed(88775621)
     random.shuffle(indexes)    
     f = open(fileName, "w")
-    texts = table['text']; urls = table['url']    
+    texts = table['text']; urls = table['url']; titles = table['title_feed']
     for i in indexes[:sampleSize] :
-        f.write(urls[table.index[i]]+"\n") 
-        f.write(texts[table.index[i]]); f.write("\n\n ***************** \n\n");
+        f.write('URL: ' + urls[table.index[i]]+"\n\n")
+        title = titles[table.index[i]]; title.replace('\n', ' ');
+        f.write('TITLE: ' + title +"\n\n")
+        text = texts[table.index[i]]; text = text[:cutoffLen]
+        text.replace('\n', ' '); text = '\n'.join(wrap(text, 100));
+        f.write(text); f.write("\n\n*****************\n");
 
 def readLines(fileName):
     lines = []
@@ -136,7 +142,7 @@ def plotDates(dates):
     plt.show()
 
 ERRURL = '/data/rsssucker_data/errorUrlAll_topus05022015.txt'
-TABLE = '/data/rsssucker_data/table_topus09032015.txt'
+TABLE = '/datafast/rsssucker_data/table_topus_23032015.txt'
 #TABLE = '/data/rsssucker_data/table_topus03022015.txt'
 #TABLE='/data/rsssucker_data/table_loop_test_mediagg_23022015.txt'
 
