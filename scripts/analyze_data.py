@@ -136,7 +136,7 @@ def plotDates(dates):
     plt.show()
 
 ERRURL = '/data/rsssucker_data/errorUrlAll_topus05022015.txt'
-TABLE = '/data/rsssucker_data/table_topus26022015.txt'
+TABLE = '/data/rsssucker_data/table_topus09032015.txt'
 #TABLE = '/data/rsssucker_data/table_topus03022015.txt'
 #TABLE='/data/rsssucker_data/table_loop_test_mediagg_23022015.txt'
 

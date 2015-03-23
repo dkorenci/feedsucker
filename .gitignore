@@ -1,3 +1,7 @@
+# pycharm
+.idea
+
+# netbeans
 nbproject
 build
 lib/cachedir
@@ -23,7 +27,7 @@ config/rsssucker.properties
 mediadef.txt
 config/local/**
 
-# pydev project and compiled files
+# eclipse pydev
 .project
 .pydevproject
 *.pyc
