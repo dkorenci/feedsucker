@@ -37,7 +37,8 @@ elif [ "$ACTION" == "TOOL" ]; then
   # use default_java instead of ""
   JAVA_BIN=$(get_java_bin $2) 
   JAVA_CMD="$JAVA_BIN""java"
-  $JAVA_CMD -jar RssSucker.jar $2 $3
+  ARGS="-Xmx6g -XX:+UseConcMarkSweepGC"
+  $JAVA_CMD -jar $ARGS RssSucker.jar $2 $3
 elif [ "$ACTION" == "LOOP" ]; then  
   if [ "$2" == "STOP" ]; then     
     echo $SHUTDOWN_NOW > $LOOP_MSG_FILE
