@@ -27,10 +27,11 @@ config/rsssucker.properties
 mediadef.txt
 config/local/**
 
-# eclipse pydev
+# python, eclipse pydev
 .project
 .pydevproject
 *.pyc
+.ipynb_checkpoints
 
 #data_analysis/**/*.txt
 
