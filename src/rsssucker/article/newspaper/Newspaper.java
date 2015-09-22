@@ -32,9 +32,12 @@ public class Newspaper implements IArticleScraper {
         PropertiesReader properties = new PropertiesReader(RssConfig.propertiesFile);        
         String interfaceScript = properties.getProperty("newspaper_interface");
         String pythonCommand = properties.getProperty("python_command");
+        String language = properties.getProperty("newspaper_language");
         process = Runtime.getRuntime().exec(pythonCommand + " " + interfaceScript);      
         procIn = new OutputStreamWriter(process.getOutputStream(), "UTF-8");                  
         procOut = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
+        // signal article language code, this must be the first line of the input
+        procIn.append(language+"\n").flush();          
     }    
     
     @Override

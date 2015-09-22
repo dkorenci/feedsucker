@@ -11,10 +11,11 @@ import sys
 def printUtf8(string):
 	print string.encode('utf-8')
 
-def printArticleText(articleURL):
+def printArticleText(articleURL, language):
     conf = Config()
     conf.fetch_images = False
-    conf.memoize_articles = False    
+    conf.memoize_articles = False  
+    conf.set_language(language)
     try:
         article = Article(url=articleURL, config=conf)
         article.download()
@@ -36,11 +37,14 @@ def printArticleText(articleURL):
         sys.stdout.flush() 
 
 def run():        
+    # read configuration lines
+    # language code
+    language = sys.stdin.readline().strip()
     while True:        
         line = sys.stdin.readline().strip()
         line = unicode(line, "utf-8")
         if line == "EXIT" : break
-        else : printArticleText(line)        
+        else : printArticleText(line, language)        
 
 #printArticleText("http://www.theguardian.com/environment/2014/jul/28/bee-research-funding-pesticides-mps")    
 run()    

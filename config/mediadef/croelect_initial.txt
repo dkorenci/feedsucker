@@ -1,0 +1,25 @@
+@outlet name = dnevnik.hr  ; url = http://dnevnik.hr
+  @feed url = http://rss.dnevnik.hr/vijesti/index.rss ; outlet = dnevnik.hr
+//@feed url = http://rss.dnevnik.hr/vijesti/hrvatska/index.rss  ; outlet = dnevnik.hr
+
+@outlet name = net.hr ; url = http://net.hr
+  @feed url = http://net.hr/kategorija/danas/feed/ ; outlet = net.hr
+
+@outlet name = 24sata ; url = http://www.24sata.hr
+  @feed url = http://www.24sata.hr/feeds/news.xml ; outlet = 24sata
+
+@outlet name = hrt ; url = http://www.hrt.hr
+  @feed url = http://www.hrt.hr/rss/vijesti/ ; outlet = hrt
+
+@outlet name = glas_slavonije ; url = http://www.glas-slavonije.hr
+  @feed url = http://www.glas-slavonije.hr/Rss/Novosti ; outlet = glas_slavonije
+  @feed url = http://www.glas-slavonije.hr/Rss/Osijek ; outlet = glas_slavonije
+  @feed url = http://www.glas-slavonije.hr/Rss/Regija ; outlet = glas_slavonije  
+  @feed url = http://www.glas-slavonije.hr/Rss/Ekonomija ; outlet = glas_slavonije  
+
+@outlet name = glas_istre  ; url = http://www.glasistre.hr
+  @feed url = http://www.glasistre.hr/rss; outlet = glas_istre
+  
+@outlet name = index.hr ; url = http://www.index.hr
+  @feed url = http://www.index.hr/najnovije/rss.ashx ; outlet = index.hr
+
