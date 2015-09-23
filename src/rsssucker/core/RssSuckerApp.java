@@ -42,6 +42,7 @@ public class RssSuckerApp {
     // main thread sleep period, in miliseconds
     private int sleepPeriod;
     private PropertiesReader properties;    
+    private String userAgent;
     private EntityManagerFactory emf;
     private List<RessurectingNewspaper> npapers;
     private MessageReceiver messageReceiver;
@@ -152,7 +153,8 @@ public class RssSuckerApp {
     
     private boolean readProperties() {
         try {
-            properties = new PropertiesReader(RssConfig.propertiesFile);
+            properties = new PropertiesReader(RssConfig.propertiesFile); 
+            userAgent = properties.getProperty("user_agent");
             numThreads = properties.readIntProperty("num_threads", RssSuckerApp.DEFAULT_NUM_THREADS);    
             numNpapers = properties.readIntProperty("num_npapers", RssSuckerApp.DEFAULT_NUM_NPAPERS);    
             refreshInterval = properties.readIntProperty("refresh_interval", RssSuckerApp.DEFAULT_REFRESH_INT);                      
@@ -168,7 +170,7 @@ public class RssSuckerApp {
     // read feeds and outlets from mediadef file, 
     // and create corresponding entities in the database 
     private boolean processMediaDef() {
-        String mediadefFile = properties.getProperty("mediadef_file");
+        String mediadefFile = properties.getProperty("mediadef_file");        
         MediadefParser parser; List<MediadefEntity> entities;        
         try { // parse mediadef file                        
             parser = new MediadefParser(mediadefFile);
@@ -179,7 +181,7 @@ public class RssSuckerApp {
             return false;
         }
         try { // persist entities from mediadef file
-            new MediadefPersister().persist(entities);        
+            new MediadefPersister(userAgent).persist(entities);        
         }
         catch (MediadefException e) {
             logger.logErr("failed to persist mediadef_file", e);            
@@ -256,8 +258,8 @@ public class RssSuckerApp {
         executor = Executors.newFixedThreadPool(localNumThreads);        
         for (Feed f : feeds) {
             try { checkMessages(); } catch (FinishAndShutdownException e) { shutdown = true; }
-            IArticleScraper scraper = getNewspaper(); if (scraper == null) continue;
-            IFeedReader reader = getFeedReader();            
+            IArticleScraper scraper = getNewspaper(); if (scraper == null) continue;            
+            IFeedReader reader = getFeedReader(f);            
             FeedProcessor processor = new FeedProcessor(f, emf, reader, scraper, filter);
             logger.info("starting processor for feed " + f.getUrl());
             executor.submit(processor);
@@ -373,7 +375,14 @@ public class RssSuckerApp {
         }
     }
     
-    private RomeFeedReader getFeedReader() { return new RomeFeedReader(); }
+    private RomeFeedReader getFeedReader(Feed f) { 
+        if (f == null || f.getAttributes() == null) return new RomeFeedReader();
+        if (f.getAttributes().toLowerCase().contains("agent")) {
+            return new RomeFeedReader(userAgent); 
+        }
+        else
+            return new RomeFeedReader();
+    }
         
     // return true if Exception describes a common situation that
     // is not alarming and should not be logged

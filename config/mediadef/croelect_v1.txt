@@ -1,0 +1,51 @@
+@outlet name = dnevnik.hr  ; url = http://dnevnik.hr
+  @feed url = http://rss.dnevnik.hr/vijesti/hrvatska/index.rss  ; outlet = dnevnik.hr
+  @feed url = http://rss.dnevnik.hr/vijesti/gospodarstvo/index.rss ; outlet = dnevnik.hr
+  @feed url = http://rss.dnevnik.hr/vijesti/svijet/index.rss ; outlet = dnevnik.hr
+
+@outlet name = net.hr ; url = http://net.hr
+  @feed url = http://net.hr/kategorija/danas/feed/ ; outlet = net.hr
+  
+@outlet name = 24sata ; url = http://www.24sata.hr
+  @feed url = http://www.24sata.hr/feeds/news.xml ; outlet = 24sata
+
+@outlet name = hrt ; url = http://www.hrt.hr
+  @feed url = http://www.hrt.hr/rss/vijesti/ ; outlet = hrt
+
+@outlet name = glas_slavonije ; url = http://www.glas-slavonije.hr
+  @feed url = http://www.glas-slavonije.hr/Rss/Novosti ; outlet = glas_slavonije
+  @feed url = http://www.glas-slavonije.hr/Rss/Osijek ; outlet = glas_slavonije
+  @feed url = http://www.glas-slavonije.hr/Rss/Regija ; outlet = glas_slavonije  
+  @feed url = http://www.glas-slavonije.hr/Rss/Ekonomija ; outlet = glas_slavonije
+  @feed url = http://www.glas-slavonije.hr/Rss/Svijet ; outlet = glas_slavonije    
+
+@outlet name = glas_istre  ; url = http://www.glasistre.hr
+  @feed url = http://www.glasistre.hr/rss; outlet = glas_istre
+  
+@outlet name = index.hr ; url = http://www.index.hr
+  @feed url = http://www.index.hr/najnovije/rss.ashx ; outlet = index.hr
+  
+// feed ne radi
+//@outlet name = novi_list ; url = http://www.novilist.hr
+//  @feed url = http://www.novilist.hr/rss/feed/sve.xml ; outlet = novi_list
+
+@outlet name = slobodna_dalmacija ; url = http://www.slobodnadalmacija.hr
+  @feed url = http://www.slobodnadalmacija.hr/RssNovosti.aspx; outlet = slobodna_dalmacija
+  @feed url = http://www.slobodnadalmacija.hr/RssHrvatska.aspx; outlet = slobodna_dalmacija
+  @feed url = http://www.slobodnadalmacija.hr/RssSvijet.aspx; outlet = slobodna_dalmacija  
+  @feed url = http://www.slobodnadalmacija.hr/RssBiH.aspx; outlet = slobodna_dalmacija
+  @feed url = http://www.slobodnadalmacija.hr/RssBiznis.aspx; outlet = slobodna_dalmacija
+  @feed url = http://www.slobodnadalmacija.hr/RssDalmacija.aspx; outlet = slobodna_dalmacija  
+
+@outlet name = telegram.hr ; url = http://www.telegram.hr
+  @feed url = http://www.telegram.hr/feed ; outlet = telegram.hr; attributes = agent
+  
+@outlet name = tportal.hr ; url = http://www.tportal.hr
+  // treba provjeriti koliko ovaj feed zaista sadrži vijesti
+  @feed url = http://www.tportal.hr/rss ; outlet = tportal.hr
+  
+@outlet name = jutarnji_list ; url = http://www.jutarnji.hr
+  @feed url = http://www.jutarnji.hr/rss?type=section&id=10 ; outlet = jutarnji_list; attributes = hrvatska
+  @feed url = http://www.jutarnji.hr/rss?type=section&id=7 ; outlet = jutarnji_list; attributes = svijet  
+  @feed url = http://www.jutarnji.hr/rss?type=section&id=65561 ; outlet = jutarnji_list; attributes = zagreb
+  @feed url = http://www.jutarnji.hr/rss/posao-plus ; outlet = jutarnji_list; attributes = posao  

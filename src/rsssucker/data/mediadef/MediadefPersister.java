@@ -35,6 +35,10 @@ public class MediadefPersister {
     private static final RssSuckerLogger logger = 
             new RssSuckerLogger(MediadefPersister.class.getName());    
     
+    private String userAgent; // user agent to emulate for fetching feed data
+    
+    public MediadefPersister(String userAgent) { this.userAgent = userAgent; }
+    
     /** Merge entity definitions to database: add unexisting entities, 
      * and update existing entities with new data. */
     public void persist(List<MediadefEntity> ents) throws MediadefException {
@@ -86,7 +90,15 @@ public class MediadefPersister {
             if (url == null || url.equals("")) 
                 throw new MediadefException("feed must have a url property");
             Feed feed = (Feed)getOrCreateEntity(EntityType.FEED, url, e);
-            try { RomeFeedReader.readFeedData(feed); } 
+            try { 
+                // read additional feed data from feed
+                // setup user agent if it should be used for the feed
+                String attributes = e.getValue("attributes");                
+                String agent = null;
+                if (attributes != null && attributes.toLowerCase().contains("agent"))
+                    agent = this.userAgent;                                
+                new RomeFeedReader(agent).readFeedData(feed); 
+            } 
             catch (FeedException|IOException ex) { logger.logErr("feed data reading failed", ex); }
             urlToFeed.put(url, feed);
             // attach feed to outlet            

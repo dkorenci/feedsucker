@@ -132,7 +132,7 @@ public class RssSucker {
         String mediadefFile = properties.getProperty("mediadef_file");
         MediadefParser parser = new MediadefParser(mediadefFile);
         List<MediadefEntity> entities = parser.parse();
-        new MediadefPersister().persist(entities);
+        new MediadefPersister(null).persist(entities);
     }
     
     public static void testNewspaper() throws IOException, NewspaperException {

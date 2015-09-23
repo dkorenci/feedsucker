@@ -19,3 +19,6 @@ restart_interval = 20
 db_url = localhost/rsssucker_devel
 db_username = rsssucker
 db_password = rsssucker
+
+# feed reading
+user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36"
