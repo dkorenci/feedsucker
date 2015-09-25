@@ -1,0 +1,8 @@
+- user agent
+If in mediadef file, for a @feed, 'agent' is a substring of the 'attributes' attribute, 
+then the user agent specified by 'user_agent' property in properties file
+will be used for reading the specified feed. 
+Otherwise, no agent will be configured, ie JVMs default user agent will be used. 
+
+- language
+
