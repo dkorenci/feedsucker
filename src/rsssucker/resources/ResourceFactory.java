@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package rsssucker.resources;
 
 import java.io.BufferedReader;
@@ -21,10 +15,6 @@ import java.util.logging.Logger;
 import rsssucker.core.RssSuckerApp;
 import rsssucker.log.RssSuckerLogger;
 
-/**
- *
- * @author damir
- */
 public class ResourceFactory {
     
     private static final RssSuckerLogger logger = 
@@ -47,7 +37,6 @@ public class ResourceFactory {
         else return null;        
     }
 
-    // 
     /**
      * Load word list from resources folder, if exists. 
      * File name corresponds to language code. File should be UTF8 encoded, 
