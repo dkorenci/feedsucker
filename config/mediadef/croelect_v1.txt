@@ -25,9 +25,6 @@
 @outlet name = index.hr ; url = http://www.index.hr ; language = hr
   @feed url = http://www.index.hr/najnovije/rss.ashx ; outlet = index.hr
   
-@outlet name = novi_list ; url = http://www.novilist.hr ; language = hr
-  @feed url = http://www.novilist.hr/rss/feed/sve.xml ; outlet = novi_list
-
 @outlet name = slobodna_dalmacija ; url = http://www.slobodnadalmacija.hr ; language = hr
   @feed url = http://www.slobodnadalmacija.hr/RssNovosti.aspx; outlet = slobodna_dalmacija
   @feed url = http://www.slobodnadalmacija.hr/RssHrvatska.aspx; outlet = slobodna_dalmacija
@@ -75,4 +72,7 @@
   @feed url = http://www.novilist.hr/Vijesti/Zagreb ; outlet = novi_list ; type = html
   @feed url = http://www.novilist.hr/Vijesti/Regija ; outlet = novi_list ; type = html
   @feed url = http://www.novilist.hr/Vijesti/Rijeka ; outlet = novi_list ; type = html 
+  
+//@outlet name = novi_list ; url = http://www.novilist.hr ; language = hr
+//  @feed url = http://www.novilist.hr/rss/feed/sve.xml ; outlet = novi_list
   
