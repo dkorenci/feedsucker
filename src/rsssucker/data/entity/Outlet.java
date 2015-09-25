@@ -34,6 +34,9 @@ public class Outlet {
     @Column(length=10000)
     private String attributes;    
     
+    @Column(length=10)
+    private String language;        
+    
     @OneToMany(mappedBy = "outlet")
     private Collection<Feed> feeds = new ArrayList<>();
     
@@ -51,5 +54,8 @@ public class Outlet {
 
     public Collection<Feed> getFeeds() { return feeds; }
     public void setFeeds(Collection<Feed> feeds) { this.feeds = feeds; }
+
+    public String getLanguage() { return language; }
+    public void setLanguage(String language) { this.language = language; }
     
 }

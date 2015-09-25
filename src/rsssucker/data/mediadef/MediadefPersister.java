@@ -25,6 +25,9 @@ public class MediadefPersister {
    
     private enum EntityType {FEED, OUTLET};
     
+    private static final String DEFAULT_OUTLET_LANGUAGE = "en";
+    private static final String DEFAULT_FEED_TYPE = "synd";
+    
     private JpaContext jpa;
     private List<MediadefEntity> entities;
     // make all outlets in the persistence context fetchable by name
@@ -77,9 +80,17 @@ public class MediadefPersister {
             if (name == null || name.equals("")) 
                 throw new MediadefException("outlet must have a name property");
             Outlet outlet = (Outlet)getOrCreateEntity(EntityType.OUTLET, name, e);
-            nameToOutlet.put(name, outlet);            
+            nameToOutlet.put(name, outlet);       
+            setDefaultOutletProperties(outlet);
         }
     }            
+    
+    private void setDefaultOutletProperties(Outlet outlet) {
+        // if undefined, set language to default language
+        String lang = outlet.getLanguage();        
+        if (lang == null || "".equals(lang.trim())) 
+            outlet.setLanguage(DEFAULT_OUTLET_LANGUAGE);
+    }
     
     // read feeds from mediadef, fetch from DB and update or create new, 
     // update outlets with feeds
@@ -107,9 +118,25 @@ public class MediadefPersister {
             if (outletName != null && !outletName.equals("")) // name is defined
                 attachFeedToOutlet(feed, outletName);
             else feed.setOutlet(null);
+            setDefaultFeedProperties(feed);
         }        
     }
 
+    private void setDefaultFeedProperties(Feed feed) {
+        // if undefined, set to outlet language or default language
+        String lang = feed.getLanguage();        
+        if (lang == null || "".equals(lang.trim())) { 
+            Outlet outlet = feed.getOutlet();
+            if (outlet == null) feed.setLanguage(DEFAULT_OUTLET_LANGUAGE);
+            else feed.setLanguage(outlet.getLanguage());            
+        }
+        // if undefined, set type do default type
+        String type = feed.getType();
+        if (type == null || "".equals(type.trim())) {
+            feed.setType(DEFAULT_FEED_TYPE);
+        }
+    }    
+    
     // set outlet property of the feed to outlet corresponding to outletName, 
     // the outlet may be in the database or a new outlet in the persistence context
     private void attachFeedToOutlet(Feed feed, String outletName) throws MediadefException {        
@@ -167,12 +194,15 @@ public class MediadefPersister {
     private void copyPropertiesToFeed(Feed feed, MediadefEntity e) {
         feed.setUrl(e.getValue("url"));
         feed.setAttributes(e.getValue("attributes"));
+        feed.setLanguage(e.getValue("language"));
+        feed.setType(e.getValue("type"));
     }    
     
     private void copyPropertiesToOutlet(Outlet outlet, MediadefEntity e) {
         outlet.setName(e.getValue("name"));
         outlet.setAttributes(e.getValue("attributes"));
         outlet.setUrl(e.getValue("url"));
+        outlet.setLanguage(e.getValue("language"));
     }        
     
     // fetch feed from the database

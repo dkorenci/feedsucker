@@ -40,6 +40,13 @@ public class Feed {
     
     @Column(length=10000)
     private String attributes;    
+        
+    @Column(length=10)
+    private String language;    
+
+    // describe weather it is synd (rss/atom), html, ...
+    @Column(length=50)
+    private String type;        
     
     @Basic(fetch=FetchType.LAZY)
     @ManyToMany(mappedBy = "feeds")
@@ -65,5 +72,11 @@ public class Feed {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public String getLanguage() { return language; }
+    public void setLanguage(String language) { this.language = language; }
+
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
     
 }
