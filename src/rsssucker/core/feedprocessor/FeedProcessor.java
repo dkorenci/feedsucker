@@ -33,6 +33,7 @@ public class FeedProcessor implements Runnable {
     private final Feed feed;
     private final EntityManagerFactory emf;  
     private final Filter filter;    
+    private final int feedPause, articlePause;
     
     private class ScrapedFeedEntry {
         public FeedEntry feedEntry;
@@ -50,8 +51,10 @@ public class FeedProcessor implements Runnable {
             new RssSuckerLogger(FeedProcessor.class.getName());        
     
     public FeedProcessor(Feed f, EntityManagerFactory e, 
-            IFeedReader fread, IArticleScraper scr, Filter fil) {
+            IFeedReader fread, IArticleScraper scr, Filter fil, 
+            int feedPause, int articlePause) {
         feed = f; freader = fread; scraper = scr; emf = e; filter = fil;
+        this.feedPause = feedPause; this.articlePause = articlePause;
     }
 
     @Override
@@ -78,7 +81,7 @@ public class FeedProcessor implements Runnable {
     }
     
     // read feed entries, log error and return false if fail
-    private boolean readFeedEntries() {        
+    private boolean readFeedEntries() throws InterruptedException {        
         logger.info("start reading entries");
         try {                        
             List<FeedEntry> fentries = freader.getFeedEntries(feed.getUrl());    
@@ -87,8 +90,11 @@ public class FeedProcessor implements Runnable {
             for (FeedEntry e : fentries) { 
                 // check if (feedUrl, articleUrl) pair already exists
                 if (filter == null) entries.add(new ScrapedFeedEntry(e, null)); 
-                else if (filter.contains(feed.getUrl(), e.getUrl()) == false) {                    
-                    redirectUrl(e);
+                else if (filter.contains(feed.getUrl(), e.getUrl()) == false) {
+                    if (Feed.TYPE_SYNDICATION.equals(feed.getType())) {
+                        redirectUrl(e);
+                        // TODO also sleep after redirect?
+                    }
 //                    System.out.println("url: "+e.getUrl());
 //                    System.out.println("rrl: "+e.getRedirUrl());
                     entries.add(new ScrapedFeedEntry(e, null));
@@ -99,6 +105,7 @@ public class FeedProcessor implements Runnable {
             return false;
         }
         logger.info("finished reading entries");
+        Thread.sleep(feedPause);                
         return true;
     }
 
@@ -130,7 +137,8 @@ public class FeedProcessor implements Runnable {
                 logger.logErr("scraping article failed for : "
                     + url + " from feed: " + feed.getUrl(), ex);                
                 entry.scrapedData = null;
-            }
+            }            
+            Thread.sleep(articlePause);
         }
         logger.info("finished scraping");
     }

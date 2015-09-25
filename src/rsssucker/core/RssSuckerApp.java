@@ -42,6 +42,8 @@ public class RssSuckerApp {
     private Date lastFeedRefresh;
     // feeds refresh interval, in minutes
     private int refreshInterval;
+    // waits after the network read operations, in milis
+    private int feedReadPause, articleReadPause;
     // main thread sleep period, in miliseconds
     private int sleepPeriod;
     private PropertiesReader properties;    
@@ -61,6 +63,8 @@ public class RssSuckerApp {
     private static final int DEFAULT_NUM_THREADS = 10;
     private static final int DEFAULT_NUM_NPAPERS = 10;
     private static final int DEFAULT_REFRESH_INT = 30;
+    private static final int DEFAULT_FEED_PAUSE = 0;
+    private static final int DEFAULT_ARTICLE_PAUSE = 0;
        
     // main loop (wait for next refresh) sleep period, in milis
     private static final int MAIN_LOOP_SLEEP = 1000;
@@ -158,9 +162,11 @@ public class RssSuckerApp {
         try {
             properties = new PropertiesReader(RssConfig.propertiesFile); 
             userAgent = properties.getProperty("user_agent");
-            numThreads = properties.readIntProperty("num_threads", RssSuckerApp.DEFAULT_NUM_THREADS);    
-            numNpapers = properties.readIntProperty("num_npapers", RssSuckerApp.DEFAULT_NUM_NPAPERS);    
-            refreshInterval = properties.readIntProperty("refresh_interval", RssSuckerApp.DEFAULT_REFRESH_INT);                      
+            numThreads = properties.readIntProperty("num_threads", DEFAULT_NUM_THREADS);    
+            numNpapers = properties.readIntProperty("num_npapers", DEFAULT_NUM_NPAPERS);    
+            refreshInterval = properties.readIntProperty("refresh_interval", DEFAULT_REFRESH_INT); 
+            feedReadPause = properties.readIntProperty("feed_read_pause", DEFAULT_FEED_PAUSE); 
+            articleReadPause = properties.readIntProperty("article_read_pause", DEFAULT_ARTICLE_PAUSE); 
             // set sleepPeriod to 1/100 th of refresh interval (in miliseconds)
             sleepPeriod = refreshInterval * 60 * 1000 / 100;
             return true;
@@ -266,7 +272,8 @@ public class RssSuckerApp {
             try {
                 scraper = getNewspaper(f.getLanguage()); if (scraper == null) continue;            
                 reader = getFeedReader(f);            
-                processor = new FeedProcessor(f, emf, reader, scraper, filter);
+                processor = new FeedProcessor(f, emf, reader, scraper, filter, 
+                                    feedReadPause, articleReadPause);
             }
             catch(Exception e) {
                 logger.logErr("error initializing processors for feed "+f.getUrl(), e);
