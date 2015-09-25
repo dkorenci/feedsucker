@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +29,9 @@ import rsssucker.data.mediadef.MediadefParser;
 import rsssucker.data.mediadef.MediadefPersister;
 import rsssucker.feeds.IFeedReader;
 import rsssucker.feeds.RomeFeedReader;
+import rsssucker.feeds.html.HtmlFeedReader;
 import rsssucker.log.RssSuckerLogger;
+import rsssucker.resources.ResourceFactory;
 import rsssucker.tools.DatabaseTools;
 
 /**
@@ -258,9 +261,18 @@ public class RssSuckerApp {
         executor = Executors.newFixedThreadPool(localNumThreads);        
         for (Feed f : feeds) {
             try { checkMessages(); } catch (FinishAndShutdownException e) { shutdown = true; }
-            IArticleScraper scraper = getNewspaper(); if (scraper == null) continue;            
-            IFeedReader reader = getFeedReader(f);            
-            FeedProcessor processor = new FeedProcessor(f, emf, reader, scraper, filter);
+            // create objects needed to process feeds
+            IArticleScraper scraper; IFeedReader reader; FeedProcessor processor;
+            try {
+                scraper = getNewspaper(f.getLanguage()); if (scraper == null) continue;            
+                reader = getFeedReader(f);            
+                processor = new FeedProcessor(f, emf, reader, scraper, filter);
+            }
+            catch(Exception e) {
+                logger.logErr("error initializing processors for feed "+f.getUrl(), e);
+                continue;
+            }
+            // submit feed processing job
             logger.info("starting processor for feed " + f.getUrl());
             executor.submit(processor);
         }
@@ -336,14 +348,14 @@ public class RssSuckerApp {
     // create newspaper instance and cache for later shutdown
     // if max. number of newspapers is exceeded, return existing instances
     // in round robin fashion
-    private RessurectingNewspaper getNewspaper() {
+    private RessurectingNewspaper getNewspaper(String langCode) {
         if (npapers == null) { 
             npapers = new ArrayList<RessurectingNewspaper>();
             npaperPointer = 0;
         }
         
         if (npapers.size() < numNpapers) {
-            RessurectingNewspaper npaper = createNewspaper();
+            RessurectingNewspaper npaper = createNewspaper(langCode);
             if (npaper == null) return null;
             else { 
                 npapers.add(npaper);
@@ -366,22 +378,37 @@ public class RssSuckerApp {
     }
     
     // initialize and return a new newspaper instance
-    private RessurectingNewspaper createNewspaper() {
+    private RessurectingNewspaper createNewspaper(String langCode) {
         try {
-            return new RessurectingNewspaper();
+            return new RessurectingNewspaper(langCode);
         } catch (IOException ex) {
             logger.logErr("failed to initialize Newspaper.", ex);
             return null;
         }
     }
     
-    private RomeFeedReader getFeedReader(Feed f) { 
-        if (f == null || f.getAttributes() == null) return new RomeFeedReader();
-        if (f.getAttributes().toLowerCase().contains("agent")) {
-            return new RomeFeedReader(userAgent); 
+    private IFeedReader getFeedReader(Feed f) throws IllegalArgumentException {         
+        String type = f.getType();
+        // check if type is valid
+        if (Feed.validTypeCode(type) == false) {
+            throw new IllegalArgumentException("Invalid type code "
+                    +type+" for feed"+f.getUrl());
         }
-        else
-            return new RomeFeedReader();
+        // create feed reader depending on feed type
+        if (Feed.TYPE_SYNDICATION.equals(type)) {
+            if (f == null || f.getAttributes() == null) return new RomeFeedReader();
+            if (f.getAttributes().toLowerCase().contains("agent")) {
+                return new RomeFeedReader(userAgent); 
+            }
+            else
+                return new RomeFeedReader();
+        }
+        else if (Feed.TYPE_WEBPAGE.equals(type)) {
+            Set<String> words = ResourceFactory.getAsciiWordlist("hr");        
+            return new HtmlFeedReader(words, 4);            
+        }
+        else throw new IllegalArgumentException("unsuported feed type "+
+                type+" for feed "+f.getUrl());
     }
         
     // return true if Exception describes a common situation that

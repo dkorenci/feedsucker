@@ -12,10 +12,12 @@ public class RessurectingNewspaper implements IArticleScraper {
     
     private Newspaper newspaper;
     private static final RssSuckerLogger logger = 
-            new RssSuckerLogger(RessurectingNewspaper.class.getName());
-
-    public RessurectingNewspaper() throws IOException {
-        newspaper = new Newspaper();
+            new RssSuckerLogger(RessurectingNewspaper.class.getName());    
+    private final String language;
+    
+    public RessurectingNewspaper(String langCode) throws IOException {        
+        language = langCode;
+        newspaper = new Newspaper(langCode);
     }
     
     // number of times to try fetching article (including first time
@@ -52,7 +54,7 @@ public class RessurectingNewspaper implements IArticleScraper {
     
     // try to create new newspaper
     private void createNewspaper() {
-        try { newspaper = new Newspaper(); }
+        try { newspaper = new Newspaper(language); }
         catch (Exception ex) { 
             logger.logErr("creating new newspaper failed", ex); 
             newspaper = null;            

@@ -22,8 +22,8 @@ public class TestHtmlFeed {
         //String url = "http://www.tportal.hr/vijesti/hrvatska/";
         String url = "http://www.vijesti.rtl.hr/novosti/";
         //String url = "http://www.vecernji.hr/hrvatska/";
-        Set<String> words = ResourceFactory.getCroatianAsciiWordlist();        
-        HtmlFeedReader reader = new HtmlFeedReader(null, 5);
+        Set<String> words = ResourceFactory.getAsciiWordlist("hr");        
+        HtmlFeedReader reader = new HtmlFeedReader(words, 5);
         List<FeedEntry> entries = reader.getFeedEntries(url);
         System.out.println();
         System.out.println("EXTRACTED URLS: ");

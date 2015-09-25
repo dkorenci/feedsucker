@@ -26,13 +26,14 @@ public class Newspaper implements IArticleScraper {
     Process process;    
     OutputStreamWriter procIn;     
     BufferedReader procOut;
+    private final String language;
     
     /** Initialize new newspaper instance. */
-    public Newspaper() throws IOException {
+    public Newspaper(String langCode) throws IOException {
+        language = langCode;
         PropertiesReader properties = new PropertiesReader(RssConfig.propertiesFile);        
         String interfaceScript = properties.getProperty("newspaper_interface");
-        String pythonCommand = properties.getProperty("python_command");
-        String language = properties.getProperty("newspaper_language");
+        String pythonCommand = properties.getProperty("python_command");        
         process = Runtime.getRuntime().exec(pythonCommand + " " + interfaceScript);      
         procIn = new OutputStreamWriter(process.getOutputStream(), "UTF-8");                  
         procOut = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));

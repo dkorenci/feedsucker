@@ -1,35 +1,34 @@
-@outlet name = dnevnik.hr  ; url = http://dnevnik.hr
+@outlet name = dnevnik.hr  ; url = http://dnevnik.hr ; language = hr
   @feed url = http://rss.dnevnik.hr/vijesti/hrvatska/index.rss  ; outlet = dnevnik.hr
   @feed url = http://rss.dnevnik.hr/vijesti/gospodarstvo/index.rss ; outlet = dnevnik.hr
   @feed url = http://rss.dnevnik.hr/vijesti/svijet/index.rss ; outlet = dnevnik.hr
 
-@outlet name = net.hr ; url = http://net.hr
+@outlet name = net.hr ; url = http://net.hr ; language = hr
   @feed url = http://net.hr/kategorija/danas/feed/ ; outlet = net.hr
   
-@outlet name = 24sata ; url = http://www.24sata.hr
+@outlet name = 24sata ; url = http://www.24sata.hr ; language = hr
   @feed url = http://www.24sata.hr/feeds/news.xml ; outlet = 24sata
 
-@outlet name = hrt ; url = http://www.hrt.hr
+@outlet name = hrt ; url = http://www.hrt.hr ; language = hr
   @feed url = http://www.hrt.hr/rss/vijesti/ ; outlet = hrt
 
-@outlet name = glas_slavonije ; url = http://www.glas-slavonije.hr
+@outlet name = glas_slavonije ; url = http://www.glas-slavonije.hr ; language = hr
   @feed url = http://www.glas-slavonije.hr/Rss/Novosti ; outlet = glas_slavonije
   @feed url = http://www.glas-slavonije.hr/Rss/Osijek ; outlet = glas_slavonije
   @feed url = http://www.glas-slavonije.hr/Rss/Regija ; outlet = glas_slavonije  
   @feed url = http://www.glas-slavonije.hr/Rss/Ekonomija ; outlet = glas_slavonije
   @feed url = http://www.glas-slavonije.hr/Rss/Svijet ; outlet = glas_slavonije    
 
-@outlet name = glas_istre  ; url = http://www.glasistre.hr
+@outlet name = glas_istre  ; url = http://www.glasistre.hr ; language = hr
   @feed url = http://www.glasistre.hr/rss; outlet = glas_istre
   
-@outlet name = index.hr ; url = http://www.index.hr
+@outlet name = index.hr ; url = http://www.index.hr ; language = hr
   @feed url = http://www.index.hr/najnovije/rss.ashx ; outlet = index.hr
   
-// feed ne radi
-//@outlet name = novi_list ; url = http://www.novilist.hr
-//  @feed url = http://www.novilist.hr/rss/feed/sve.xml ; outlet = novi_list
+@outlet name = novi_list ; url = http://www.novilist.hr ; language = hr
+  @feed url = http://www.novilist.hr/rss/feed/sve.xml ; outlet = novi_list
 
-@outlet name = slobodna_dalmacija ; url = http://www.slobodnadalmacija.hr
+@outlet name = slobodna_dalmacija ; url = http://www.slobodnadalmacija.hr ; language = hr
   @feed url = http://www.slobodnadalmacija.hr/RssNovosti.aspx; outlet = slobodna_dalmacija
   @feed url = http://www.slobodnadalmacija.hr/RssHrvatska.aspx; outlet = slobodna_dalmacija
   @feed url = http://www.slobodnadalmacija.hr/RssSvijet.aspx; outlet = slobodna_dalmacija  
@@ -37,15 +36,43 @@
   @feed url = http://www.slobodnadalmacija.hr/RssBiznis.aspx; outlet = slobodna_dalmacija
   @feed url = http://www.slobodnadalmacija.hr/RssDalmacija.aspx; outlet = slobodna_dalmacija  
 
-@outlet name = telegram.hr ; url = http://www.telegram.hr
+@outlet name = telegram.hr ; url = http://www.telegram.hr ; language = hr
   @feed url = http://www.telegram.hr/feed ; outlet = telegram.hr; attributes = agent
   
-@outlet name = tportal.hr ; url = http://www.tportal.hr
-  // treba provjeriti koliko ovaj feed zaista sadrži vijesti
-  @feed url = http://www.tportal.hr/rss ; outlet = tportal.hr
-  
-@outlet name = jutarnji_list ; url = http://www.jutarnji.hr
+@outlet name = jutarnji_list ; url = http://www.jutarnji.hr ; language = hr
   @feed url = http://www.jutarnji.hr/rss?type=section&id=10 ; outlet = jutarnji_list; attributes = hrvatska
   @feed url = http://www.jutarnji.hr/rss?type=section&id=7 ; outlet = jutarnji_list; attributes = svijet  
-  @feed url = http://www.jutarnji.hr/rss?type=section&id=65561 ; outlet = jutarnji_list; attributes = zagreb
+  @feed url = http://www.jutarnji.hr/rss?type=section&id=65561 ; outlet = jutarnji_list; attributes = zagreb ; 
   @feed url = http://www.jutarnji.hr/rss/posao-plus ; outlet = jutarnji_list; attributes = posao  
+
+@outlet name = vecernji_list ; url = http://www.vecernji.hr ; language = hr
+  @feed url = http://www.vecernji.hr/hrvatska/ ; outlet = vecernji_list ; type = html
+  @feed url = http://www.vecernji.hr/svijet/ ; outlet = vecernji_list ; type = html
+  @feed url = http://www.vecernji.hr/eu/ ; outlet = vecernji_list ; type = html
+  @feed url = http://www.vecernji.hr/gospodarstvo/ ; outlet = vecernji_list ; type = html
+  @feed url = http://www.vecernji.hr/kompanije-i-trzista/ ; outlet = vecernji_list ; type = html    
+  @feed url = http://www.vecernji.hr/zg-vijesti/ ; outlet = vecernji_list ; type = html  
+  @feed url = http://www.vecernji.hr/zupanija/ ; outlet = vecernji_list ; type = html  
+
+//@outlet name = tportal.hr ; url = http://www.tportal.hr ; language = hr
+  // treba provjeriti koliko ovaj feed zaista sadrži vijesti
+//  @feed url = http://www.tportal.hr/rss ; outlet = tportal.hr 
+  
+@outlet name = tportal.hr ; url = http://www.tportal.hr/ ; language = hr
+  @feed url = http://www.tportal.hr/vijesti/hrvatska/ ; outlet = tportal.hr ; type = html
+  @feed url = http://www.tportal.hr/vijesti/svijet/ ; outlet = tportal.hr ; type = html
+  @feed url = http://www.tportal.hr/biznis/politika-i-ekonomija/ ; outlet = tportal.hr ; type = html
+
+@outlet name = rtl ; url = http://www.vijesti.rtl.hr/ ; language = hr
+  @feed url = http://www.vijesti.rtl.hr/novosti/hrvatska/ ; outlet = rtl ; type = html
+  @feed url = http://www.vijesti.rtl.hr/novosti/svijet/ ; outlet = rtl ; type = html
+  @feed url = http://www.vijesti.rtl.hr/novosti/ ; outlet = rtl ; type = html  
+  
+@outlet name = novi_list ; url = http://www.novilist.hr ; language = hr
+  @feed url = http://www.novilist.hr/Vijesti/Hrvatska ; outlet = novi_list ; type = html
+  @feed url = http://www.novilist.hr/Vijesti/Gospodarstvo ; outlet = novi_list ; type = html
+  @feed url = http://www.novilist.hr/Vijesti/Svijet ; outlet = novi_list ; type = html
+  @feed url = http://www.novilist.hr/Vijesti/Zagreb ; outlet = novi_list ; type = html
+  @feed url = http://www.novilist.hr/Vijesti/Regija ; outlet = novi_list ; type = html
+  @feed url = http://www.novilist.hr/Vijesti/Rijeka ; outlet = novi_list ; type = html 
+  

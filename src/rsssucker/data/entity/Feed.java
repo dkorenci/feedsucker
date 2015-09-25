@@ -1,7 +1,10 @@
 package rsssucker.data.entity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,6 +25,17 @@ import javax.persistence.NamedQuery;
     @NamedQuery(name = "Feed.getAll", query = "SELECT f FROM Feed f")
 })
 public class Feed {
+    
+    // feed type codes
+    public static final String TYPE_SYNDICATION = "synd";
+    public static final String TYPE_WEBPAGE = "html";
+    public static final String[] types = {TYPE_SYNDICATION, TYPE_WEBPAGE};
+    public static final Set<String> validTypes = new TreeSet<>(Arrays.asList(types));
+    
+    public static boolean validTypeCode(String code) {
+        return validTypes.contains(code);
+    }
+    
     @Id
     @GeneratedValue
     private Long id;

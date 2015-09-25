@@ -24,7 +24,11 @@ public class NewspaperTester {
         private List<FeedArticle> articles;
         private Newspaper npaper;
         
-        public NewspaperRunnable() throws IOException { npaper = new Newspaper(); }
+        public NewspaperRunnable(String langCode) throws IOException 
+        { 
+            npaper = new Newspaper(langCode); 
+        }
+        
         public void setUrls(List<FeedArticle> art) { articles = art; }
         
         private void printUrl(String url) {
@@ -68,7 +72,7 @@ public class NewspaperTester {
         NewspaperRunnable[] nprunner = new NewspaperRunnable[numThreads];
         Thread[] threads = new Thread[numThreads];
         for (int i = 0; i < numThreads; ++i) {
-            nprunner[i] = new NewspaperRunnable();
+            nprunner[i] = new NewspaperRunnable("en");
             nprunner[i].setUrls(split.get(i));
             threads[i] = new Thread(nprunner[i]);
         }

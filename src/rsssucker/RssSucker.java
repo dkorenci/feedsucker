@@ -136,7 +136,7 @@ public class RssSucker {
     }
     
     public static void testNewspaper() throws IOException, NewspaperException {
-        Newspaper newspaper = new Newspaper();
+        Newspaper newspaper = new Newspaper("en");
         ArticleData out = newspaper.scrapeArticle(article1);
         System.out.println("title: " + out.getTitle());
         System.out.println(out.getText());

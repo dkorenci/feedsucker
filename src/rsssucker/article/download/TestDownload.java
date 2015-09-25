@@ -34,7 +34,7 @@ public class TestDownload {
         writer.write(html);
         writer.close();
         
-        Newspaper npaper = new Newspaper();
+        Newspaper npaper = new Newspaper("en");
         String fileUrl = "http://localhost/test.html";
         ArticleData articleData = npaper.scrapeArticle(fileUrl);
         System.out.println(articleData.getText());        

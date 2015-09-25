@@ -26,7 +26,7 @@ public class MediadefPersister {
     private enum EntityType {FEED, OUTLET};
     
     private static final String DEFAULT_OUTLET_LANGUAGE = "en";
-    private static final String DEFAULT_FEED_TYPE = "synd";
+    private static final String DEFAULT_FEED_TYPE = Feed.TYPE_SYNDICATION;
     
     private JpaContext jpa;
     private List<MediadefEntity> entities;
@@ -80,7 +80,7 @@ public class MediadefPersister {
             if (name == null || name.equals("")) 
                 throw new MediadefException("outlet must have a name property");
             Outlet outlet = (Outlet)getOrCreateEntity(EntityType.OUTLET, name, e);
-            nameToOutlet.put(name, outlet);       
+            nameToOutlet.put(name, outlet);                   
             setDefaultOutletProperties(outlet);
         }
     }            
@@ -117,11 +117,18 @@ public class MediadefPersister {
             // TODO do detach feed from outlet, if necessary
             if (outletName != null && !outletName.equals("")) // name is defined
                 attachFeedToOutlet(feed, outletName);
-            else feed.setOutlet(null);
+            else feed.setOutlet(null);            
             setDefaultFeedProperties(feed);
+            checkFeedProperties(feed);
         }        
     }
 
+    private void checkFeedProperties(Feed feed) throws MediadefException {    
+        if (Feed.validTypeCode(feed.getType()) == false) 
+            throw new MediadefException("Invalid type code "
+                    +feed.getType()+" for feed"+feed.getUrl());
+    }
+    
     private void setDefaultFeedProperties(Feed feed) {
         // if undefined, set to outlet language or default language
         String lang = feed.getLanguage();        
