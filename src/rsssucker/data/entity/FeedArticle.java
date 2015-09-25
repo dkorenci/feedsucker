@@ -79,7 +79,7 @@ public class FeedArticle {
     }
 
     public void setText(String txt) {
-        if (txt.length() > 100000) txt = txt.substring(0, 100000);
+        if (txt != null && txt.length() > 100000) txt = txt.substring(0, 100000);
         this.text = txt;
     }
 
@@ -88,7 +88,7 @@ public class FeedArticle {
     }
 
     public void setDescription(String desc) {
-        if (desc.length() > 10000) desc = desc.substring(0, 10000);
+        if (desc != null && desc.length() > 10000) desc = desc.substring(0, 10000);
         this.description = desc;
     }
 
@@ -97,7 +97,8 @@ public class FeedArticle {
     }
 
     public void setFeedTitle(String title) {
-        if (title.length() > 1000) title = title.substring(0, 1000);
+        if (title != null && title.length() > 1000) 
+            title = title.substring(0, 1000);
         this.feedTitle = title;
     }
 
@@ -122,13 +123,13 @@ public class FeedArticle {
     }
 
     public void setExtractedTitle(String title) {
-        if (title.length() > 1000) title = title.substring(0, 1000);
+        if (title != null && title.length() > 1000) title = title.substring(0, 1000);
         this.extractedTitle = title;
     }
 
     public String getAuthor() { return author; }
     public void setAuthor(String author) { 
-        if (author.length() > 200) author = author.substring(0, 200);
+        if (author != null && author.length() > 200) author = author.substring(0, 200);
         this.author = author; 
     }
 
