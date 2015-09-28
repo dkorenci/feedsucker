@@ -1,0 +1,7 @@
+@outlet name = novi_list ; url = http://www.novilist.hr ; language = hr
+  @feed url = http://www.novilist.hr/Vijesti/Hrvatska ; outlet = novi_list ; type = html
+  @feed url = http://www.novilist.hr/Vijesti/Gospodarstvo ; outlet = novi_list ; type = html
+  @feed url = http://www.novilist.hr/Vijesti/Svijet ; outlet = novi_list ; type = html
+  @feed url = http://www.novilist.hr/Vijesti/Zagreb ; outlet = novi_list ; type = html
+  @feed url = http://www.novilist.hr/Vijesti/Regija ; outlet = novi_list ; type = html
+  @feed url = http://www.novilist.hr/Vijesti/Rijeka ; outlet = novi_list ; type = html  
