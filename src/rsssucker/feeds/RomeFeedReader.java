@@ -6,6 +6,7 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import rsssucker.util.HttpUtils;
 public class RomeFeedReader implements IFeedReader {
 
     private String userAgent;
+    private URLConnection urlConn;
     
     public RomeFeedReader() {}
     public RomeFeedReader(String userAgent) { this.userAgent = userAgent; }
@@ -34,13 +36,14 @@ public class RomeFeedReader implements IFeedReader {
             e.setLink(HttpUtils.cleanFeedUrl(e.getLink()));
             result.add(syndEntryToFeedEntry(e));
         }        
+        closeUrlConnection();
         return result;
     } 
     
     // setup url connection, create and return readable feed for url
     public SyndFeed createFeed(String feedUrl) throws IOException, FeedException {        
         SyndFeedInput input = new SyndFeedInput();       
-        SyndFeed feed = null; URLConnection urlConn = null;
+        SyndFeed feed = null; urlConn = null;
         if (userAgent == null) { // use default user agend
             feed = input.build(new XmlReader(new URL(feedUrl)));
         } 
@@ -51,6 +54,15 @@ public class RomeFeedReader implements IFeedReader {
         }        
         return feed;
     }
+
+    private void closeUrlConnection() {
+        if (urlConn == null) return;
+        if (urlConn instanceof HttpURLConnection) {
+            HttpURLConnection httpConn = (HttpURLConnection)urlConn;
+            httpConn.disconnect();                  
+        }
+        urlConn = null;
+    }    
     
     private static FeedEntry syndEntryToFeedEntry(SyndEntry e) {
         FeedEntry entry = new FeedEntry();
