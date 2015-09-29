@@ -9,3 +9,8 @@ xpath queries for searching log files
 - extract only some subnodes from record
 //record[exception/message[not(contains(text(),'ERR]'))]]//*[(self::message or self::date)]
 
+- CROELECT 
+-- novilist parse errors
+//record[exception/message[  (contains(text(),'parse ERR') and contains(text(),'novilist.hr'))  ]]
+-- non novilist parse errors, messages and dates
+//record[exception/message[  not((contains(text(),'parse ERR') and contains(text(),'novilist.hr')))  ]]/(message|date)

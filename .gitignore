@@ -11,6 +11,9 @@ tmp
 # log files
 log/*log_*
 log/*.log
+## log processing tmp files
+log/errorUrlAll.txt
+log/tmpout.txt
 
 # build and run files
 build_log.txt
@@ -21,6 +24,7 @@ RssSucker.jar
 pid.txt
 run_output.txt
 loop_output.txt
+git_head_commit_id.txt
 
 # database connection settings
 src/META-INF/persistence.xml
