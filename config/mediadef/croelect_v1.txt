@@ -76,3 +76,19 @@
 //@outlet name = novi_list ; url = http://www.novilist.hr ; language = hr
 //  @feed url = http://www.novilist.hr/rss/feed/sve.xml ; outlet = novi_list
   
+@outlet name = direktno.hr  ; url = http://direktno.hr/; language = hr
+  @feed url = http://direktno.hr/en/2014/domovina/ ; outlet = direktno.hr; type = html
+  @feed url = http://direktno.hr/en/2014/eu/ ; outlet = direktno.hr; type = html
+  @feed url = http://direktno.hr/en/2014/svijet/ ; outlet = direktno.hr; type = html
+  @feed url = http://direktno.hr/en/2014/dijaspora/ ; outlet = direktno.hr; type = html
+  @feed url = http://direktno.hr/en/2014/direkt/ ; outlet = direktno.hr; type = html     
+ 
+@outlet name = dnevno.hr ; url = http://www.dnevno.hr/; language = hr
+  @feed url = http://www.dnevno.hr/feed ; outlet = dnevno.hr
+  
+@outlet name = h-alter ; url = http://www.h-alter.org/ ; language = hr
+  @feed url = http://www.h-alter.org/rss ; outlet = h-alter
+  
+@outlet name = n1info ; url = http://hr.n1info.com/ ; language = hr
+  @feed url = http://hr.n1info.com/rss/1/N1-info ; outlet = n1info
+  
