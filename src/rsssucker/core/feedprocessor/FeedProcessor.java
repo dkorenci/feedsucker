@@ -112,7 +112,8 @@ public class FeedProcessor implements Runnable {
     // find redirect location for entry's url, write it to redirUrl
     private void redirectUrl(FeedEntry e) {
         try {
-            String host = new URI(e.getUrl()).getHost().trim(), redir = null;
+            String host = new URI(e.getUrl()).getHost().trim();
+            String redir = null;
             if ("news.google.com".equals(host)) 
                 redir = HttpUtils.resolveGoogleRedirect(e.getUrl());
             else 
@@ -120,7 +121,14 @@ public class FeedProcessor implements Runnable {
             e.setRedirUrl(redir);
         }
         catch (Exception ex) {
-            logger.logErr("redirecting url failed", ex);
+            String message;
+            if (e == null) 
+                message = "redirecting url failed. feed: "+feed.getUrl()+"\n"
+                            +"FeedEntry is null";
+            else 
+                message = "redirecting url failed. feed: "+feed.getUrl()+"\n"
+                            +"FeedEntry url: " + e.getUrl();                    
+            logger.logErr(message, ex);
             e.setRedirUrl(e.getUrl());
         }
     }
