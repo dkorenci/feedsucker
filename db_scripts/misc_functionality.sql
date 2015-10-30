@@ -15,6 +15,18 @@ SELECT count(*) FROM feedarticle WHERE
 SELECT id FROM feed WHERE url IN ('http://www.theguardian.com/us-news/rss', 'http://rss.cnn.com/rss/cnn_us.rss')
 	AND EXISTS 
 )
+
+-- get short texts
+select a.url, a.text from feedarticle a where length(a.text) < 150
+
+-- get articles per outlet counts
+select o.name, count(a.id) 
+from outlet o
+left join feed f on f.outlet_id = o.id
+left join feedarticle_feed ff on ff.feeds_id = f.id
+left join feedarticle a on a.id = ff.articles_id
+group by o.name
+
 -- get ids of all articles from a set of feeds
 SELECT DISTINCT art.id FROM feedarticle AS art 
 JOIN (

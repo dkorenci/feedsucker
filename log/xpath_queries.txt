@@ -14,3 +14,7 @@ xpath queries for searching log files
 //record[exception/message[  (contains(text(),'parse ERR') and contains(text(),'novilist.hr'))  ]]
 -- non novilist parse errors, messages and dates
 //record[exception/message[  not((contains(text(),'parse ERR') and contains(text(),'novilist.hr')))  ]]/(message|date)
+-- common errors
+//record[message[ not(contains(text(),'committing rollback failed')) and not(contains(text(),'download feed entries for feed failed')) and not(contains(text(),'novilist.hr')) and not(contains(text(),'scraping article failed')) and not(contains(text(),'httpool-nakon-twittera-sklapa')) and not(contains(text(),'saving article failed')) and not(contains(text(),'download feed entries for feed failed')) and not(contains(text(),'novilist.hr')) and not(contains(text(),'scraping article failed')) and not(contains(text(),'httpool-nakon-twittera-sklapa')) and not(contains(text(),'ucenicima-hrvatskog-vrtica-i-skola-u-budimpesti')) ]]/(message|date)
+//record[message[ not(contains(text(),'httpool-nakon-twitter')) and not(contains(text(),'novilist.hr')) ]]/(message|date)
+//record[message[ not(contains(text(),'download feed entries for feed failed')) and not(contains(text(),'novilist.hr')) and not(contains(text(),'scraping article failed')) and not(contains(text(),'httpool-nakon-twittera-sklapa')) and not(contains(text(),'ucenicima-hrvatskog-vrtica-i-skola-u-budimpesti')) ]]/(message|date)
