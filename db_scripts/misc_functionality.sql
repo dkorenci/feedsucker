@@ -61,3 +61,10 @@ SELECT DISTINCT feeds_id FROM feedarticle_feed WHERE articles_id IN
 (
 
 ) ORDER BY feeds_id	
+
+
+-- group (count) and ouder by day
+select to_char(date_trunc('day', datesaved), 'YYYY-MM-DD') as datetrunc, 
+	count(id) FROM feedarticle
+GROUP BY datetrunc
+ORDER BY datetrunc
