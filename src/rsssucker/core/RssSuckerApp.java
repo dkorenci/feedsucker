@@ -2,6 +2,7 @@ package rsssucker.core;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +34,7 @@ import rsssucker.feeds.html.HtmlFeedReader;
 import rsssucker.log.RssSuckerLogger;
 import rsssucker.resources.ResourceFactory;
 import rsssucker.tools.DatabaseTools;
+import rsssucker.tools.fillfeed.FeedFiller;
 
 /**
  * Initialization and workflow the the application.
@@ -63,8 +65,8 @@ public class RssSuckerApp {
     private static final int DEFAULT_NUM_THREADS = 10;
     private static final int DEFAULT_NUM_NPAPERS = 10;
     private static final int DEFAULT_REFRESH_INT = 30;
-    private static final int DEFAULT_FEED_PAUSE = 0;
-    private static final int DEFAULT_ARTICLE_PAUSE = 0;
+    public static final int DEFAULT_FEED_PAUSE = 0;
+    public static final int DEFAULT_ARTICLE_PAUSE = 0;
        
     // main loop (wait for next refresh) sleep period, in milis
     private static final int MAIN_LOOP_SLEEP = 1000;
@@ -80,7 +82,7 @@ public class RssSuckerApp {
             app.run();
         }
         else {
-            runTools(args[1], args[0]);
+            runTools(args);
         }
     }    
     
@@ -95,12 +97,19 @@ public class RssSuckerApp {
         
     }
 
-    private static void runTools(String tool, String javaBin) {
-        tool = tool.toLowerCase();
+    private static void runTools(String[] args) {
+        String javaBin = args[0];
+        System.out.println(javaBin);
+        String tool = args[1].toLowerCase();        
+        System.out.println(tool);
         try {
             if ("hosts".equals(tool)) new DatabaseTools().printHosts();
             else if ("table".equals(tool)) new DatabaseTools().exportDatabaseAsTable();
             else if ("loop".equals(tool)) new LoopAppRunner(javaBin).run();
+            else if ("fill".equals(tool)) {
+                String[] ffargs = Arrays.copyOfRange(args, 2, args.length);
+                new FeedFiller().run(ffargs);
+            }
             else System.out.println("unrecognized tool command");
         }
         catch (Exception e) {
@@ -385,7 +394,7 @@ public class RssSuckerApp {
     }
     
     // initialize and return a new newspaper instance
-    private RessurectingNewspaper createNewspaper(String langCode) {
+    public static RessurectingNewspaper createNewspaper(String langCode) {
         try {
             return new RessurectingNewspaper(langCode);
         } catch (IOException ex) {

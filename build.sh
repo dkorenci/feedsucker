@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # params: $1 - location of the bin folder of java runtime environment, 
 # leave empty to work with JRE tools on system path 
 
