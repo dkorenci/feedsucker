@@ -99,8 +99,8 @@ public class RssSuckerApp {
         tool = tool.toLowerCase();
         try {
             if ("hosts".equals(tool)) new DatabaseTools().printHosts();
-            if ("table".equals(tool)) new DatabaseTools().exportDatabaseAsTable();
-            if ("loop".equals(tool)) new LoopAppRunner(javaBin).run();
+            else if ("table".equals(tool)) new DatabaseTools().exportDatabaseAsTable();
+            else if ("loop".equals(tool)) new LoopAppRunner(javaBin).run();
             else System.out.println("unrecognized tool command");
         }
         catch (Exception e) {
