@@ -33,7 +33,7 @@ public class FeedProcessor implements Runnable {
     private final Feed feed;
     private final EntityManagerFactory emf;  
     private final Filter filter;    
-    private final int feedPause, articlePause;
+    private final int feedPause, articlePause;    
     
     private class ScrapedFeedEntry {
         public FeedEntry feedEntry;
@@ -54,7 +54,7 @@ public class FeedProcessor implements Runnable {
             IFeedReader fread, IArticleScraper scr, Filter fil, 
             int feedPause, int articlePause) {
         feed = f; freader = fread; scraper = scr; emf = e; filter = fil;
-        this.feedPause = feedPause; this.articlePause = articlePause;
+        this.feedPause = feedPause; this.articlePause = articlePause;        
     }
 
     @Override
@@ -89,16 +89,12 @@ public class FeedProcessor implements Runnable {
             entries = new ArrayList<>(fentries.size());
             for (FeedEntry e : fentries) { 
                 // check if (feedUrl, articleUrl) pair already exists
-                if (filter == null) entries.add(new ScrapedFeedEntry(e, null)); 
-                else if (filter.contains(feed.getUrl(), e.getUrl()) == false) {
+                if (filter == null || !filter.contains(feed.getUrl(), e.getUrl())) {
                     if (Feed.TYPE_SYNDICATION.equals(feed.getType())) {
-                        redirectUrl(e);
-                        // TODO also sleep after redirect?
+                        redirectUrl(e);  
                     }
-//                    System.out.println("url: "+e.getUrl());
-//                    System.out.println("rrl: "+e.getRedirUrl());
                     entries.add(new ScrapedFeedEntry(e, null));
-                }
+                } 
             }
         } catch (Exception ex) {
             logger.logErr("download feed entries for feed failed: " + feed.getUrl(), ex); 
