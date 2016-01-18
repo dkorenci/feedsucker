@@ -1,6 +1,22 @@
 -- get articles without datepublished
 SELECT * FROM feedarticle WHERE datepublished IS NULL
 
+-- filter by datespublished range
+SELECT url, datepublished, datesaved FROM feedarticle WHERE datepublished > '2015-12-10 00:00:01' AND datepublished < '2015-12-10 23:59:59'
+AND url LIKE '%jutarnji.hr%' ORDER BY datesaved DESC
+
+-- select articles withing a date range from a set of feeds
+SELECT * FROM feedarticle WHERE 
+	(datepublished > '2015-12-11 00:00:01' AND
+	 datepublished < '2015-12-11 23:59:59')
+	AND 
+	(id IN (SELECT DISTINCT art.id AS feed_id FROM feedarticle AS art 
+	JOIN (
+	SELECT DISTINCT articles_id, feeds_id FROM feedarticle_feed WHERE feeds_id IN 
+		( SELECT id FROM feed WHERE url IN 
+		  ('http://www.jutarnji.hr/rss?type=section&id=10' ) )
+	) AS t ON art.id = t.articles_id))
+
 -- article corpus date cutoff filter:
 SELECT datepublished, datesaved FROM feedarticle WHERE 
 	datepublished > '2015-01-26 00:00:00' OR

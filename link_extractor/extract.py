@@ -11,10 +11,11 @@ from urlparse import urlparse
 import re, sys, codecs
 
 CRO_CHARS = u'[a-zA-ZćčđšžĆČĐŠŽ]'
+CRO_CHARS_NUMS = u'[a-zA-ZćčđšžĆČĐŠŽ0-9]'
 
 REGEXES = {
     'www.jutarnji.hr':
-        [ur'http://www\.jutarnji\.hr/({0}+\-+)+({0}+\-*)/[0-9]+/'.format(CRO_CHARS)]
+        [ur'http://www\.jutarnji\.hr/\-*({0}+\-+)+({0}+\-*)/[0-9]+/'.format(CRO_CHARS_NUMS)]
 }
 
 FILTERS = {
@@ -29,7 +30,8 @@ def extractLinks(url):
     accept = lambda l: urlMatches(l, regexes, filters)
     # download all links
     links = getLinks(url)
-    return [ unicode(l) for l in links if accept(l) ]
+    return [ unicode(l) for l in links if accept(l) ], \
+            [ unicode(l) for l in links if not accept(l) ]
 
 def urlMatches(url, regexes, filters):
     for r in filters:
@@ -44,13 +46,15 @@ def getLinks(url):
     root = tree.getroot()
     return [e for e in root.xpath('//a/@href')]
 
-def extractToFile(pageUrl, file, feedUrl):
+def extractToFile(pageUrl, file, feedUrl, date):
     print 'extracting %s\nto file %s\nfeed:%s' % (pageUrl, file, feedUrl)
-    links = extractLinks(pageUrl)
+    links, missed = extractLinks(pageUrl)
     f = codecs.open(file, 'w', 'utf-8')
     f.write(feedUrl+'\n')
-    for url in links:
-        f.write(url+'\n')
+    f.write('[date] %s\n'%date)
+    for url in links: f.write(url+'\n')
+    m = codecs.open(file+'.missed', 'w', 'utf-8')
+    for url in missed: m.write(url+'\n')
 
 if __name__ == '__main__':
     args = sys.argv
@@ -58,6 +62,8 @@ if __name__ == '__main__':
         print 'needed 3 parameters: url of page to extract links from,\n' \
               'file to save links, url of feed from rsssucker database'
     else:
-        extractToFile(args[1], args[2], args[3])
+        if len(args) == 5: date = args[4]
+        else: date = '[unknown]'
+        extractToFile(pageUrl=args[1], file=args[2], feedUrl=args[3], date=date)
 
 #extractLinks('http://www.jutarnji.hr/')
