@@ -1,1 +1,2 @@
-java -jar RssSucker.jar java fill "/datafast/rsssucker_data/feedfill/jutarnji2.txt"
+fname=$1
+java -jar RssSucker.jar java fill "/datafast/rsssucker_data/feedfill/$fname"
