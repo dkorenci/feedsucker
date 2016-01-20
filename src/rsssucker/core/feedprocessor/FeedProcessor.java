@@ -176,7 +176,10 @@ public class FeedProcessor implements Runnable {
                 } // else article could be refreshed with new data, if this is the policy                                              
                 Feed f = em.find(Feed.class, feed.getId()); 
                 if (f == null) throw new IllegalArgumentException("feed is not in the database");
-                article.getFeeds().add(f);                
+                article.getFeeds().add(f);           
+                if (article.getDatePublished() == null) {
+                    article.setDatePublished(e.feedEntry.getDate());                    
+                }
                 // feed.getArticles().add(article); is this necessary? this would slow down things
                 em.getTransaction().commit();    
                 // save original, not redirected feed entry url to filter, 

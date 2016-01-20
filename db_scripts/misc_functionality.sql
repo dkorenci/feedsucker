@@ -5,7 +5,18 @@ SELECT * FROM feedarticle WHERE datepublished IS NULL
 SELECT url, datepublished, datesaved FROM feedarticle WHERE datepublished > '2015-12-10 00:00:01' AND datepublished < '2015-12-10 23:59:59'
 AND url LIKE '%jutarnji.hr%' ORDER BY datesaved DESC
 
--- select articles withing a date range from a set of feeds
+-- select articles within a date range from a set of feeds
+SELECT url, datesaved, datepublished, text FROM feedarticle WHERE 
+	(datepublished > '2015-12-10 00:00:01' AND
+	 datepublished < '2015-12-10 23:59:59')
+	AND 
+	(id IN (SELECT DISTINCT art.id AS feed_id FROM feedarticle AS art 
+	JOIN (
+	SELECT DISTINCT articles_id, feeds_id FROM feedarticle_feed WHERE feeds_id IN 
+		( SELECT id FROM feed WHERE url IN 
+		  ('http://www.tportal.hr/vijesti/hrvatska/' ) )
+	) AS t ON art.id = t.articles_id))
+
 SELECT * FROM feedarticle WHERE 
 	(datepublished > '2015-12-11 00:00:01' AND
 	 datepublished < '2015-12-11 23:59:59')
