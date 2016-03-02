@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javautils.PropertiesReader;
+import rsssucker.util.PropertiesReader;
 import rsssucker.config.RssConfig;
 
 

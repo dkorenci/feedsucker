@@ -14,7 +14,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import rsssucker.article.IArticleScraper;
 import rsssucker.article.newspaper.RessurectingNewspaper;
-import javautils.PropertiesReader;
+import rsssucker.util.PropertiesReader;
 import rsssucker.config.RssConfig;
 import rsssucker.core.feedprocessor.FeedProcessor;
 import rsssucker.core.messages.FinishAndShutdownException;

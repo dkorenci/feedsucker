@@ -33,7 +33,7 @@ import rsssucker.article.ArticleData;
 import rsssucker.article.newspaper.Newspaper;
 import rsssucker.article.newspaper.NewspaperException;
 import rsssucker.article.newspaper.NewspaperTester;
-import javautils.PropertiesReader;
+import rsssucker.util.PropertiesReader;
 import rsssucker.config.RssConfig;
 import rsssucker.data.mediadef.MediadefEntity;
 import rsssucker.data.mediadef.MediadefParser;
