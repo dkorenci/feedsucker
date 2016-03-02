@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.xmlbeans.impl.piccolo.io.IllegalCharException;
 
 /**
  * Reads file with media definitions. 

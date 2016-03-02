@@ -28,13 +28,6 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.html.HtmlParser;
-import org.apache.tika.sax.BodyContentHandler;
-import org.apache.tika.sax.LinkContentHandler;
-import org.apache.tika.sax.TeeContentHandler;
-import org.apache.tika.sax.ToHTMLContentHandler;
 import org.xml.sax.ContentHandler;
 import rsssucker.article.ArticleData;
 import rsssucker.article.newspaper.Newspaper;
@@ -195,23 +188,6 @@ public class RssSucker {
 //                System.out.println(c.getValue());
 //            }
         }
-    }
-
-    public void tikaExtractURL(String urlString) throws Exception {
-         URL url = new URL(urlString);
-         InputStream input = url.openStream();
-         LinkContentHandler linkHandler = new LinkContentHandler();
-         ContentHandler textHandler = new BodyContentHandler();
-         ToHTMLContentHandler toHTMLHandler = new ToHTMLContentHandler();
-         TeeContentHandler teeHandler = new TeeContentHandler(linkHandler, textHandler, toHTMLHandler);
-         Metadata metadata = new Metadata();
-         ParseContext parseContext = new ParseContext();
-         HtmlParser parser = new HtmlParser();
-         parser.parse(input, teeHandler, metadata, parseContext);
-         System.out.println("title:\n" + metadata.get("title"));
-         //System.out.println("links:\n" + linkHandler.getLinks());
-         System.out.println("text:\n" + textHandler.toString());
-         //System.out.println("html:\n" + toHTMLHandler.toString());
-     }     
+    }  
     
 }
