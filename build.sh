@@ -3,15 +3,15 @@
 # params: $1 - location of the bin folder of java runtime environment, 
 # leave empty to work with JRE tools on system path 
 
-# has to be run from RssSucker root folder (with lib and src subfolders)
+# has to be run from Feedsucker root folder (with lib and src subfolders)
 
 JAVA_BIN=$1 #"/usr/lib/jvm/java-7-openjdk-amd64/bin/"
 #LOG="build_log.txt" ; `rm $LOG` 
-ARCHIVE=RssSucker.jar
+ARCHIVE=Feedsucker.jar
 
 # CLEAN
 if [ -f $ARCHIVE ]; then
-  rm RssSucker.jar
+  rm $ARCHIVE
 fi
 for class in $(find src -regex ".*\.class");
 do
@@ -51,10 +51,10 @@ do
   cp="$jar \n $cp"  
 done
 echo -e "Class-Path: $cp" > manifest.txt
-echo "Main-Class: rsssucker.core.RssSuckerApp" >> manifest.txt
+echo "Main-Class: feedsucker.core.FeedsuckerApp" >> manifest.txt
 JAR="$JAVA_BIN""jar" #jar command
 #echo 'CREATE JAR: ' >> $LOG
-$JAR cfm RssSucker.jar manifest.txt -C src . #>> $LOG 2>&1
+$JAR cfm $ARCHIVE manifest.txt -C src . #>> $LOG 2>&1
 
 
 # clean *.class files

@@ -97,7 +97,7 @@ if __name__ == '__main__':
     args = sys.argv
     if len(args) < 4:
         print 'needed 3 parameters: url of page to extract links from,\n' \
-              'file to save links, url of feed from rsssucker database'
+              'file to save links, url of feed from feedsucker database'
     else:
         if len(args) == 5: date = args[4]
         else: date = '[unknown]'

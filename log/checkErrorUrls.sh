@@ -13,7 +13,7 @@ for url in `cat $ERRORURLS` ; do
 	#echo $f
 	DB_COMMAND="SELECT COUNT(*) FROM feedarticle WHERE url='$url'"
 	#echo $DB_COMMAND
-	echo $DB_COMMAND | psql --username rsssucker --dbname $1 > $TMPOUT
+	echo $DB_COMMAND | psql --username feedsucker --dbname $1 > $TMPOUT
 	res=`cat $TMPOUT | grep '^[ ]*1$' | wc -l`
 	#echo $res
 	if [ "$res" = "1" ]; then

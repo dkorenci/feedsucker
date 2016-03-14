@@ -7,5 +7,5 @@ NUMT=$2
 #TO STDOUT WITH CSV" 
 DB_COMMAND="SELECT datesaved, substring(text from 1 for 100) FROM feedarticle ORDER BY datesaved DESC LIMIT $NUMT;"
 echo $DB_COMMAND
-echo $DB_COMMAND | psql --username rsssucker --dbname $1
+echo $DB_COMMAND | psql --username feedsucker --dbname $1
 #sudo -u postgres psql -c @$DB_COMMAND"

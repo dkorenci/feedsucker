@@ -21,7 +21,7 @@ build_log.txt
 build_out.txt
 manifest.txt
 *.class
-RssSucker.jar
+Feedsucker.jar
 pid.txt
 run_output.txt
 loop_output.txt
@@ -31,7 +31,7 @@ git_head_commit_id.txt
 src/META-INF/persistence.xml
 
 # local and test settings
-config/rsssucker.properties
+config/feedsucker.properties
 mediadef.txt
 config/local/**
 

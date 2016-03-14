@@ -2,7 +2,7 @@
 
 day="11"
 url="http://localhost/tportal$day""12.html" #"file://var/www/tportal$day12.html"
-file="/datafast/rsssucker_data/feedfill/tportal_$day.txt"
+file="/datafast/feedsucker_data/feedfill/tportal_$day.txt"
 feed="http://www.tportal.hr/vijesti/hrvatska/"
 date="$day.12.2015-12:00:00"
 
