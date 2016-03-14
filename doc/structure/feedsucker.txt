@@ -1,0 +1,25 @@
+*** tool mode and main-app mode
+
+*** Main app structure
+Main application is in the file feedsucker.core.FeedsuckerApp.java
+-- mainLoop()
+-- doFeedRefresh()
+
+- FeedProcessor
+
+- class structure
+
+- Persistence/ORM
+
+- mediadef
+
+- feedreaders
+
+- article scraper
+
+- logging
+
+- caching
+
+- resource factory
+
