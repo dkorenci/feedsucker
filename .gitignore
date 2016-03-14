@@ -7,6 +7,7 @@ build
 lib/cachedir
 build.xml
 tmp
+manifest.mf
 
 # log files
 log/*log_*
