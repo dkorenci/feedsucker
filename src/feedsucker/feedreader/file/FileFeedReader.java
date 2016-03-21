@@ -1,5 +1,7 @@
-package feedsucker.feeds;
+package feedsucker.feedreader.file;
 
+import feedsucker.feedreader.FeedEntry;
+import feedsucker.feedreader.IFeedReader;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,18 +19,18 @@ import feedsucker.log.FeedsuckerLogger;
 /**
  * Reads "fill feed" file with data for filling an existing DB Feed
  * with articles. The file contains urls and other information 
- * neccesary to construct FeedEntry objects with data.  
+ * necessary to construct FeedEntry objects with data.  
  * It does not getFeedEntries from feedUrl, but from file it was
- * initialized with, due to current operaion of FeedProcessor. 
+ * initialized with, due to current operation of FeedProcessor. 
  */
-public class FillFeedReader implements IFeedReader {
+public class FileFeedReader implements IFeedReader {
 
     private String fillFile;
 
     private static final FeedsuckerLogger logger = 
-            new FeedsuckerLogger(FillFeedReader.class.getName());            
+            new FeedsuckerLogger(FileFeedReader.class.getName());            
     
-    public FillFeedReader(String file) {
+    public FileFeedReader(String file) {
         fillFile = file;
     }
     

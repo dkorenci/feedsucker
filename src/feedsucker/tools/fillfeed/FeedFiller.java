@@ -17,8 +17,8 @@ import feedsucker.core.FeedsuckerApp;
 import feedsucker.core.feedprocessor.FeedProcessor;
 import feedsucker.data.Factory;
 import feedsucker.data.entity.Feed;
-import feedsucker.feeds.FillFeedReader;
-import feedsucker.feeds.IFeedReader;
+import feedsucker.feedreader.file.FileFeedReader;
+import feedsucker.feedreader.IFeedReader;
 import feedsucker.log.FeedsuckerLogger;
 
 /**
@@ -93,7 +93,7 @@ public class FeedFiller {
         if (f == null) throw new 
             IllegalArgumentException("feed "+feedUrl+" is not in the database");
         IArticleScraper scraper = FeedsuckerApp.createNewspaper(f.getLanguage());        
-        IFeedReader feedReader = new FillFeedReader(file.getAbsolutePath());
+        IFeedReader feedReader = new FileFeedReader(file.getAbsolutePath());
         FeedProcessor fproc = 
                 new FeedProcessor(f, emf, feedReader, scraper, null, 
                         feedReadPause, articleReadPause);       

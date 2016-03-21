@@ -1,7 +1,7 @@
 package feedsucker.data.entity;
 
 import feedsucker.article.ArticleData;
-import feedsucker.feeds.FeedEntry;
+import feedsucker.feedreader.FeedEntry;
 
 /**
  * Utility methods for creating entity objects from various data. 

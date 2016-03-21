@@ -1,4 +1,4 @@
-package feedsucker.feeds.html;
+package feedsucker.feedreader.html;
 
 import java.io.IOException;
 import org.jsoup.Jsoup;
@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import feedsucker.feeds.FeedEntry;
+import feedsucker.feedreader.FeedEntry;
 import feedsucker.resources.ResourceFactory;
 
 public class TestHtmlFeed {

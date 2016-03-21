@@ -1,4 +1,4 @@
-package feedsucker.feeds;
+package feedsucker.feedreader.rome;
 
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -12,6 +12,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import feedsucker.data.entity.Feed;
+import feedsucker.feedreader.FeedEntry;
+import feedsucker.feedreader.IFeedReader;
 import feedsucker.util.HttpUtils;
 
 /**

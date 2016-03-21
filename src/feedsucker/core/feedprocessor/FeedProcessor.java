@@ -14,8 +14,8 @@ import feedsucker.data.cache.Filter;
 import feedsucker.data.entity.EntityFactory;
 import feedsucker.data.entity.Feed;
 import feedsucker.data.entity.FeedArticle;
-import feedsucker.feeds.FeedEntry;
-import feedsucker.feeds.IFeedReader;
+import feedsucker.feedreader.FeedEntry;
+import feedsucker.feedreader.IFeedReader;
 import feedsucker.log.FeedsuckerLogger;
 import feedsucker.util.HttpUtils;
 

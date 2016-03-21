@@ -1,4 +1,4 @@
-package feedsucker.feeds;
+package feedsucker.feedreader;
 
 import java.util.Date;
 

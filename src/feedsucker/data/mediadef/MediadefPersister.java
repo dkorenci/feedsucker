@@ -11,7 +11,7 @@ import feedsucker.data.Factory;
 import feedsucker.data.JpaContext;
 import feedsucker.data.entity.Feed;
 import feedsucker.data.entity.Outlet;
-import feedsucker.feeds.RomeFeedReader;
+import feedsucker.feedreader.rome.RomeFeedReader;
 import feedsucker.log.FeedsuckerLogger;
 
 /**

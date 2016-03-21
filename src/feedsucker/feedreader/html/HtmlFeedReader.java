@@ -1,4 +1,4 @@
-package feedsucker.feeds.html;
+package feedsucker.feedreader.html;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -15,8 +15,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import feedsucker.feeds.FeedEntry;
-import feedsucker.feeds.IFeedReader;
+import feedsucker.feedreader.FeedEntry;
+import feedsucker.feedreader.IFeedReader;
 
 /**
  * View web page as a feed, URLs in the feeds are URLs of articles published on the page.
