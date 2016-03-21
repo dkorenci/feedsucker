@@ -22,7 +22,7 @@ import feedsucker.core.messages.ShutdownException;
 import feedsucker.core.messages.MessageFileMonitor;
 import feedsucker.core.messages.MessageReceiver;
 import feedsucker.data.Factory;
-import feedsucker.data.cache.Filter;
+import feedsucker.data.filter.Filter;
 import feedsucker.data.entity.Feed;
 import feedsucker.data.mediadef.MediadefEntity;
 import feedsucker.data.mediadef.MediadefException;

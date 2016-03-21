@@ -10,7 +10,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import feedsucker.scrape.ArticleData;
 import feedsucker.scrape.IArticleScraper;
-import feedsucker.data.cache.Filter;
+import feedsucker.data.filter.Filter;
 import feedsucker.data.entity.EntityFactory;
 import feedsucker.data.entity.Feed;
 import feedsucker.data.entity.FeedArticle;

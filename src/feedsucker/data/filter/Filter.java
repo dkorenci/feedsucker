@@ -1,4 +1,4 @@
-package feedsucker.data.cache;
+package feedsucker.data.filter;
 
 import java.util.ArrayList;
 import java.util.Calendar;

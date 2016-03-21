@@ -1,4 +1,4 @@
-package feedsucker.data.cache;
+package feedsucker.data.filter;
 
 import java.io.Serializable;
 import java.util.Date;
