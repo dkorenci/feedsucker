@@ -1,4 +1,4 @@
-package feedsucker.article;
+package feedsucker.scrape;
 
 /**
  * Scraped web article data.

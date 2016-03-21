@@ -1,8 +1,8 @@
-package feedsucker.article.newspaper;
+package feedsucker.scrape.newspaper;
 
 import java.io.IOException;
-import feedsucker.article.ArticleData;
-import feedsucker.article.IArticleScraper;
+import feedsucker.scrape.ArticleData;
+import feedsucker.scrape.IArticleScraper;
 import feedsucker.log.FeedsuckerLogger;
 
 /**

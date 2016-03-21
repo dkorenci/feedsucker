@@ -1,4 +1,4 @@
-package feedsucker.article.newspaper;
+package feedsucker.scrape.newspaper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import javax.persistence.Query;
-import feedsucker.article.ArticleData;
+import feedsucker.scrape.ArticleData;
 import feedsucker.data.Factory;
 import feedsucker.data.JpaContext;
 import feedsucker.data.entity.FeedArticle;

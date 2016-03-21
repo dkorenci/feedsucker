@@ -1,4 +1,4 @@
-package feedsucker.article;
+package feedsucker.scrape;
 
 public interface IArticleScraper {
 

@@ -1,4 +1,4 @@
-package feedsucker.article.newspaper;
+package feedsucker.scrape.newspaper;
 
 public class NewspaperOutput {
 

@@ -1,6 +1,6 @@
 package feedsucker.data.entity;
 
-import feedsucker.article.ArticleData;
+import feedsucker.scrape.ArticleData;
 import feedsucker.feedreader.FeedEntry;
 
 /**

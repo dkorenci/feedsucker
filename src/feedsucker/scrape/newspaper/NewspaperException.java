@@ -1,4 +1,4 @@
-package feedsucker.article.newspaper;
+package feedsucker.scrape.newspaper;
 
 /**
  * Exception signaling errors reported by newspaper API.

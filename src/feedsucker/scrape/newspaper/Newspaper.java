@@ -1,11 +1,11 @@
-package feedsucker.article.newspaper;
+package feedsucker.scrape.newspaper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import feedsucker.article.ArticleData;
-import feedsucker.article.IArticleScraper;
+import feedsucker.scrape.ArticleData;
+import feedsucker.scrape.IArticleScraper;
 import feedsucker.util.PropertiesReader;
 import feedsucker.config.FeedsuckerConfig;
 

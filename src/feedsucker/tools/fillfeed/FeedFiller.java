@@ -11,7 +11,7 @@ import feedsucker.util.PropertiesReader;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
-import feedsucker.article.IArticleScraper;
+import feedsucker.scrape.IArticleScraper;
 import feedsucker.config.FeedsuckerConfig;
 import feedsucker.core.FeedsuckerApp;
 import feedsucker.core.feedprocessor.FeedProcessor;
