@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package feedsucker.data;
 
 import javax.persistence.EntityManager;

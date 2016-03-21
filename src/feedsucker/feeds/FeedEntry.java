@@ -1,6 +1,5 @@
 package feedsucker.feeds;
 
-import com.sun.syndication.feed.synd.SyndEntry;
 import java.util.Date;
 
 /**

@@ -2,19 +2,15 @@ package feedsucker.article.newspaper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import feedsucker.article.ArticleData;
 import feedsucker.article.IArticleScraper;
 import feedsucker.util.PropertiesReader;
 import feedsucker.config.FeedsuckerConfig;
 
 /**
- * Wrapper for python newspaper package.
+ * Wrapper for news article scraping functionality in python newspaper package.
  */
 public class Newspaper implements IArticleScraper {        
     

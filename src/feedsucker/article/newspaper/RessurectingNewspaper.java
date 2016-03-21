@@ -6,7 +6,7 @@ import feedsucker.article.IArticleScraper;
 import feedsucker.log.FeedsuckerLogger;
 
 /**
- * Wrapper around newspaper that initializes a new instance in case of failure.
+ * Wrapper around newspaper that initializes a new instance in case of a crash.
  */
 public class RessurectingNewspaper implements IArticleScraper {
     

@@ -1,4 +1,3 @@
-
 package feedsucker.data.entity;
 
 import java.util.ArrayList;

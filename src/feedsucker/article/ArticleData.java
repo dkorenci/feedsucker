@@ -5,8 +5,8 @@ package feedsucker.article;
  */
 public class ArticleData {
 
-    private String text; // article text
-    private String title; // article title
+    private String text; 
+    private String title;
 
     public String getText() {
         return text;

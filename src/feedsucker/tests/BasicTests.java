@@ -13,7 +13,6 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -28,7 +27,6 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.xml.sax.ContentHandler;
 import feedsucker.article.ArticleData;
 import feedsucker.article.newspaper.Newspaper;
 import feedsucker.article.newspaper.NewspaperException;
@@ -42,10 +40,6 @@ import feedsucker.log.LoggersManager;
 import feedsucker.tools.DatabaseTools;
 import feedsucker.util.HttpUtils;
 
-/**
- *
- * @author dam1root
- */
 public class BasicTests {
    
     private static String guardian1="http://www.theguardian.com/world/europe/roundup/rss";

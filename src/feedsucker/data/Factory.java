@@ -10,7 +10,7 @@ import javax.persistence.Persistence;
 import feedsucker.util.PropertiesReader;
 import feedsucker.config.FeedsuckerConfig;
 
-
+/** Methods for creating JPA EntityManagerFactory objects. */
 public class Factory {
 
     private static final String DB_UNAME_PROP = "db_username";
@@ -23,7 +23,7 @@ public class Factory {
             readConnectionParams();
         } catch (Exception ex) {
             // errors are tolerated since the assumption is that if there is 
-            // no config files, the params will be passed directly to createEmf()
+            // no config file, the params will be passed directly to createEmf()
         }
     }      
     

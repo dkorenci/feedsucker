@@ -15,7 +15,7 @@ import feedsucker.data.entity.Feed;
 import feedsucker.util.HttpUtils;
 
 /**
- * Feed Reader using rome framework 
+ * Feed reader for Atom and RSS feed based on Rome framework 
  */
 public class RomeFeedReader implements IFeedReader {
 

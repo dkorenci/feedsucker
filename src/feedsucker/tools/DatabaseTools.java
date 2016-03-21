@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package feedsucker.tools;
 
 import com.google.common.base.Function;
@@ -26,8 +20,9 @@ import feedsucker.data.JpaContext;
 import feedsucker.data.entity.FeedArticle;
 
 /**
- *
- * @author damir
+ * Miscellaneous tools for extracting parts of the Feedsucker
+ * database to the txt-oid files. 
+ * 
  */
 public class DatabaseTools {
 

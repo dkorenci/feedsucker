@@ -37,7 +37,7 @@ import feedsucker.tools.DatabaseTools;
 import feedsucker.tools.fillfeed.FeedFiller;
 
 /**
- * Initialization and workflow the the application.
+ * Main class, implementing initialization and workflow of the application.
  */
 public class FeedsuckerApp {
     
@@ -76,6 +76,10 @@ public class FeedsuckerApp {
     // before shutting the application down
     private static final int THREAD_SHUTDOWN_WAIT = 10 * 1000;
     
+    /**
+     * If run without arguments, Feedsucker is started. 
+     * Else, tools starter is run with the passed arguments.      
+     */
     public static void main(String[] args) {   
         if (args.length == 0) {
             FeedsuckerApp app = new FeedsuckerApp();
@@ -220,6 +224,10 @@ public class FeedsuckerApp {
         return true;
     }  
    
+    /**
+     * Sleep. Monitor messages passed to the application. 
+     * At specified intervals run feed reading and article scraping.     
+     */
     private void mainLoop() { try {
         boolean sleep = false;
         while (true) {

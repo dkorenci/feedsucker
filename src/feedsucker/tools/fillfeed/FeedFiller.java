@@ -10,7 +10,6 @@ import java.util.List;
 import feedsucker.util.PropertiesReader;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import feedsucker.article.IArticleScraper;
 import feedsucker.config.FeedsuckerConfig;

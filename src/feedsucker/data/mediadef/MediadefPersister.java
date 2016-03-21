@@ -5,17 +5,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import feedsucker.core.FeedsuckerApp;
 import feedsucker.data.Factory;
 import feedsucker.data.JpaContext;
 import feedsucker.data.entity.Feed;
 import feedsucker.data.entity.Outlet;
 import feedsucker.feeds.RomeFeedReader;
-import feedsucker.log.LoggersManager;
 import feedsucker.log.FeedsuckerLogger;
 
 /**

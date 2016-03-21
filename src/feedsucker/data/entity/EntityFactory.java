@@ -3,6 +3,9 @@ package feedsucker.data.entity;
 import feedsucker.article.ArticleData;
 import feedsucker.feeds.FeedEntry;
 
+/**
+ * Utility methods for creating entity objects from various data. 
+ */
 public class EntityFactory {
 
     public static FeedArticle createFeedArticle(FeedEntry entry, ArticleData artData) {        

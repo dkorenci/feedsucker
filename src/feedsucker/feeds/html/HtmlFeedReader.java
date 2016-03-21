@@ -6,14 +6,12 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
-import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -22,8 +20,10 @@ import feedsucker.feeds.IFeedReader;
 
 /**
  * View web page as a feed, URLs in the feeds are URLs of articles published on the page.
- * Extract URLs that are children of feed/page URL, and whose URL path 
+ * Article URLs that are extracted are children of feed/page URL whose URL path 
  * ends in an article title - list of words separated by non alphabetic characters.
+ * List of words and threshold for the number of words are configurable
+ * (ie words from a particular language).
  */
 public class HtmlFeedReader implements IFeedReader {
 
@@ -33,7 +33,7 @@ public class HtmlFeedReader implements IFeedReader {
     
     /**     
      * @param words dictionary to decide weather url ends in a title (list of words)
-     * @param treshold minimum number of words for a title
+     * @param treshold minimum number of words in the ending for the url to be considered a title
      */
     public HtmlFeedReader(Set<String> words, int treshold) {
         this.words = words; wordTreshold = treshold;

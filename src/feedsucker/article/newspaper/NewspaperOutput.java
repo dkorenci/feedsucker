@@ -1,8 +1,5 @@
 package feedsucker.article.newspaper;
 
-/**
- *
- */
 public class NewspaperOutput {
 
     private String text; // article text

@@ -1,19 +1,15 @@
 package feedsucker.core.feedprocessor;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import feedsucker.article.ArticleData;
 import feedsucker.article.IArticleScraper;
-import feedsucker.core.FeedsuckerApp;
 import feedsucker.data.cache.Filter;
 import feedsucker.data.entity.EntityFactory;
 import feedsucker.data.entity.Feed;
@@ -24,7 +20,7 @@ import feedsucker.log.FeedsuckerLogger;
 import feedsucker.util.HttpUtils;
 
 /**
- * Downloads entries from a single feed, scrapes the articles and save them to database.
+ * Downloads entries from a single feed, scrapes the articles and saves them to database.
  */
 public class FeedProcessor implements Runnable {
     

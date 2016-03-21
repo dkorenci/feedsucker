@@ -5,13 +5,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Logger;
 import javax.persistence.Query;
 import feedsucker.article.ArticleData;
 import feedsucker.data.Factory;
 import feedsucker.data.JpaContext;
 import feedsucker.data.entity.FeedArticle;
 
+/**
+ * Various run-to-test-it-works functionality written during development. 
+ */
 public class NewspaperTester {
 
     List<FeedArticle> articles;
