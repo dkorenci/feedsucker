@@ -428,8 +428,10 @@ public class FeedsuckerApp {
                 return new RomeFeedReader();
         }
         else if (Feed.TYPE_WEBPAGE.equals(type)) {
-            Set<String> words = ResourceFactory.getAsciiWordlist("hr");        
-            return new HtmlFeedReader(words, 4);            
+            Set<String> words = ResourceFactory.getAsciiWordlist(f.getLanguage());        
+            if (words == null) throw new IllegalArgumentException("Could not load "
+                        + "language file for : "+f.getLanguage());
+            else return new HtmlFeedReader(words, 4);            
         }
         else throw new IllegalArgumentException("unsuported feed type "+
                 type+" for feed "+f.getUrl());
