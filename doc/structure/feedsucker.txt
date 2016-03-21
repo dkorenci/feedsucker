@@ -1,25 +1,69 @@
+Feedsucker monitors a set of feeds, reads URLs
+from the feeds at regular intervals, scrapes the texts from the
+web pages and saves them together with metadata in a relational database.
+Main use case is monitoring news feeds. 
+A feed is an entity described by an URL from which URLs can be extracted. 
+It can be an RSS or Atom feed, a web page containing a list 
+of articles for a specified category, a text file with a list of urls ...
+
+Feedsucker app is started by running Feedsucker.jar, either
+directly or via startup scripts. 
+It has to be run from the feedsucker root folder that 
+contains folders config, newspaper and resources as subfolders. 
+
 *** tool mode and main-app mode
+If started without command line arguments, main functionality is started. 
+Otherwise one of the tools specified by the arguments is run.
 
 *** Main app structure
-Main application is in the file feedsucker.core.FeedsuckerApp.java
--- mainLoop()
--- doFeedRefresh()
+Main application class is feedsucker.core.FeedsuckerApp
+Entry point is FeedsuckerApp.main()
+
+- Important methods:
+-- mainLoop() - starts feed reading at regular intervals
+-- doFeedRefresh() 
+Distributes feed reading jobs among threads and starts them, 
+by creating a FeedProcessor for each feed. 
 
 - FeedProcessor
+Class that does feed reading, article scraping and saving for a single feed. 
+It is configured (most importantly) with a IFeedReader and IArticleScraper.
 
-- class structure
+- Filter
+Filter is a DB persisted list of (feed, feed_article) pairs that should not be processed
+to avoid downloading same entries multiple times. Entries expire in a few days. 
+
+- IFeedReader 
+Interface for getting URLs from a feed URL. 
+
+- IArticleScraper 
+Interface for getting article data from a URL
 
 - Persistence/ORM
+Entities such as feeds, feed entries, outlets, etc. are kept in a relational database.
+JPA (Hibernate implementation) is used to work with the database.
+For now the app is configured to work with Postgres, but DBMS can be easily switched. 
 
 - mediadef
+Definition of feeds to monitor and corresponding outlets is defined 
+by writing a txt file named mediadef file, and configuring the app to read such a file. 
+At start mediadef is parsed with MediadefParser and the entries are persisted
+to database using MediadefPersister. 
+Syntax of the mediadef file is described in doc/mediadef.txt
 
-- feedreaders
+*** Supporting functionality
 
-- article scraper
+- messaging
+Feedsucker app and Loop tool can receive messages from outside world
+(user, scripts, other apps) via a txt file to which a specific 
+string has to be written in order for corresponding message to be sent. 
+classes in feedsucker.core.messages implement this functionality
 
 - logging
+Actions of the apps as well as errors are logged in XML format. 
+Logs can be searched with xpath queries using BaseX (packaged with the app).
+All the logs are written in a log/ folder, and one timestamped
+log subfolder is created per run, notice that the Loop tool
+also creates one such log folder. 
 
-- caching
-
-- resource factory
 
