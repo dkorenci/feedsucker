@@ -154,6 +154,7 @@ public class FeedProcessor implements Runnable {
         if (e.scrapedData != null) { // check if scraping failed
             if ("".equals(e.scrapedData.getText().trim())) {
                 logger.logErr("article with empty text scraped from: " + e.feedEntry.getRedirUrl(), null);
+                logger.logUrl(e.feedEntry.getRedirUrl());
                 continue;
             }
             if (em.getTransaction().isActive()) {
