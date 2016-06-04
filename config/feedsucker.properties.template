@@ -1,28 +1,29 @@
-# feeds refresh interval, in minutes
-refresh_interval = 30
-
-# newspaper
+## newspaper settings
+# location of the script for interfacing with newspaper
 newspaper_interface = newspaper/console_interface.py
+# command to run the newspaper interface
 python_command = python
+# default newspaper language
 newspaper_language = en
 
-# mediadef
+## mediadef file with feed and outlet definintion
 mediadef_file = config/mediadef/mediadef.txt
 
+## app settings
+# feeds refresh interval, in minutes
+refresh_interval = 30
+# number of threads used for reading feed content
 num_threads = 10
+# number of newspaper instances used for scraping content
 num_npapers = 10
-
-# loop restart interval, in minutes
-restart_interval = 20
-
+# main app will be restarted every this many minutes
+restart_interval = 310
 # database connection
 db_url = localhost/feedsucker_devel
 db_username = feedsucker
 db_password = feedsucker
-
-# feed reading
+# default data for agent emulation when reading feeds
 user_agent = Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36
-
 # pauses after the reads, in miliseconds, to ovoid bombarding the servers with requests
 feed_read_pause = 250
 article_read_pause = 250
