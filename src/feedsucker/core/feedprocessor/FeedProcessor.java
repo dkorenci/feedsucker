@@ -152,6 +152,10 @@ public class FeedProcessor implements Runnable {
         for (ScrapedFeedEntry e : entries) {
         checkInterrupted();
         if (e.scrapedData != null) { // check if scraping failed
+            if ("".equals(e.scrapedData.getText().trim())) {
+                logger.logErr("article with empty text scraped from: " + e.feedEntry.getRedirUrl(), null);
+                continue;
+            }
             if (em.getTransaction().isActive()) {
                 // this should not happen, since transaction should be 
                 // commited or rolled back, continue with new entity manager
