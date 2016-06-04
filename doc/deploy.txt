@@ -1,0 +1,61 @@
+These are instructions how to deploy a working instance of feedsucker. 
+First check prerequisites.txt to see if all the neccessary resources are present.
+
+1. Create deploy folder with feedsucker code and resources
+you can use the bash script to do this automatically: 
+scripts/deploy_from_git_repo.sh (also created the database, 
+see the code for documentation)
+Otherwise:
+1.0 Take the code and resources from the git repository
+1.1 Create config files
+Create persistence.xml from persistence.template.xml 
+Create feedsucker.properties from feedsucker.properties.template 
+These files are not git-tracked since they are deploy-specific
+
+2. Create the database
+Create a user/login role and a database (with UTF-8 encoding).
+Default configuration options assume a 'feedsucker' login role and 'feedsucker' password
+Script deploy_from_git_repo.sh does this for you if you use postgres, 
+the script assumes that a 'feedsucker' login role is created
+ 
+3. Create mediadef file
+mediadef file contains description of feeds and outlets you want to monitor
+doc/structure/mediadef.txt contains more information
+
+4. Configure the application
+main config files are config/feedsucker.properties (app config)
+and src/META-INF/persistence.xml
+For more info, see the comments in files. 
+Make sure to specify the name of the database you will be using.
+Default app config options should work well. 
+
+5. Compile the code
+On linux, run build.sh from feedsucker deploy folder, 
+optionally specifying java location. 
+Quick way to compile on any platform is to create NetBeans
+project and compile (add feedsucker source files and 
+jars in lib folder to the project).
+
+6. Run
+App has to be started from feedsucker root folder.
+Check run.sh and feedsucker.sh for more details. 
+Best way to run is to run the app in LOOP mode:
+./feedsucker.sh LOOP START
+stopping is done by: 
+./feedsucker.sh LOOP STOP
+There is more about LOOP and standalone mode in the documentation.
+Ways to run the standalone app:
+- directly: java -jar Feedsucker.jar 
+- by executing: run.sh script
+- via feedsucker.sh control script
+feedsucker.sh START [java_location]
+
+7. Newspaper stopwords
+Newspaper text scraping algorithm needs a language-specific stopword list.
+These lists are located in resources/text subfolder of newspaper, 
+on linux they could be in:
+/usr/local/lib/python2.7/dist-packages/newspaper/resources/text
+Lists for some langugages are already there, and
+resources subfolder of newspaper contains some word lists.
+
+ 

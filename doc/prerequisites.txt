@@ -1,0 +1,24 @@
+0. Java 7+ JDK
+
+1. DBMS
+You have to install a JPA-compatible DBMS.
+Feedsucker has been developed and tested with PostgreSQL
+and all the settings and helper scripts (for now) assume working with pgsql.
+To install it on linux, try: apt-get install postgresql pgadmin3
+If some other DMBS is used, you will have to create the database manually, 
+and change src/META-INF/persistence.xml (JPA configuration) 
+
+2. newspaper/python
+Text scraping tool used for now is newspaper: 
+http://newspaper.readthedocs.io/en/latest/
+You need python and newspaper installed
+-- this could work on linux:
+sudo apt-get install libxml2-dev libxslt1-dev // needed for lxml
+sudo pip install newspaper
+-- test the newspaper app
+To check if all the python dependencies are installed 
+and work well run console_interface.py from newspaper folder
+on the first line enter language code, for example 'en'
+than enter one URL per line, for each URL newspaper should
+scrape the web page and print the data. enter EXIT to exit. 
+
