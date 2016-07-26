@@ -58,12 +58,3 @@ Feedsucker app and Loop tool can receive messages from outside world
 (user, scripts, other apps) via a txt file to which a specific 
 string has to be written in order for corresponding message to be sent. 
 classes in feedsucker.core.messages implement this functionality
-
-- logging
-Actions of the apps as well as errors are logged in XML format. 
-Logs can be searched with xpath queries using BaseX (packaged with the app).
-All the logs are written in a log/ folder, and one timestamped
-log subfolder is created per run, notice that the Loop tool
-also creates one such log folder. 
-
-

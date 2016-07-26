@@ -1,0 +1,31 @@
+*** Logging
+Actions of the apps as well as errors are logged in XML format. 
+All the logs are written in a log/ folder, and one timestamped
+log subfolder is created per run, notice that the Loop tool
+also creates one such log folder and that each time the 
+app is restarted during Loop run, another log folder will be created. 
+
+For each run, several log files are created, one for each category of events, 
+as well as errorUrl.log with url of the articles that were not
+persisted due to an error at some processing step.
+
+URL that caused an error can later be processed successfully, to 
+determine amount of "error urls" in the database, run 
+extractErrorUrls.sh and checkErrorUrls.sh DB_NAME from the log/ folder. 
+For checkErrorUrls script, change of db connection params might be necessary. 
+
+Logs can be searched/filtered with xpath queries 
+using BaseX (packaged with the app).
+Examples of xpath queries are in log/xpath_queries.txt . 
+To browse the logs, firs merge all log files from all per-run folders, 
+for example: ./merge_logs.sh error errorLogs.xml
+and then start BaseX: ./run_basex.sh errorLogs.xml basex.out
+Answer yes to the question weather to create database and
+then just enter xpath queries in the "Find" field on top. 
+
+*** Database operations
+
+*** Misc. functionality
+misc. scripts (scripts folder)
+
+ 

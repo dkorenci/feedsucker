@@ -1,5 +1,0 @@
-- logging
-- db scripts
-- misc. scripts (scripts folder)
-
- 
