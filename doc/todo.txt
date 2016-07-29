@@ -1,1 +1,8 @@
- 
+*** Core Functionality
+
+*** Control, Tools and Utils
+
+- make Loop tool platform independent
+Make LoopAppRunner not dependent on feedsucker.sh script.
+Make it execute Feedsucker via java -jar command and
+. write control messages to files directly

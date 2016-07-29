@@ -1,9 +1,37 @@
+Tools encompass supporting functionality and utilities. 
+They are run by invoking Feedsucker (java -jar Feedsucker.jar) 
+with following arguments: JAVA_RUNTIME_PATH TOOL_NAME [TOOL_PARAMS]
+
 - loop
+Loop tool is used to control the Feedsucker app. 
+The app can freeze or crash within weeks of running, 
+and until this is solved the app is periodically restarted
+(and maybe even after the fix it might be 
+wise to do so, to preempt unknown bugs).
+Loop tool is a stan alone process that controls the 
+main app via file-based messaging and a bash script (for now):
+restarts it, or starts it if it crashed. 
+It is configured via main configuration file. 
 
 - fill
--- feedfill as a part of feedsucker app
--- feedfill scripts
+java -jar Feedsucker.jar java fill FILE_OR_FOLDER
+Used for populating the database with articles collected
+from other sources, via a set of files mimicking 
+a feed and containing article URLs. 
+For example, can be used for filling holes in the database
+due to server crash, URLs of articles for the missing dates can 
+be retrieved from news site archives, stored to a file and 
+processed via fill tool which will store them to database.
+Command invokes FeedFiller class, that reads files in a folder or single file, 
+each file starting with feed url, each line containing
+an article URL optionally preceeded with a line containing a date. 
+Than it scrapes and stores the articles using feedsacker app. 
 
 - hosts
+java -jar Feedsucker.jar java hosts > hosts.txt
+Print host names of all article URLs in the database. 
 
 - table 
+java -jar Feedsucker.jar java table
+Writes out articles in the database in txt table 
+suitable for reading as R table or pandas dframe. 
