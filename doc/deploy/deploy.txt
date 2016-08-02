@@ -20,7 +20,7 @@ the script assumes that a 'feedsucker' login role is created
  
 3. Create mediadef file
 mediadef file contains description of feeds and outlets you want to monitor
-doc/structure/mediadef.txt contains more information
+doc/deploy/mediadef.txt contains more information
 
 4. Configure the application
 main config files are config/feedsucker.properties (app config)
