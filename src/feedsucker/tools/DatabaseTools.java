@@ -42,7 +42,7 @@ public class DatabaseTools {
         for (String h : hosts) System.out.println(h);
     }
 
-    /** Export as table for statistical software (R, scipy, ...) */ 
+    /** Export as table for statistical software (R, pandas, ...) */ 
     public void exportDatabaseAsTable() throws IOException {
         List<FeedArticle> articles = getAllArticles();
         BufferedWriter table = new BufferedWriter(new OutputStreamWriter(
@@ -53,6 +53,7 @@ public class DatabaseTools {
           private Escaper rmquote = Escapers.builder().addEscape('"', "").build();        
           private Escaper rmnewline = Escapers.builder().addEscape('\n', "").build();        
           @Override public String apply(String s) {
+            if (s == null) s = "";
             s = rmquote.escape(s);
             return new StringBuilder(s.length()+2).append('"').append(s).append('"').toString();
           }
@@ -78,14 +79,20 @@ public class DatabaseTools {
         return b.toString();
     }
     
+    // null filter, conver null to "NULL"
+    private Object nf(Object o) {
+        if (o == null) return "NULL";
+        else return o;
+    }
+    
     // format article data for printing into a table row, include
     // modifier function for operations such as quoting and escaping
     private CharSequence toTableRow(FeedArticle art, char delimit, 
             Function<String, String> m) {
         StringBuilder b = new StringBuilder();
         b.append(art.getId()).append(delimit);
-        b.append(art.getDatePublished()).append(delimit);
-        b.append(art.getDateSaved()).append(delimit);        
+        b.append(nf(art.getDatePublished())).append(delimit);
+        b.append(nf(art.getDateSaved())).append(delimit);        
         b.append(m.apply(art.getUrl())).append(delimit);
         b.append(m.apply(art.getAuthor())).append(delimit);        
         b.append(m.apply(art.getExtractedTitle())).append(delimit);        
