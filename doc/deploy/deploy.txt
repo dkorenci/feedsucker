@@ -17,6 +17,9 @@ Create a user/login role and a database (with UTF-8 encoding).
 Default configuration options assume a 'feedsucker' login role and 'feedsucker' password
 Script deploy_from_git_repo.sh does this for you if you use postgres, 
 the script assumes that a 'feedsucker' login role is created
+2.1 JDBC
+A JDBC driver for the DBMS used must be provided in 
+a jar file located in the lib/ folder.
  
 3. Create mediadef file
 mediadef file contains description of feeds and outlets you want to monitor
@@ -36,7 +39,21 @@ Quick way to compile on any platform is to create NetBeans
 project and compile (add feedsucker source files and 
 jars in lib folder to the project).
 
-6. Run
+6. Set up language resources (if neccessary)
+6.1 Newspaper stopwords
+Newspaper text scraping algorithm needs a language-specific stopword list.
+These lists are located in resources/text subfolder of newspaper, 
+on linux they could be in:
+/usr/local/lib/python2.7/dist-packages/newspaper/resources/text
+Lists for some large langugages are already there, and
+resources subfolder of newspaper contains some word lists.
+6.1 HtmlFeedReader dictionary
+If you are reading from html feeds, HtmlFeedReader will need a 
+dictionary of words for recognizing URLs of news articles.
+For a specific language, dictionary must be in 
+resources/lang_ascii_wordlist.txt , where lang is ISO 639-1 language code.
+
+7. Run
 App has to be started from feedsucker root folder.
 Check run.sh and feedsucker.sh for more details. 
 Best way to run is to run the app in LOOP mode:
@@ -49,13 +66,3 @@ Ways to run the standalone app:
 - by executing: run.sh script
 - via feedsucker.sh control script
 feedsucker.sh START [java_location]
-
-7. Newspaper stopwords
-Newspaper text scraping algorithm needs a language-specific stopword list.
-These lists are located in resources/text subfolder of newspaper, 
-on linux they could be in:
-/usr/local/lib/python2.7/dist-packages/newspaper/resources/text
-Lists for some langugages are already there, and
-resources subfolder of newspaper contains some word lists.
-
- 

@@ -35,6 +35,15 @@ to avoid downloading same entries multiple times. Entries expire in a few days.
 
 - IFeedReader 
 Interface for getting URLs from a feed URL. 
+-- HtmlFeedReader
+This is a reader that works well for a class of news sites that
+format article URLs so that they end with a title, extended title
+or a short description, ie a list of words separated with delimiters. 
+To recognize such URLs, a dictionary of site's language words 
+must be provided in resources/ folder. 
+Currently there is a list of Croatian words provided, 
+extracted from Goran Igaly's Croatian-English dictionary: 
+https://web.math.pmf.unizg.hr/~igaly/EHrjecnik.htm
 
 - IArticleScraper 
 Interface for getting article data from a URL
