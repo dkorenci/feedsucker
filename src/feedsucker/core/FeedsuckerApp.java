@@ -278,7 +278,7 @@ public class FeedsuckerApp {
         boolean shutdown = false;
         try {            
             
-        logger.info("starting feed refresh");
+        logger.info("STARTING FEED REFRESH");
         int localNumThreads = numThreads;           
         if (feeds.size() < localNumThreads) localNumThreads = feeds.size();
         executor = Executors.newFixedThreadPool(localNumThreads);        
@@ -296,22 +296,19 @@ public class FeedsuckerApp {
                 logger.logErr("error initializing processors for feed "+f.getUrl(), e);
                 continue;
             }
-            // submit feed processing job
-            logger.info("starting processor for feed " + f.getUrl());
+            // submit feed processing job            
             executor.submit(processor);
         }
-        executor.shutdown();
-        logger.info("waiting for FeedProcessor threads to finish");
+        executor.shutdown();        
         while (executor.isTerminated() == false) {
             try { checkMessages(); } catch (FinishAndShutdownException e) { shutdown = true; }
             try { executor.awaitTermination(FEED_REFRESH_SLEEP, TimeUnit.MILLISECONDS); }
             catch (InterruptedException e) {}           
-        }
-        logger.info("FeedProcessor threads finished");
+        }        
         persistFilter();
         removeExpiredFilterEntries();
         closeNewspapers();        
-        logger.info("ending feed refresh");        
+        logger.info("ENDING FEED REFRESH - all feeds processed");        
         
         }
         catch (ShutdownException e) {

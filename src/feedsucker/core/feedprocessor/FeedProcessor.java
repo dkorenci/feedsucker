@@ -58,9 +58,11 @@ public class FeedProcessor implements Runnable {
         boolean result;
         try {           
             checkInterrupted();
+            logger.info("START processing for feed: "+feed.getUrl());
             result = readFeedEntries(); if (result == false) return;
             scrapeFeedArticles(); 
             saveFeedArticles();
+            logger.info("FINISHED processing for feed: "+feed.getUrl());
         }
         catch (InterruptedException ex) {
             logger.info("feed processing interrupted occured for feed: " + feed.getUrl());
@@ -78,7 +80,7 @@ public class FeedProcessor implements Runnable {
     
     // read feed entries, log error and return false if fail
     private boolean readFeedEntries() throws InterruptedException {        
-        logger.info("start reading entries");
+        logger.info("start reading entries for feed: " + feed.getUrl());
         try {                        
             List<FeedEntry> fentries = freader.getFeedEntries(feed.getUrl());    
             //fentries = fentries.subList(0, 5);
@@ -96,7 +98,7 @@ public class FeedProcessor implements Runnable {
             logger.logErr("download feed entries for feed failed: " + feed.getUrl(), ex); 
             return false;
         }
-        logger.info("finished reading entries");
+        logger.info("finished reading entries for feed: " + feed.getUrl());
         Thread.sleep(feedPause);                
         return true;
     }
@@ -126,7 +128,7 @@ public class FeedProcessor implements Runnable {
     }
     
     private void scrapeFeedArticles() throws InterruptedException {
-        logger.info("start scraping");
+        logger.info("start scraping for feed: " + feed.getUrl());
         for (ScrapedFeedEntry entry : entries) {
             String url = entry.feedEntry.getRedirUrl();
             checkInterrupted();
@@ -140,11 +142,11 @@ public class FeedProcessor implements Runnable {
             }            
             Thread.sleep(articlePause);
         }
-        logger.info("finished scraping");
+        logger.info("finished scraping for feed: " + feed.getUrl());
     }
 
     private void saveFeedArticles() throws InterruptedException {
-        logger.info("start saving");        
+        logger.info("start saving for feed: " + feed.getUrl());        
         EntityManager em = null;
         try {
         
@@ -200,7 +202,7 @@ public class FeedProcessor implements Runnable {
         
         }        
         finally { if (em != null) em.close(); }
-        logger.info("finished saving");
+        logger.info("finished saving for feed: " + feed.getUrl());
     }
     
 }
