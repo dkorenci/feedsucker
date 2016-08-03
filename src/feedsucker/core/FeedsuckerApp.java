@@ -13,7 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import feedsucker.scrape.IArticleScraper;
-import feedsucker.scrape.newspaper.RessurectingNewspaper;
+import feedsucker.scrape.newspaper.ResurrectingNewspaper;
 import feedsucker.util.PropertiesReader;
 import feedsucker.config.FeedsuckerConfig;
 import feedsucker.core.feedprocessor.FeedProcessor;
@@ -51,7 +51,7 @@ public class FeedsuckerApp {
     private PropertiesReader properties;    
     private String userAgent;
     private EntityManagerFactory emf;
-    private List<RessurectingNewspaper> npapers;
+    private List<ResurrectingNewspaper> npapers;
     private MessageReceiver messageReceiver;
     private MessageFileMonitor messageMonitor;
     private Filter filter;
@@ -372,14 +372,14 @@ public class FeedsuckerApp {
     // create newspaper instance and cache for later shutdown
     // if max. number of newspapers is exceeded, return existing instances
     // in round robin fashion
-    private RessurectingNewspaper getNewspaper(String langCode) {
+    private ResurrectingNewspaper getNewspaper(String langCode) {
         if (npapers == null) { 
-            npapers = new ArrayList<RessurectingNewspaper>();
+            npapers = new ArrayList<ResurrectingNewspaper>();
             npaperPointer = 0;
         }
         
         if (npapers.size() < numNpapers) {
-            RessurectingNewspaper npaper = createNewspaper(langCode);
+            ResurrectingNewspaper npaper = createNewspaper(langCode);
             if (npaper == null) return null;
             else { 
                 npapers.add(npaper);
@@ -387,14 +387,14 @@ public class FeedsuckerApp {
             }
         }
         else {
-            RessurectingNewspaper npaper = npapers.get(npaperPointer++);
+            ResurrectingNewspaper npaper = npapers.get(npaperPointer++);
             if (npaperPointer == npapers.size()) npaperPointer = 0;
             return npaper;
         }
     }
     
     private void closeNewspapers() {
-        for (RessurectingNewspaper npaper : npapers) {
+        for (ResurrectingNewspaper npaper : npapers) {
             try { npaper.close(); }
             catch (Exception ex) { logger.logErr("closing newspaper error", ex); }
         }      
@@ -402,9 +402,9 @@ public class FeedsuckerApp {
     }
     
     // initialize and return a new newspaper instance
-    public static RessurectingNewspaper createNewspaper(String langCode) {
+    public static ResurrectingNewspaper createNewspaper(String langCode) {
         try {
-            return new RessurectingNewspaper(langCode);
+            return new ResurrectingNewspaper(langCode);
         } catch (IOException ex) {
             logger.logErr("failed to initialize Newspaper.", ex);
             return null;

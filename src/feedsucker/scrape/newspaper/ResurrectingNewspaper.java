@@ -8,14 +8,14 @@ import feedsucker.log.FeedsuckerLogger;
 /**
  * Wrapper around newspaper that initializes a new instance in case of a crash.
  */
-public class RessurectingNewspaper implements IArticleScraper {
+public class ResurrectingNewspaper implements IArticleScraper {
     
     private Newspaper newspaper;
     private static final FeedsuckerLogger logger = 
-            new FeedsuckerLogger(RessurectingNewspaper.class.getName());    
+            new FeedsuckerLogger(ResurrectingNewspaper.class.getName());    
     private final String language;
     
-    public RessurectingNewspaper(String langCode) throws IOException {        
+    public ResurrectingNewspaper(String langCode) throws IOException {        
         language = langCode;
         newspaper = new Newspaper(langCode);
     }
