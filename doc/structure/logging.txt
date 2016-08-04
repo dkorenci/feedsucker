@@ -1,4 +1,3 @@
-*** Logging
 Actions of the apps as well as errors are logged in XML format. 
 All the logs are written in a log/ folder, and one timestamped
 log subfolder is created per run, notice that the Loop tool
@@ -21,14 +20,4 @@ To browse the logs, firs merge all log files from all per-run folders,
 for example: ./merge_logs.sh error errorLogs.xml
 and then start BaseX: ./run_basex.sh errorLogs.xml basex.out
 Answer yes to the question weather to create database and
-then just enter xpath queries in the "Find" field on top. 
-
-*** Database operations
-db_scripts/ folder contains scripts for automatizing some 
-database related tasks as well as .sql files with examples
-of queries that can be used directly on feedsucker database
-for data analysis purposes.
-
-*** Misc. functionality
-scripts/ folder contains various scripts used at some point 
-for data preprocessing, analysis and other purposes. 
+then just enter xpath queries in the "Find" field on top.  

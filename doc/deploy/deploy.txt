@@ -12,7 +12,14 @@ Create persistence.xml from persistence.template.xml
 Create feedsucker.properties from feedsucker.properties.template 
 These files are not git-tracked since they are deploy-specific
 
-2. Create the database
+2. Compile the code
+On linux, run build.sh from feedsucker deploy folder, 
+optionally specifying java location. 
+Quick way to compile on any platform is to create NetBeans
+project and compile (add feedsucker source files and 
+jars in lib folder to the project).
+
+3. Create the database
 Create a user/login role and a database (with UTF-8 encoding).
 Default configuration options assume a 'feedsucker' login role and 'feedsucker' password
 Script deploy_from_git_repo.sh does this for you if you use postgres, 
@@ -21,23 +28,16 @@ the script assumes that a 'feedsucker' login role is created
 A JDBC driver for the DBMS used must be provided in 
 a jar file located in the lib/ folder.
  
-3. Create mediadef file
+4. Create mediadef file
 mediadef file contains description of feeds and outlets you want to monitor
 doc/deploy/mediadef.txt contains more information
 
-4. Configure the application
+5. Configure the application
 main config files are config/feedsucker.properties (app config)
 and src/META-INF/persistence.xml
 For more info, see the comments in files. 
 Make sure to specify the name of the database you will be using.
 Default app config options should work well. 
-
-5. Compile the code
-On linux, run build.sh from feedsucker deploy folder, 
-optionally specifying java location. 
-Quick way to compile on any platform is to create NetBeans
-project and compile (add feedsucker source files and 
-jars in lib folder to the project).
 
 6. Set up language resources (if neccessary)
 6.1 Newspaper stopwords
@@ -66,3 +66,7 @@ Ways to run the standalone app:
 - by executing: run.sh script
 - via feedsucker.sh control script
 feedsucker.sh START [java_location]
+
+8. Check that it works
+Check the run_output.txt file with info messages. 
+Check the logs (see doc/structure/logging.txt for details)

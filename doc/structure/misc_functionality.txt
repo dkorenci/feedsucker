@@ -1,0 +1,7 @@
+db_scripts/ folder contains scripts for automatizing some 
+database related tasks as well as .sql files with examples
+of queries that can be used directly on feedsucker database
+for data analysis purposes.
+
+scripts/ folder contains various scripts used at some point 
+for data preprocessing, analysis and other purposes. 

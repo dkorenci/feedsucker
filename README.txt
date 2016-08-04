@@ -17,8 +17,9 @@ doc/structure/ : Structure of the main application code, and supporting function
 doc/deploy/ : Deployment instructons
 doc/todo/ : List of functionality to add, todo lists and bug lists. 
 
-Feedsucker is written in Java, with interface to newspaper 
+Feedsucker is written in Java (Java 7 or above is required), with interface to newspaper 
 written in Python and some control and support functionality written in Bash.
 For this reason, for now quick deployment (without modifications) 
 is possible only on Linux/Unix systems, until Bash functionality 
 is replaced by command line or GUI tools written in Java. 
+
