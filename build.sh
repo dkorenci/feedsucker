@@ -55,6 +55,11 @@ echo "Main-Class: feedsucker.core.FeedsuckerApp" >> manifest.txt
 JAR="$JAVA_BIN""jar" #jar command
 #echo 'CREATE JAR: ' >> $LOG
 $JAR cfm $ARCHIVE manifest.txt -C src . #>> $LOG 2>&1
+# insert license into jar
+mkdir META-INF
+cp doc/license.txt META-INF/LICENSE.txt
+jar -fu $ARCHIVE META-INF/LICENSE.txt
+rm -rf META-INF
 
 
 # clean *.class files
