@@ -47,6 +47,11 @@ https://web.math.pmf.unizg.hr/~igaly/EHrjecnik.htm
 
 - IArticleScraper 
 Interface for getting article data from a URL
+-- Newspaper / ResurrectingNewspaper wrapper
+Implemenation of IArticleScraper using python newspaper tool for scraping. 
+Communicates via stdin/stdout with newspaper/console_interface.py script, 
+which accepts URLs on stdin, invokes newspaper functionality, and 
+writes formatted the results on stdout. 
 
 - Persistence/ORM
 Entities such as feeds, feed entries, outlets, etc. are kept in a relational database.
