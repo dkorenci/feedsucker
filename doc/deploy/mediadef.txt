@@ -1,0 +1,37 @@
+Mediadef is a simple syntax for describing 
+a set of outlets, feeds and their properties. 
+Outlet is a set of feeds, ie a news website and 
+feed is a source producing URLs of news articles. 
+Folder config/mediadef contains some example mediadef files. 
+
+Application is configured with a single mediadef file, 
+(via config/feedsucker.properties file), this file is 
+read and parsed on app start and the feeds and outlets
+are stored in the database.
+New feeds and outlets will be added in each new app run, 
+existing ones will be updated with new values, but the removed ones 
+will not be automatically removed from the database.
+
+*** SYNTAX
+
+Each line is either a comment (starting with //), a blank line, 
+or a line describing an entity (feed or outlet) via set of properties. 
+The syntax of an entity line is: @entity [property=value;]* 
+For example: 
+@outlet name = h-alter ; url = http://www.h-alter.org/ ; language = hr
+@feed url = http://www.h-alter.org/rss ; outlet = h-alter
+After an @entity header follows a list of properties property = "value".
+apostrophes are optional but required if a property 
+contains special characters or whitespace.
+Prop/value pairs must be separated by a ";". 
+Properties:
+-- outlet - must have a "name" property. 
+-- feed
+feed must have "url" and "outlet" properties, 
+value of outlet prop must be a name of one of the outlets from the file. 
+"language" property, if undefined, is set to "en", otherwise it 
+. must be a valid ISO 639-1 language code
+"type" property, if undefined is set to "synd" (syndication feed), 
+. other supported option, for now, is "html"
+
+For more info, see the feedsucker.data.mediadef.MediadefParser class.
