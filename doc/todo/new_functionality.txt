@@ -1,0 +1,51 @@
+*** Tests
+
+- testing web server for serving feeds and html pages
+- unit tests for feed readers 
+rss/atom feed readers, html feed readers
+- unit tests for article scrapers
+
+*** Core Functionality
+
+- distribute feed processing over time
+for now, processing of all feeds is invoked periodicaly
+modify main app workflow so that this processing is 
+. continuously distributed throught time
+
+- HTML feed readers
+Currently HtmlFeedReader can extracts a class of URLs 
+common for news sites but there infinitely many other cases exist.
+So new HTML feed readers should be added to enable 
+viewing new html pages as feeds. These should include, for 
+example, new syntaxes of URLs to extract, ability for
+the user to define rules for URL recognition, etc.
+
+- scrapers
+Currently this means text scraping from HTML. 
+The more scrapers exist the application will be more robust
+since a couple of scrapers can be run on a page and best result taken. 
+Also, extraction of text metadata such as date of publishing
+(often not found in rss feeds) would be quite useful. 
+Some Java scrapers exist that could prove useful. 
+
+- unify logs per app deploy
+make all app instances invoked by loop tool write to same log file
+
+*** Control, Tools and Utils
+
+- make Loop tool platform independent
+Make LoopAppRunner not dependent on feedsucker.sh script.
+Make it execute Feedsucker via java -jar command and
+. write control messages to files directly
+
+- write control interface in Java
+write Java command line tool that replaces feedsucker.sh script
+for starting and stopping the app as well as for invoking tools. 
+
+- messaging
+Loop tool controls main app via text-file based messages. 
+While this quick solution, handy in some cases (control by hand or via scripts), 
+better inter application communication would be preferable.
+
+- write ant build script 
+to replace build.sh

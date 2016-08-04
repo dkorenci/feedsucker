@@ -1,0 +1,3 @@
+- app freeze
+after some uptime, usually 2-3 weeks, the main app freezes.
+this error is currently circumwented by using loop tool. 

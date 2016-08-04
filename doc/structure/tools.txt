@@ -12,6 +12,13 @@ Loop tool is a stan alone process that controls the
 main app via file-based messaging and a bash script (for now):
 restarts it, or starts it if it crashed. 
 It is configured via main configuration file. 
+-- starting app in loop mode
+./feedsucker.sh LOOP START path_to_java
+path_to_java can be "default_java" to use default java command, 
+or full path to the folder containing java
+-- stopping app started in loop mode
+./feedsucker.sh LOOP STOP
+Starting and stopping must be performed from feedsucker root folder.
 
 - fill
 java -jar Feedsucker.jar java fill FILE_OR_FOLDER

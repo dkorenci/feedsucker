@@ -57,7 +57,7 @@ resources/lang_ascii_wordlist.txt , where lang is ISO 639-1 language code.
 App has to be started from feedsucker root folder.
 Check run.sh and feedsucker.sh for more details. 
 Best way to run is to run the app in LOOP mode:
-./feedsucker.sh LOOP START
+./feedsucker.sh LOOP START default_java
 stopping is done by: 
 ./feedsucker.sh LOOP STOP
 There is more about LOOP and standalone mode in the documentation.
