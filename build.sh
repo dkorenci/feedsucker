@@ -57,7 +57,7 @@ JAR="$JAVA_BIN""jar" #jar command
 $JAR cfm $ARCHIVE manifest.txt -C src . #>> $LOG 2>&1
 # insert license into jar
 mkdir META-INF
-cp doc/license.txt META-INF/LICENSE.txt
+cp LICENSE.txt META-INF/LICENSE.txt
 jar -fu $ARCHIVE META-INF/LICENSE.txt
 rm -rf META-INF
 
