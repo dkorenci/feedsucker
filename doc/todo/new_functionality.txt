@@ -1,6 +1,6 @@
 *** Tests
 
-- testing web server for serving feeds and html pages
+- test web server for serving feeds and html pages
 - unit tests for feed readers 
 rss/atom feed readers, html feed readers
 - unit tests for article scrapers
