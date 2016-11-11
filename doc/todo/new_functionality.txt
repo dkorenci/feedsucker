@@ -34,7 +34,7 @@ make all app instances invoked by loop tool write to same log file
 *** Control, Tools and Utils
 
 - make Loop tool platform independent
-Make LoopAppRunner not dependent on feedsucker.sh script.
+Make LoopAppRunner not dependent on feedsucker.sh script and bash commands.
 Make it execute Feedsucker via java -jar command and
 . write control messages to files directly
 

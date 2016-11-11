@@ -10,9 +10,8 @@ doc/todo/ : List of functionality to add, todo lists and bug lists.
 
 Feedsucker is written in Java (Java 7 or above is required), with interface to newspaper 
 written in Python and with control and support functionality written in Bash.
-For this reason, fastest way to deploy it is to use a Linux system 
-(the alternative is to convert a couple of most important scripts 
-to scripting languages for other platforms).
+For this reason, it is deployable on Linux only, without some modifications 
+(these are on todo list, see doc/todo/new_functionality.txt). 
 
 Supported feeds are rss and atom feeds and a class of html pages 
 (containing URLs with specific structure common for news sites). 
