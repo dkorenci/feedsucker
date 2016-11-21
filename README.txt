@@ -2,6 +2,8 @@ Feedsucker is an application for collecting texts from
 a set of feeds over a period of time and storing them in a relational database. 
 Main use case is collection of texts from web media outlets. 
 Feedsucker is a free software, licensed under the Apache License, Version 2.0
+The app was developed while its author was an employee of 
+Ruđer Bošković Institute (http://www.irb.hr/eng).
 
 Documentation is contained in the following folders:
 doc/structure/ : Structure of the main application code, and supporting functionality. 
